@@ -1,0 +1,70 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background-color: #ffffff;
+    --text-color: #000000;
+    --footer-background-color: #b1b9c2;
+    --footer-text-color: #333;
+    --footer-link-color: #333;
+  }
+
+  [data-theme='dark'] {
+    --background-color: #121212;
+    --text-color: #ffffff;
+    --footer-background-color: #1f1f1f;
+    --footer-text-color: #f5f5f5;
+    --footer-link-color: #f5f5f5;
+  }
+
+  body {
+    @apply m-0 font-sans antialiased;
+    background-color: var(--background-color);
+    color: var(--text-color);
+  }
+}
+
+@layer components {
+  .footer {
+    @apply bg-footer-bg text-footer-text py-6 px-8 border-t border-gray-200;
+  }
+
+  .footer-container {
+    @apply flex justify-between items-center max-w-7xl mx-auto;
+  }
+
+  .footer-brand {
+    @apply flex-1;
+  }
+
+  /* Custom styling for footer navigation */
+.footer-nav {
+  @apply flex-grow flex justify-center;
+}
+
+
+  .footer-link {
+    @apply mx-6 no-underline text-footer-text text-base hover:underline;
+  }
+
+  .footer-copyright {
+    @apply flex-1 text-right text-sm;
+  }
+}
+
+/* Responsive styles */
+@media (max-width: 768px) {
+  .footer-container {
+    @apply flex-col items-start;
+  }
+
+  .footer-nav {
+    @apply my-4;
+  }
+
+  .footer-link {
+    @apply my-2 mx-0;
+  }
+}
