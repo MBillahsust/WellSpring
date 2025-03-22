@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { BookOpen, Phone, Search, Youtube } from "lucide-react";
+import { motion } from 'framer-motion';
 
 const resources = [
   {
@@ -293,14 +294,6 @@ const resources = [
     }  
     ]
   },
-  // {
-  //   category: "Hotlines",
-  //   items: [
-  //     { title: "Crisis Helpline", description: "24/7 support for those in emotional distress: 1-800-273-8255" },
-  //     { title: "Substance Abuse Helpline", description: "Get help for addiction: 1-800-662-4357" },
-  //     { title: "Teen Line", description: "Support for teenagers: 1-800-852-8336" },
-  //   ]
-  // },
   {
     category: "YouTube Videos",
     items: [
@@ -524,34 +517,58 @@ export default function ResourcesPage() {
     cursor: 'pointer',
   };
 
-  // Filtering logic
   const filteredItems = resources
     .find(resource => resource.category === activeTab)
-    ?.items.filter(item => // Optional chaining in case 'activeTab' category is not found
+    ?.items.filter(item => 
       item.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
       item.description.toLowerCase().includes(searchTerm.toLowerCase())
-    ) || []; // Default to empty array if no matches
+    ) || []; 
 
   return (
-    <div style={containerStyle}>
-      <h1 style={headingStyle}>Mental Health Resources</h1>
+    <motion.div 
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.5 }}
+      style={containerStyle}
+    >
+      <motion.h1 
+        initial={{ y: -20, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ duration: 0.5 }}
+        style={headingStyle}
+      >
+        Mental Health Resources
+      </motion.h1>
 
-      {/* Category Tabs */}
-      <div style={{ display: 'flex', marginBottom: '20px' }}>
-        {resources.map(resource => (
-          <button
+      <motion.div 
+        initial={{ y: 20, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ duration: 0.5, delay: 0.2 }}
+        style={{ display: 'flex', marginBottom: '20px' }}
+      >
+        {resources.map((resource, index) => (
+          <motion.button
             key={resource.category}
             onClick={() => setActiveTab(resource.category)}
             style={buttonStyle(resource.category)}
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.3, delay: index * 0.1 }}
           >
             {getCategoryIcon(resource.category)}
             <span style={{ marginLeft: '8px' }}>{resource.category}</span>
-          </button>
+          </motion.button>
         ))}
-      </div>
+      </motion.div>
 
-       {/* Search Bar */}
-      <div style={{ marginBottom: '20px', display: 'flex', alignItems: 'center' }}>
+      <motion.div 
+        initial={{ y: 20, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ duration: 0.5, delay: 0.3 }}
+        style={{ marginBottom: '20px', display: 'flex', alignItems: 'center' }}
+      >
         <label htmlFor="searchInput" aria-label="Search"> 
           <Search className="icon" style={{ marginRight: '8px', color: isDarkMode ? '#ffffff' : '#000000' }} />
         </label>
@@ -570,26 +587,52 @@ export default function ResourcesPage() {
             color: isDarkMode ? '#ffffff' : '#000000',
           }}
         />
-      </div>
+      </motion.div>
 
-      {/* Resource Cards or No Results Message */}
       {filteredItems.length > 0 ? (
-        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '20px' }}>
+        <motion.div 
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.5, delay: 0.4 }}
+          style={{ display: 'flex', flexWrap: 'wrap', gap: '20px' }}
+        >
           {filteredItems.map((item, index) => (
-            <div key={index} style={cardStyle}>
+            <motion.div 
+              key={index} 
+              style={cardStyle}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.3, delay: index * 0.1 }}
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+            >
               <h3 style={titleStyle}>{item.title}</h3>
               <p style={descriptionStyle}>{item.description}</p>
               {item.url && ( 
-                <a href={item.url} style={linkStyle} target="_blank" rel="noopener noreferrer">
+                <motion.a 
+                  href={item.url} 
+                  style={linkStyle} 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                >
                   {activeTab === "YouTube Videos" ? "Watch Video" : "Read More"}
-                </a>
+                </motion.a>
               )}
-            </div>
+            </motion.div>
           ))}
-        </div>
+        </motion.div>
       ) : (
-        <p style={{ color: isDarkMode ? '#dddddd' : '#333333' }}>No resources found matching your search.</p>
+        <motion.p 
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.5 }}
+          style={{ color: isDarkMode ? '#dddddd' : '#333333' }}
+        >
+          No resources found matching your search.
+        </motion.p>
       )}
-    </div>
+    </motion.div>
   );
 }

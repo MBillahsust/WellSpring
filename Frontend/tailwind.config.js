@@ -7,7 +7,6 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        // You can define your custom colors here
         'footer-bg': 'var(--footer-background-color)',
         'footer-text': 'var(--footer-text-color)',
       },

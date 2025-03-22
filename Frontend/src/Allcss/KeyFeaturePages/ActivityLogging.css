@@ -1,5 +1,3 @@
-/* ActivityLogging.css */
-
 .activity-logging-section {
     width: 100%;
     max-width: 800px;
@@ -56,12 +54,12 @@
   .auth-button {
     display: inline-block;
     margin: 0.5rem;
-    padding: 0.5rem 1.5rem;  /* Reduced padding for smaller buttons */
+    padding: 0.5rem 1.5rem;  
     background-color: #007bff;
     color: #fff;
     text-decoration: none;
     border-radius: 5px;
-    font-size: 1rem; /* Reduced font size */
+    font-size: 1rem; 
     cursor: pointer;
     transition: background-color 0.3s ease;
   }
@@ -71,7 +69,7 @@
   }
   
   .auth-button.login-button:hover {
-    background-color: darken(#3d8de3, 10%); /* Darkens the button color on hover */
+    background-color: darken(#3d8de3, 10%); 
   }
   
   .auth-button.signup-button:hover {

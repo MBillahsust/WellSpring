@@ -1,10 +1,10 @@
 import React, { useState, useContext, useEffect } from 'react';
-import { useNavigate, Link } from 'react-router-dom'; // Import Link for navigation
-import { UserContext } from '../../UserContext'; // Import UserContext
+import { useNavigate, Link } from 'react-router-dom'; 
+import { UserContext } from '../../UserContext';
 import '../../Allcss/KeyFeaturePages/ActivityLogging.css';
 
 export default function ActivityLogging() {
-  const { userInfo } = useContext(UserContext); // Get userInfo from context
+  const { userInfo } = useContext(UserContext); 
   const [activity, setActivity] = useState('');
   const [category, setCategory] = useState('');
   const [duration, setDuration] = useState('');
@@ -29,7 +29,6 @@ export default function ActivityLogging() {
     }
   };
 
-  // Render different content based on authentication status
   return userInfo ? (
     <section className="activity-logging-section">
       <h2 className="heading">Activity Logging</h2>

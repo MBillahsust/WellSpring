@@ -80,6 +80,7 @@ export default function MentalHealthAssessments() {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
           transition={{ duration: 0.8 }}
           className="text-center mb-16"
         >
@@ -87,6 +88,7 @@ export default function MentalHealthAssessments() {
             className="text-[2.5rem] font-bold text-[#1a1a1a] mb-5 relative inline-block leading-tight"
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
             transition={{ duration: 0.8, delay: 0.2 }}
           >
             Mental Health Assessments
@@ -94,29 +96,49 @@ export default function MentalHealthAssessments() {
               className="absolute -bottom-1 left-0 w-full h-[3px] bg-gradient-to-r from-[#00a0ff] to-[#0066ff]"
               initial={{ scaleX: 0 }}
               whileInView={{ scaleX: 1 }}
+              viewport={{ once: true }}
               transition={{ duration: 0.8, delay: 0.4 }}
             />
           </motion.h2>
         </motion.div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-7xl mx-auto">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {assessments.map((assessment, index) => (
             <motion.div
               key={assessment.path}
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.2 + index * 0.1 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5, delay: index * 0.1 }}
               className="group h-full"
             >
               <div className="h-full bg-white rounded-2xl p-8 shadow-[0_2px_12px_rgba(0,157,255,0.08)] hover:shadow-[0_4px_16px_rgba(0,157,255,0.16)] transition-all duration-300 hover:-translate-y-1">
                 <div className="text-center h-full flex flex-col">
-                  <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gradient-to-r from-[#00a0ff] to-[#0066ff] text-white mb-6 mx-auto transform group-hover:scale-110 transition-transform duration-300">
+                  <motion.div 
+                    className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gradient-to-r from-[#00a0ff] to-[#0066ff] text-white mb-6 mx-auto transform group-hover:scale-110 transition-transform duration-300"
+                    whileHover={{ scale: 1.1 }}
+                    whileTap={{ scale: 0.95 }}
+                  >
                     <assessment.icon className="w-8 h-8" />
-                  </div>
-                  <h3 className="text-xl font-semibold text-[#1a1a1a] mb-4">{assessment.title}</h3>
-                  <p className="text-[#4a5568] leading-relaxed mb-6 flex-grow">
+                  </motion.div>
+                  <motion.h3 
+                    className="text-xl font-semibold text-[#1a1a1a] mb-4"
+                    initial={{ opacity: 0 }}
+                    whileInView={{ opacity: 1 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.5, delay: 0.2 }}
+                  >
+                    {assessment.title}
+                  </motion.h3>
+                  <motion.p 
+                    className="text-[#4a5568] leading-relaxed mb-6 flex-grow"
+                    initial={{ opacity: 0 }}
+                    whileInView={{ opacity: 1 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.5, delay: 0.3 }}
+                  >
                     {assessment.description}
-                  </p>
+                  </motion.p>
                   <motion.button
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}

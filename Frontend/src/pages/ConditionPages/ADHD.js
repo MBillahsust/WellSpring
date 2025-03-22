@@ -6,7 +6,6 @@ export default function ADHD() {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    // Fetch detailed content from Wikipedia using their REST API
     fetch('https://en.wikipedia.org/api/rest_v1/page/summary/Attention_deficit_hyperactivity_disorder')
       .then((response) => response.json())
       .then((data) => {

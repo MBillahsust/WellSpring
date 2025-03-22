@@ -1,4 +1,3 @@
-// src/pages/AnxietyPage.js
 import React, { useEffect, useState } from 'react';
 import '../../Allcss/HeaderPages/DisorderPage.css';
 
@@ -7,7 +6,6 @@ export default function ED() {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    // Fetch detailed content from Wikipedia using their REST API
     fetch('https://en.wikipedia.org/api/rest_v1/page/summary/Eating_disorder')
       .then((response) => response.json())
       .then((data) => {

@@ -1,4 +1,3 @@
-// src/pages/MoodTracking.js
 import React, { useState } from 'react';
 import '../../Allcss/KeyFeaturePages/MoodTracking.css';
 
@@ -31,7 +30,6 @@ export default function MoodTracking() {
           <option value="sad">Sad</option>
           <option value="anxious">Anxious</option>
           <option value="calm">Calm</option>
-          {/* Add more mood options as needed */}
         </select>
         <textarea
           value={notes}

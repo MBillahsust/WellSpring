@@ -43,65 +43,61 @@ header nav {
 }
 
 .group {
-  position: relative; /* Necessary for positioning the dropdown */
+  position: relative; 
 }
 
 .dropdown-menu {
-  position: absolute; /* Positioning the dropdown */
-  top: 100%; /* Position below the profile icon */
-  right: 0; /* Align to the right */
-  background-color: #fff; /* Background color for dropdown */
-  border: 1px solid #ddd; /* Border for the dropdown */
-  border-radius: 4px; /* Rounded corners */
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15); /* Shadow for depth */
-  display: none; /* Initially hidden */
-  z-index: 10; /* Ensure it appears above other elements */
+  position: absolute; 
+  top: 100%; 
+  right: 0; 
+  background-color: #fff; 
+  border: 1px solid #ddd; 
+  border-radius: 4px; 
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15); 
+  display: none; 
+  z-index: 10;
 }
 
 .group:hover .dropdown-menu {
-  display: block; /* Show on hover */
+  display: block;
 }
 
-/* Optional: Style for dropdown items */
 .dropdown-menu a {
-  display: block; /* Block display for full width */
-  padding: 10px 15px; /* Padding for clickable area */
-  color: #333; /* Text color */
-  text-decoration: none; /* Remove underline */
+  display: block; 
+  padding: 10px 15px;
+  color: #333; 
+  text-decoration: none; 
 }
 
 .dropdown-menu a:hover {
-  background-color: #f1f1f1; /* Highlight on hover */
+  background-color: #f1f1f1; 
 }
-/* Container for the logo */
+
 .logo-container {
   display: flex;
   align-items: center;
 }
 
-/* Styling for the logo icon */
 .logo-icon {
-  width: 40px; /* Adjust icon size */
+  width: 40px; 
   height: 40px;
   color: white;
-  margin-right: 10px; /* Spacing between icon and text */
+  margin-right: 10px;
 }
 
-/* Styling for the logo text */
 .logo-text {
-  font-size: 2rem; /* Increase text size */
+  font-size: 2rem; 
   font-weight: bold;
   color: white;
 }
 
-/* General header styles */
 header {
   display: flex;
   justify-content: space-between;
   align-items: center;
   background-color: rgb(9, 9, 11);
   color: white;
-  padding: 15px 30px; /* Adjust padding for better spacing */
+  padding: 15px 30px;
 }
 
 header .nav-links {
@@ -109,30 +105,29 @@ header .nav-links {
   gap: 50px;
 }
 
-/* Optional hover effect for nav items */
 header .nav-item:hover {
   color: #6d8ded;
 }
 .profile-image {
-  width: 40px; /* Adjust the size as needed */
+  width: 40px;
   height: 40px;
-  border-radius: 50%; /* Makes it circular */
-  object-fit: cover; /* Ensures the image fits within the circle */
-  border: 2px solid white; /* Adds a white border for better visibility */
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid white; 
 }
 .dropdown-item {
-  margin: 5px 0; /* Some margin between items */
-  padding: 10px 20px; /* Add padding for better button feel */
-  background-color: #4caf50; /* Button background color */
-  color: white; /* Button text color */
-  border: none; /* Remove borders */
-  border-radius: 5px; /* Rounded corners */
-  cursor: pointer; /* Pointer/hand icon on hover */
-  text-decoration: none; /* Remove underline from links */
-  display: block; /* Make it a block element */
-  width: 100%; /* Full width for better click area */
+  margin: 5px 0; 
+  padding: 10px 20px; 
+  background-color: #4caf50; 
+  color: white; 
+  border: none; 
+  border-radius: 5px; 
+  cursor: pointer; 
+  text-decoration: none; 
+  display: block; 
+  width: 100%; 
 }
 
 .dropdown-item:hover {
-  background-color: #45a049; /* Darker green on hover */
+  background-color: #45a049;
 }

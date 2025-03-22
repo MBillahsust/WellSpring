@@ -1,5 +1,5 @@
 import React from 'react';
-import '../../Allcss/HeaderPages/HotlinePage.css'; // Add a new CSS file for styling if needed
+import '../../Allcss/HeaderPages/HotlinePage.css';
 
 export default function HotlinePage() {
   return (

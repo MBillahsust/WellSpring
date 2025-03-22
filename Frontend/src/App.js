@@ -40,11 +40,11 @@ import Schizophrenia from './pages/ConditionPages/Schizophrenia';
 
 import Privacy from './pages/FooterPages/Privacy';
 import Terms from './pages/FooterPages/Terms';
-//import Privacy from './pages/FooterPages/Privacy';
 
 
 import { Route, Routes } from "react-router-dom";
 import { UserContextProvider } from './UserContext';
+import ScrollToTop from './Components/ScrollToTop';
 
 import './index.css';
 
@@ -53,15 +53,14 @@ function App() {
     <div className="app-container">
       <UserContextProvider>
         <Header />
+        <ScrollToTop />
         <div className="content-wrapper">
           <Routes>
-            {/* routes for the main page elemets */}
             <Route path="/" element={<Layout />} />
 
             <Route path='/counsellors' element={<Counsellor />} />
             <Route path="/counsellor-bot" element={<CounsellorBotChat />} />
 
-            {/* routes for the assessments */}
             <Route path='/anxiety-assessment' element={<AnxietyAssessment />} />
             <Route path='/depression-screening' element={<DepressionScreening />} />
             <Route path='/stress-evaluation' element={<StressEvaluation />} />
@@ -71,7 +70,6 @@ function App() {
             <Route path='/ocd_check' element={<OCD_Assesment />} />
             <Route path='/ptsd_clarity_check' element={<PTSD_Assesment />} />
 
-            {/* routes for the header elements */}
             <Route path='/conditions' element={<Conditions />} />
             <Route path='/resources' element={<Resources />} />
             <Route path='/contact' element={<Contact />} />
@@ -82,7 +80,6 @@ function App() {
             <Route path="/signup" element={<Signup />} />
             <Route path="/dashboard" element={<Dashboard />} />
 
-            {/* Routes for specific conditions */}
             <Route path="/conditions/anxiety" element={<Anxiety />} />
             <Route path="/conditions/depression" element={<Depression />} />
             <Route path="/conditions/bipolar-disorder" element={<Bipolar />} />
@@ -92,12 +89,10 @@ function App() {
             <Route path="/conditions/adhd" element={<ADHD />} />
             <Route path="/conditions/schizophrenia" element={<Schizophrenia />} />
 
-            {/* routes for assesments section */}
             <Route path="/mood-tracking" element={<MoodTracking />} />
             <Route path="/activity-logging" element={<ActivityLogging />} />
             <Route path="/personalized-guidance" element={<PersonalizedGuidance />} />
 
-            {/* routes for footer section */}
             <Route path="/privacy" element={<Privacy />} />
             <Route path="/terms" element={<Terms />} />
             <Route path="/contact" element={<Contact />} />

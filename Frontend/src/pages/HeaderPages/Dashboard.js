@@ -1,10 +1,10 @@
 import { useContext } from "react";
-import { UserContext } from '../../UserContext'; // Adjust the import path if necessary
+import { UserContext } from '../../UserContext'; 
 import '../../Allcss/HeaderPages/Dashboard.css';
 
 
 export default function Dashboard() {
-    const { userInfo } = useContext(UserContext); // Access userInfo from context
+    const { userInfo } = useContext(UserContext); 
 
     return (
         <div className="dashboard">

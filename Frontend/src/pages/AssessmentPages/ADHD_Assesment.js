@@ -1,19 +1,13 @@
-// Adult ADHD Self-Report Scale (ASRS-v1.1) as a React component,
-
-
 import React, { useState } from 'react';
-import '../../Allcss/AssessmentPages/AnxietyAssessment.css';
+import '../../Allcss/AssessmentPages/Assessment.css';
 
 const asrsQuestions = [
-  // Inattention (6 items)
   "How often do you have trouble wrapping up the final details of a project, once the challenging parts have been done?",
   "How often do you have difficulty organizing tasks and activities?",
   "How often do you have trouble keeping your attention on tasks or activities?",
   "How often do you avoid, dislike, or are reluctant to engage in tasks that require sustained mental effort?",
   "How often do you lose things necessary for tasks and activities?",
   "How often are you easily distracted by extraneous stimuli?",
-
-  // Hyperactivity/Impulsivity (12 items)
   "How often do you fidget with or tap your hands or feet, or squirm in your seat?",
   "How often do you leave your seat in situations when remaining seated is expected?",
   "How often do you run or climb in situations where it is inappropriate?",
@@ -62,16 +56,16 @@ export default function ADHD_Assesment() {
 
     if (totalScore <= 18) {
         severity = "Minimal likelihood of ADHD";
-        recommendation = "No immediate intervention needed.";
+        recommendation = "Your symptoms suggest minimal indication of ADHD. Continue monitoring any concerns you may have.";
     } else if (totalScore <= 36) {
         severity = "Mild likelihood of ADHD";
-        recommendation = "Consider monitoring symptoms and consulting a healthcare provider.";
+        recommendation = "Your symptoms suggest mild ADHD traits. Consider discussing these symptoms with a healthcare provider.";
     } else if (totalScore <= 54) {
         severity = "Moderate likelihood of ADHD";
-        recommendation = "Consult with a mental health professional for further evaluation.";
+        recommendation = "Your symptoms suggest moderate ADHD traits. It's recommended to consult with a mental health professional for further evaluation.";
     } else if (totalScore <= 72) {
         severity = "High likelihood of ADHD";
-        recommendation = "Seek support from a mental health specialist.";
+        recommendation = "Your symptoms suggest strong ADHD traits. We strongly recommend seeking professional evaluation and support.";
     }
 
     setResult({
@@ -79,7 +73,7 @@ export default function ADHD_Assesment() {
       totalScore,
       inattentionScore,
       hyperImpulsivityScore,
-      maxScore: asrsQuestions.length * 4, // Max possible score is 72
+      maxScore: asrsQuestions.length * 4,
       recommendation
     });
   };
@@ -87,66 +81,73 @@ export default function ADHD_Assesment() {
   const progress = ((currentQuestion + 1) / asrsQuestions.length) * 100;
 
   return (
-    <div className="container mx-auto p-4 max-w-2xl">
-      <div className="card shadow-lg">
-        <div className="card-header bg-gradient-to-r from-green-500 to-teal-600 text-white rounded-t-lg">
-          <h2 className="text-2xl font-bold">Adult ADHD Self-Report Scale (ASRS-v1.1)</h2>
-          <p className="text-gray-100">Answer the following questions to assess your ADHD symptoms.</p>
+    <div className="assessment-container">
+      <div className="assessment-card">
+        <div className="assessment-header adhd">
+          <h2 className="assessment-title">Adult ADHD Self-Report Scale (ASRS-v1.1)</h2>
+          <p className="assessment-subtitle">Answer the following questions to assess your ADHD symptoms.</p>
         </div>
-        <div className="card-content pt-6">
+        <div className="assessment-content">
           {result ? (
-            <div className="text-center">
-              <h3 className="text-2xl font-bold mb-4 text-green-600">
-                ADHD Likelihood: {result.severity}
-              </h3>
-              <p className="text-sm text-gray-600 mb-2">
+            <div className="result-container">
+              <h3 className="result-title">Assessment Complete</h3>
+              <div className="result-score">
+                {result.severity}
+              </div>
+              <p className="result-details">
                 Total Score: {result.totalScore} / {result.maxScore}
               </p>
-              <p className="text-sm text-gray-600 mb-2">
-                Inattention Score: {result.inattentionScore} / 24
-              </p>
-              <p className="text-sm text-gray-600 mb-2">
-                Hyperactivity/Impulsivity Score: {result.hyperImpulsivityScore} / 48
-              </p>
-              <p className="text-sm text-gray-600 mb-2">
-                Recommendation: {result.recommendation}
-              </p>
-              <p className="text-sm text-gray-600">
-                Note: This is a screening tool, not a diagnostic instrument. Consult a professional for proper evaluation.
+              <div className="result-details">
+                <p>Inattention Score: {result.inattentionScore} / 24</p>
+                <p>Hyperactivity/Impulsivity Score: {result.hyperImpulsivityScore} / 48</p>
+              </div>
+              <div className="result-recommendation">
+                <h4 className="recommendation-title">Recommendation</h4>
+                <p className="recommendation-text">{result.recommendation}</p>
+              </div>
+              <p className="disclaimer">
+                Note: This is a screening tool and not a diagnostic instrument. 
+                Please consult with a mental health professional for a proper evaluation.
               </p>
             </div>
           ) : (
             <>
-              <div className="progress mb-4 h-2" style={{ width: `${progress}%` }}></div>
-              <p className="text-sm text-gray-600 mb-4">Question {currentQuestion + 1} of {asrsQuestions.length}</p>
-              <div className="mb-6">
-                <label className="text-lg font-medium mb-4 block text-gray-800">
-                  {asrsQuestions[currentQuestion]}
-                </label>
-                <div className="space-y-2">
-                  {answerOptions.map((option) => (
-                    <div key={option.value} className="flex items-center">
-                      <input
-                        type="radio"
-                        name="answer"
-                        value={option.value}
-                        id={`q-${option.value}`}
-                        checked={answers[currentQuestion] === option.value}
-                        onChange={() => handleAnswer(option.value)}
-                      />
-                      <label htmlFor={`q-${option.value}`} className="ml-2 text-gray-700">{option.label}</label>
-                    </div>
-                  ))}
-                </div>
+              <div className="progress-container">
+                <div className="progress-bar" style={{ width: `${progress}%` }}></div>
+              </div>
+              <p className="question-counter">Question {currentQuestion + 1} of {asrsQuestions.length}</p>
+              <div className="question">
+                {asrsQuestions[currentQuestion]}
+              </div>
+              <div className="options-grid">
+                {answerOptions.map((option) => (
+                  <div 
+                    key={option.value} 
+                    className={`option-item ${answers[currentQuestion] === option.value ? 'selected' : ''}`}
+                  >
+                    <input
+                      type="radio"
+                      name="answer"
+                      value={option.value}
+                      id={`q-${option.value}`}
+                      checked={answers[currentQuestion] === option.value}
+                      onChange={() => handleAnswer(option.value)}
+                      className="radio-input"
+                    />
+                    <label htmlFor={`q-${option.value}`} className="option-label">
+                      {option.label}
+                    </label>
+                  </div>
+                ))}
               </div>
             </>
           )}
         </div>
-        <div className="card-footer">
+        <div className="assessment-footer">
           {!result && (
             <button
               onClick={handleNext}
-              className="w-full bg-gradient-to-r from-green-500 to-teal-600 hover:from-green-600 hover:to-teal-700 text-white font-semibold py-2 px-4 rounded-full transition duration-300 ease-in-out transform hover:scale-105 flex items-center justify-center"
+              className="next-button"
               disabled={answers[currentQuestion] === undefined}
             >
               {currentQuestion < asrsQuestions.length - 1 ? "Next Question" : "Submit"}

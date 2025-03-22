@@ -1,75 +1,140 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { motion } from 'framer-motion';
 
+export default function SignUp() {
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    password: '',
+    confirmPassword: ''
+  });
+  const [isLoading, setIsLoading] = useState(false);
 
-export default function Signup() {
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const navigate = useNavigate();
-
-  const handleSignup = async (e) => {
-    e.preventDefault();
-    
-    const response = await fetch("http://localhost:8080/api/auth/signup", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ name, email, password }),
+  const handleChange = (e) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value
     });
-    
-    if (response.ok) {
-      // If signup is successful, redirect or show success message
-      navigate("/login");
-    } else {
-      console.error("Signup failed");
-    }
+  };
+
+  const onSubmitHandler = async (e) => {
+    e.preventDefault();
+    setIsLoading(true);
+    setTimeout(() => setIsLoading(false), 2000); 
   };
 
   return (
-    <div className="auth-container">
-      <h2 className="auth-header">Create a New Account</h2>
-      <form className="auth-form" onSubmit={handleSignup}>
-        <div className="form-group">
-          <label htmlFor="name">Name</label>
-          <input
-            type="text"
-            id="name"
-            placeholder="Enter your name"
-            required
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-          />
+    <div className="min-h-screen flex flex-col md:flex-row bg-gradient-to-br from-sky-50 to-white">
+      <motion.div 
+        initial={{ opacity: 0, x: -20 }}
+        animate={{ opacity: 1, x: 0 }}
+        transition={{ duration: 0.5 }}
+        className="hidden md:flex flex-1 items-center justify-center p-8"
+      >
+        <div className="max-w-md text-center">
+          <h1 className="text-4xl font-bold text-gray-900 mb-4">Join Wellspring</h1>
+          <p className="text-gray-600 text-lg">Begin your journey to better mental health today</p>
         </div>
-        <div className="form-group">
-          <label htmlFor="email">Email</label>
-          <input
-            type="email"
-            id="email"
-            placeholder="Enter your email"
-            required
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-          />
+      </motion.div>
+
+      <motion.div 
+        initial={{ opacity: 0, x: 20 }}
+        animate={{ opacity: 1, x: 0 }}
+        transition={{ duration: 0.5 }}
+        className="flex-1 flex items-center justify-center p-4 sm:p-8 min-h-screen md:min-h-0"
+      >
+        <div className="w-full max-w-md">
+          <motion.form 
+            onSubmit={onSubmitHandler}
+            className="bg-white p-6 sm:p-8 rounded-lg shadow-lg"
+            initial={{ scale: 0.95 }}
+            animate={{ scale: 1 }}
+            transition={{ duration: 0.3 }}
+          >
+            <div className="text-center mb-6 sm:mb-8">
+              <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">Create Account</h2>
+              <p className="text-gray-600">Join our community of support</p>
+            </div>
+
+            <div className="space-y-4">
+              <motion.div whileHover={{ scale: 1.01 }} className="group">
+                <input
+                  name="name"
+                  onChange={handleChange}
+                  value={formData.name}
+                  type="text"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-500 transition-all duration-200"
+                  placeholder="Full Name"
+                  required
+                />
+              </motion.div>
+
+              <motion.div whileHover={{ scale: 1.01 }} className="group">
+                <input
+                  name="email"
+                  onChange={handleChange}
+                  value={formData.email}
+                  type="email"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-500 transition-all duration-200"
+                  placeholder="Email"
+                  required
+                />
+              </motion.div>
+
+              <motion.div whileHover={{ scale: 1.01 }} className="group">
+                <input
+                  name="password"
+                  onChange={handleChange}
+                  value={formData.password}
+                  type="password"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-500 transition-all duration-200"
+                  placeholder="Password"
+                  required
+                />
+              </motion.div>
+
+              <motion.div whileHover={{ scale: 1.01 }} className="group">
+                <input
+                  name="confirmPassword"
+                  onChange={handleChange}
+                  value={formData.confirmPassword}
+                  type="password"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-500 transition-all duration-200"
+                  placeholder="Confirm Password"
+                  required
+                />
+              </motion.div>
+            </div>
+
+            <div className="mt-6 flex flex-col sm:flex-row justify-between items-center gap-4 text-sm">
+              <Link 
+                to="/login" 
+                className="text-sky-600 hover:text-sky-700 font-medium transition-colors duration-200"
+              >
+                Already have an account?
+              </Link>
+            </div>
+
+            <motion.button
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              type="submit"
+              disabled={isLoading}
+              className="w-full mt-6 bg-gradient-to-r from-sky-500 to-sky-600 text-white py-3 px-4 rounded-lg hover:from-sky-600 hover:to-sky-700 transition-all duration-200 font-medium shadow-md relative"
+            >
+              {isLoading ? (
+                <div className="flex items-center justify-center">
+                  <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"></div>
+                  Creating Account...
+                </div>
+              ) : (
+                "Create Account"
+              )}
+            </motion.button>
+          </motion.form>
         </div>
-        <div className="form-group">
-          <label htmlFor="password">Password</label>
-          <input
-            type="password"
-            id="password"
-            placeholder="Create a password"
-            required
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-          />
-        </div>
-        <button type="submit" className="auth-button">Sign Up</button>
-      </form>
-      <div className="auth-footer">
-        <p>Already have an account? <Link to="/login">Login</Link></p>
-      </div>
+      </motion.div>
     </div>
   );
 }

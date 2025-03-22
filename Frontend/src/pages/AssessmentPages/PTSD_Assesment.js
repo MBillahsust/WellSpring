@@ -1,10 +1,7 @@
-// internationally accepted clinical version of the PTSD Checklist for DSM-5 (PCL-5) assessment, including all 20 questions and standard scoring. The marking system for PCL-5 typically uses a binary yes/no system (0–1), but since you’ve requested a linear scoring system (0–4 per item), I’ve modified it accordingly.
-
 import React, { useState } from 'react';
-import '../../Allcss/AssessmentPages/AnxietyAssessment.css';
-import { version } from 'mongoose';
+import '../../Allcss/AssessmentPages/Assessment.css';
 
-const pcl5Questions = [
+const questions = [
   "In the past month, how often have you had distressing memories, thoughts, or images of the traumatic event?",
   "In the past month, how often have you avoided thoughts or feelings related to the traumatic event?",
   "In the past month, how often have you had negative thoughts about yourself or others?",
@@ -17,9 +14,9 @@ const pcl5Questions = [
   "In the past month, how often have you felt guilty or ashamed about the traumatic event?",
   "In the past month, how often have you felt distant or cut off from others?",
   "In the past month, how often have you had difficulty concentrating?",
-  "In the past month, how often have you engaged in self-destructive behavior (e.g., substance abuse)?",
+  "In the past month, how often have you engaged in self-destructive behavior?",
   "In the past month, how often have you felt overwhelmed by your emotions?",
-  "In the past month, how often have you had physical reactions (e.g., sweating, racing heart) when reminded of the traumatic event?",
+  "In the past month, how often have you had physical reactions when reminded of the traumatic event?",
   "In the past month, how often have you avoided activities, places, or people that remind you of the traumatic event?",
   "In the past month, how often have you felt detached or estranged from others?",
   "In the past month, how often have you had difficulty experiencing positive emotions?",
@@ -41,11 +38,13 @@ export default function PTSD_Assessment() {
   const [result, setResult] = useState(null);
 
   const handleAnswer = (value) => {
-    setAnswers([...answers.slice(0, currentQuestion), value]);
+    const newAnswers = [...answers];
+    newAnswers[currentQuestion] = value;
+    setAnswers(newAnswers);
   };
 
   const handleNext = () => {
-    if (currentQuestion < pcl5Questions.length - 1) {
+    if (currentQuestion < questions.length - 1) {
       setCurrentQuestion(currentQuestion + 1);
     } else {
       calculateResult();
@@ -53,90 +52,102 @@ export default function PTSD_Assessment() {
   };
 
   const calculateResult = () => {
-    const totalScore = answers.reduce((sum, answer) => sum + parseInt(answer, 10), 0);
+    const total = answers.reduce((sum, answer) => sum + parseInt(answer, 10), 0);
+    const score = total / questions.length;
 
     let severity, recommendation;
-
-    if (totalScore <= 20) {
-      severity = "Minimal Symptoms";
-      recommendation = "No intervention needed.";
-    } else if (totalScore <= 40) {
-      severity = "Mild Symptoms";
-      recommendation = "Consider consulting a healthcare provider.";
-    } else if (totalScore <= 60) {
-      severity = "Moderate Symptoms";
-      recommendation = "Consult with a mental health professional.";
-    } else if (totalScore <= 80) {
-      severity = "Severe Symptoms";
-      recommendation = "Seek immediate support from a mental health specialist.";
+    if (score < 1) {
+      severity = "Minimal PTSD symptoms";
+      recommendation = "Your symptoms suggest minimal indication of PTSD. Continue monitoring your mental health.";
+    } else if (score < 2) {
+      severity = "Mild PTSD symptoms";
+      recommendation = "You're showing mild symptoms of PTSD. Consider discussing these symptoms with a mental health professional.";
+    } else if (score < 3) {
+      severity = "Moderate PTSD symptoms";
+      recommendation = "Your symptoms suggest moderate PTSD. It's recommended to consult with a mental health professional for further evaluation.";
+    } else {
+      severity = "Severe PTSD symptoms";
+      recommendation = "Your symptoms indicate severe PTSD. Please seek professional help for proper evaluation and support.";
     }
 
     setResult({
       severity,
-      score: totalScore,
-      maxScore: pcl5Questions.length * 4,  // 80
+      score: total,
+      maxScore: questions.length * 4,
       recommendation
     });
   };
 
-  const progress = ((currentQuestion + 1) / pcl5Questions.length) * 100;
+  const progress = ((currentQuestion + 1) / questions.length) * 100;
 
   return (
-    <div className="container mx-auto p-4 max-w-2xl">
-      <div className="card shadow-lg">
-        <div className="card-header bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-t-lg">
-          <h2 className="text-2xl font-bold">PTSD Checklist for DSM-5 (PCL-5)</h2>
-          <p className="text-gray-100">Answer the following questions to assess your PTSD symptoms.</p>
+    <div className="assessment-container">
+      <div className="assessment-card">
+        <div className="assessment-header ptsd">
+          <h2 className="assessment-title">PTSD Assessment</h2>
+          <p className="assessment-subtitle">Rate how much these experiences have bothered you in the past month.</p>
         </div>
-        <div className="card-content pt-6">
+        <div className="assessment-content">
           {result ? (
-            <div className="text-center">
-              <h3 className="text-2xl font-bold mb-4 text-blue-600">
-                Your PTSD Severity Level: {result.severity}
-              </h3>
-              <p className="text-sm text-gray-600 mb-2">
-                Recommendation: {result.recommendation}
+            <div className="result-container">
+              <h3 className="result-title">Assessment Complete</h3>
+              <div className="result-score">
+                {result.severity}
+              </div>
+              <p className="result-details">
+                Score: {result.score} out of {result.maxScore}
               </p>
-              <p className="text-sm text-gray-600">
-                Note: This is a simple screening tool and not a diagnostic instrument.
+              <div className="result-recommendation">
+                <h4 className="recommendation-title">Recommendation</h4>
+                <p className="recommendation-text">{result.recommendation}</p>
+              </div>
+              <p className="disclaimer">
+                Note: This is a screening tool and not a diagnostic instrument. 
                 Please consult with a mental health professional for a proper evaluation.
+                If you're experiencing severe distress, please seek immediate help from a mental health professional or emergency services.
               </p>
             </div>
           ) : (
             <>
-              <div className="progress mb-4 h-2" style={{ width: `${progress}%` }}></div>
-              <p className="text-sm text-gray-600 mb-4">Question {currentQuestion + 1} of {pcl5Questions.length}</p>
-              <div className="mb-6">
-                <label className="text-lg font-medium mb-4 block text-gray-800">
-                  {pcl5Questions[currentQuestion]}
-                </label>
-                <div className="space-y-2">
-                  {answerOptions.map((option) => (
-                    <div key={option.value} className="flex items-center">
-                      <input
-                        type="radio"
-                        name="answer"
-                        value={option.value}
-                        id={`q-${option.value}`}
-                        checked={answers[currentQuestion] === option.value}
-                        onChange={() => handleAnswer(option.value)}
-                      />
-                      <label htmlFor={`q-${option.value}`} className="ml-2 text-gray-700">{option.label}</label>
-                    </div>
-                  ))}
-                </div>
+              <div className="progress-container">
+                <div className="progress-bar" style={{ width: `${progress}%` }}></div>
+              </div>
+              <p className="question-counter">Question {currentQuestion + 1} of {questions.length}</p>
+              <div className="question">
+                {questions[currentQuestion]}
+              </div>
+              <div className="options-grid">
+                {answerOptions.map((option) => (
+                  <div 
+                    key={option.value} 
+                    className={`option-item ${answers[currentQuestion] === option.value ? 'selected' : ''}`}
+                  >
+                    <input
+                      type="radio"
+                      name="answer"
+                      value={option.value}
+                      id={`q-${option.value}`}
+                      checked={answers[currentQuestion] === option.value}
+                      onChange={() => handleAnswer(option.value)}
+                      className="radio-input"
+                    />
+                    <label htmlFor={`q-${option.value}`} className="option-label">
+                      {option.label}
+                    </label>
+                  </div>
+                ))}
               </div>
             </>
           )}
         </div>
-        <div className="card-footer">
+        <div className="assessment-footer">
           {!result && (
             <button
               onClick={handleNext}
-              className="w-full bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white font-semibold py-2 px-4 rounded-full transition duration-300 ease-in-out transform hover:scale-105 flex items-center justify-center"
+              className="next-button"
               disabled={answers[currentQuestion] === undefined}
             >
-              {currentQuestion < pcl5Questions.length - 1 ? "Next Question" : "Submit"}
+              {currentQuestion < questions.length - 1 ? "Next Question" : "Submit"}
             </button>
           )}
         </div>

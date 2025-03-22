@@ -1,96 +1,171 @@
-/* src/pages/Conditions.css */
 
-/* General Styles */
 .conditions {
-    padding: 40px 20px;
-    max-width: 1200px;
+    padding: 80px 20px;
+    max-width: 1400px;
     margin: 0 auto;
     text-align: center;
-    font-family: 'Arial', sans-serif;
-    color: #333;
-  }
-  
-  .conditions h2 {
-    font-size: 2.5rem;
-    color: #2c3e50;
-    margin-bottom: 20px;
-  }
-  
-  .conditions p {
+    font-family: 'Inter', sans-serif;
+    background: linear-gradient(135deg, #f8faff 0%, #ffffff 100%);
+    min-height: calc(100vh - 72px);
+    margin-top: 72px;
+}
+
+.conditions h2 {
+    font-size: 3rem;
+    font-weight: 800;
+    color: #1a1a1a;
+    margin-bottom: 1rem;
+    background: linear-gradient(135deg, #00a0ff, #0066ff);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.conditions p {
     font-size: 1.2rem;
-    margin-bottom: 40px;
-    color: #555;
-  }
-  
-  /* Conditions List Grid */
-  .conditions-list {
+    margin-bottom: 3rem;
+    color: #4a5568;
+    max-width: 800px;
+    margin-left: auto;
+    margin-right: auto;
+    line-height: 1.6;
+}
+
+.conditions-list {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 30px;
-    margin-top: 20px;
-  }
-  
-  /* Condition Card Styles */
-  .condition-card {
-    background-color: #e5ebf5;
-    border: 1px solid #ddd;
-    border-radius: 10px;
-    padding: 20px;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2rem;
+    margin-top: 2rem;
+    padding: 0 1rem;
+}
+
+.condition-card {
+    background: white;
+    border-radius: 20px;
+    padding: 2rem;
     text-align: left;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    transition: transform 0.3s, box-shadow 0.3s;
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
+    transition: all 0.3s ease;
     position: relative;
     overflow: hidden;
-  }
-  
-  .condition-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
-  }
-  
-  .condition-card h3 {
-    font-size: 1.5rem;
-    color: #0f1113;
-    margin-bottom: 10px;
-  }
-  
-  .condition-card p {
-    font-size: 1rem;
-    color: #666;
-    margin-bottom: 20px;
-  }
-  
-  /* Learn More Button */
-  .learn-more-link {
-    display: inline-block;
-    margin-top: 10px;
-    padding: 8px 16px;
-    background: linear-gradient(to right, #b4bcc1, #7d8996);
+    border: 1px solid rgba(0, 157, 255, 0.1);
+    display: flex;
+    flex-direction: column;
+}
 
+.condition-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 32px rgba(0, 157, 255, 0.16);
+}
+
+.condition-icon {
+    width: 64px;
+    height: 64px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 157, 255, 0.1);
+    border-radius: 16px;
+    margin-bottom: 1.5rem;
+    transition: all 0.3s ease;
+}
+
+.condition-card:hover .condition-icon {
+    transform: scale(1.1);
+}
+
+.condition-card h3 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #1a1a1a;
+    margin-bottom: 1rem;
+    line-height: 1.3;
+}
+
+.condition-card p {
+    font-size: 1rem;
+    color: #4a5568;
+    margin-bottom: 1.5rem;
+    line-height: 1.6;
+    text-align: left;
+}
+
+.learn-more-link {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.75rem 1.5rem;
+    background: linear-gradient(135deg, #00a0ff, #0066ff);
     color: white;
     text-decoration: none;
-    border-radius: 5px;
-    font-size: 0.9rem;
-    transition: background-color 0.3s;
-  }
-  
-  .learn-more-link:hover {
-    background-color: #0056b3;
-    color: rgb(17, 16, 16);
-  }
-  
-  /* Responsive Design */
-  @media (max-width: 768px) {
+    border-radius: 9999px;
+    font-size: 0.95rem;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    border: none;
+    cursor: pointer;
+    margin-top: auto;
+}
+
+.learn-more-link:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 157, 255, 0.2);
+}
+
+@media (max-width: 1200px) {
+    .conditions-list {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 768px) {
     .conditions {
-      padding: 20px 10px;
+        padding: 60px 20px;
+        margin-top: 72px;
     }
-  
+
     .conditions h2 {
-      font-size: 2rem;
+        font-size: 2.5rem;
     }
-  
+
+    .conditions p {
+        font-size: 1.1rem;
+        margin-bottom: 2rem;
+    }
+
+    .conditions-list {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+
     .condition-card {
-      padding: 15px;
+        padding: 1.5rem;
     }
-  }
+
+    .condition-icon {
+        width: 56px;
+        height: 56px;
+    }
+}
+
+@media (max-width: 480px) {
+    .conditions {
+        padding: 40px 16px;
+    }
+
+    .conditions h2 {
+        font-size: 2rem;
+    }
+
+    .condition-card {
+        padding: 1.25rem;
+    }
+
+    .condition-card h3 {
+        font-size: 1.25rem;
+    }
+
+    .condition-icon {
+        width: 48px;
+        height: 48px;
+    }
+}
   
