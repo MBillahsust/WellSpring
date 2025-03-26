@@ -1,10 +1,12 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useContext } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { FaUser } from 'react-icons/fa';
+import { FaUser, FaUserCircle } from 'react-icons/fa';
+import { UserContext } from '../../UserContext';
 
 export default function Header() {
   const navigate = useNavigate();
+  const { user, setUser } = useContext(UserContext);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
 
@@ -20,37 +22,42 @@ export default function Header() {
   }, []);
 
   const handleLogout = () => {
+    setUser(null);
     setIsDropdownOpen(false);
+    navigate('/');
   };
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 bg-[#09090b] text-white py-4 px-6">
-      <div className="max-w-7xl mx-auto flex items-center justify-between">
+    <header className="fixed top-0 left-0 right-0 z-50 bg-[#09090b] text-white py-4 px-4">
+      <div className="max-w-[1600px] mx-auto flex items-center justify-between">
         <Link to="/" className="flex items-center space-x-2 hover:opacity-80 transition-opacity">
-          <span className="text-xl font-bold">MindCare</span>
+          <span className="text-xl font-bold">WellSpring</span>
         </Link>
 
-        <nav className="hidden md:flex items-center space-x-8">
-          <Link to="/conditions" className="nav-link hover:text-[#6d8ded] transition-colors">
+        <nav className="hidden md:flex items-center space-x-4">
+          <Link to="/assessment" className="nav-link hover:text-[#6d8ded] transition-colors text-sm">
+            Assessment
+          </Link>
+          <Link to="/conditions" className="nav-link hover:text-[#6d8ded] transition-colors text-sm">
             Conditions
           </Link>
-          <Link to="/resources" className="nav-link hover:text-[#6d8ded] transition-colors">
+          <Link to="/resources" className="nav-link hover:text-[#6d8ded] transition-colors text-sm">
             Resources
           </Link>
-          <Link to="/hotlines" className="nav-link hover:text-[#6d8ded] transition-colors">
-            Hotlines
+          <Link to="/research-development" className="nav-link hover:text-[#6d8ded] transition-colors text-sm">
+            Research
           </Link>
-          <Link to="/about" className="nav-link hover:text-[#6d8ded] transition-colors">
+          <Link to="/about" className="nav-link hover:text-[#6d8ded] transition-colors text-sm">
             About
           </Link>
-          
-          <div className="relative" ref={dropdownRef}>
+
+          <div className="relative ml-1" ref={dropdownRef}>
             <div 
               onMouseEnter={() => setIsDropdownOpen(true)}
               onMouseLeave={() => setIsDropdownOpen(false)}
-              className="flex items-center justify-center w-10 h-10 rounded-full bg-[#1a1a1a] hover:bg-[#2a2a2a] transition-colors duration-300 cursor-pointer"
+              className="flex items-center justify-center w-8 h-8 rounded-full bg-[#1a1a1a] hover:bg-[#2a2a2a] transition-colors duration-300 cursor-pointer"
             >
-              <FaUser className="text-xl" />
+              {user ? <FaUserCircle className="text-lg" /> : <FaUser className="text-lg" />}
             </div>
             
             <AnimatePresence>
@@ -63,24 +70,43 @@ export default function Header() {
                   onMouseEnter={() => setIsDropdownOpen(true)}
                   onMouseLeave={() => setIsDropdownOpen(false)}
                 >
-                  <Link 
-                    to="/login" 
-                    className="block px-4 py-2 text-white hover:bg-[#2a2a2a] transition-colors duration-200"
-                  >
-                    Login
-                  </Link>
-                  <Link 
-                    to="/signup" 
-                    className="block px-4 py-2 text-white hover:bg-[#2a2a2a] transition-colors duration-200"
-                  >
-                    Sign Up
-                  </Link>
-                  <div
-                    onClick={handleLogout}
-                    className="block px-4 py-2 text-white hover:bg-[#2a2a2a] transition-colors duration-200 cursor-pointer"
-                  >
-                    Logout
-                  </div>
+                  {user ? (
+                    <>
+                      <Link 
+                        to="/dashboard" 
+                        className="block px-4 py-2 text-white hover:bg-[#2a2a2a] transition-colors duration-200"
+                      >
+                        Dashboard
+                      </Link>
+                      <Link 
+                        to="/profile" 
+                        className="block px-4 py-2 text-white hover:bg-[#2a2a2a] transition-colors duration-200"
+                      >
+                        Profile
+                      </Link>
+                      <div
+                        onClick={handleLogout}
+                        className="block px-4 py-2 text-white hover:bg-[#2a2a2a] transition-colors duration-200 cursor-pointer"
+                      >
+                        Logout
+                      </div>
+                    </>
+                  ) : (
+                    <>
+                      <Link 
+                        to="/login" 
+                        className="block px-4 py-2 text-white hover:bg-[#2a2a2a] transition-colors duration-200"
+                      >
+                        Login
+                      </Link>
+                      <Link 
+                        to="/signup" 
+                        className="block px-4 py-2 text-white hover:bg-[#2a2a2a] transition-colors duration-200"
+                      >
+                        Sign Up
+                      </Link>
+                    </>
+                  )}
                 </motion.div>
               )}
             </AnimatePresence>

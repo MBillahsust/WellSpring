@@ -5,6 +5,8 @@ import Layout from './IndexPage';
 import Counsellor from './pages/CommunityPages/Counsellor';
 import CounsellorBotChat from './pages/CommunityPages/CounsellorBotChat';
 
+import MentalHealthAssessments from './Components/Assesment';
+import ResearchDevelopment from './pages/HeaderPages/ResearchDevelopment';
 import AnxietyAssessment from './pages/AssessmentPages/AnxietyAssessment';
 import DepressionScreening from './pages/AssessmentPages/DepressionScreening';
 import StressEvaluation from './pages/AssessmentPages/StressEvaluation';
@@ -48,6 +50,10 @@ import ScrollToTop from './Components/ScrollToTop';
 
 import './index.css';
 
+import TechUsage from './pages/HeaderPages/TechUsage';
+import LifestylePsychosocial from './pages/HeaderPages/LifestylePsychosocial';
+import MentalHealthScales from './pages/HeaderPages/MentalHealthScales';
+
 function App() {
   return (
     <div className="app-container">
@@ -61,6 +67,7 @@ function App() {
             <Route path='/counsellors' element={<Counsellor />} />
             <Route path="/counsellor-bot" element={<CounsellorBotChat />} />
 
+            <Route path='/assessment' element={<MentalHealthAssessments />} />
             <Route path='/anxiety-assessment' element={<AnxietyAssessment />} />
             <Route path='/depression-screening' element={<DepressionScreening />} />
             <Route path='/stress-evaluation' element={<StressEvaluation />} />
@@ -75,6 +82,7 @@ function App() {
             <Route path='/contact' element={<Contact />} />
             <Route path='/about' element={<About />} />
             <Route path='/hotlines' element={<HotlinePage />} />
+            <Route path='/research-development' element={<ResearchDevelopment />} />
 
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<Signup />} />
@@ -96,6 +104,10 @@ function App() {
             <Route path="/privacy" element={<Privacy />} />
             <Route path="/terms" element={<Terms />} />
             <Route path="/contact" element={<Contact />} />
+
+            <Route path="/research/tech-usage" element={<TechUsage />} />
+            <Route path="/research/lifestyle-psychosocial" element={<LifestylePsychosocial />} />
+            <Route path="/research/mental-health-scales" element={<MentalHealthScales />} />
           </Routes>
         </div>
         <Footer />
