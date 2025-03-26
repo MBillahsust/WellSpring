@@ -1,8 +1,15 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { FaUserFriends, FaBed, FaRunning, FaUsers } from 'react-icons/fa';
+import { useNavigate } from 'react-router-dom';
 
 const LifestylePsychosocial = () => {
+  const navigate = useNavigate();
+
+  const handleJoinSurvey = () => {
+    navigate('/LifestyleSurvey');
+  };
+
   const researchSections = [
     {
       title: "Sleep Patterns Study",
@@ -79,10 +86,16 @@ const LifestylePsychosocial = () => {
               Lifestyle & Psychosocial Research
             </h1>
           </div>
-          <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+          <p className="text-xl text-gray-600 max-w-3xl mx-auto mb-6">
             Comprehensive studies on how lifestyle factors and social relationships 
             influence mental health and overall well-being.
           </p>
+          <button
+            onClick={handleJoinSurvey}
+            className="mt-4 bg-[#6d8ded] text-white px-6 py-3 rounded-full text-lg font-medium shadow-md hover:bg-[#5b7cc8] transition"
+          >
+            Join Lifestyle & Psychosocial Survey
+          </button>
         </motion.div>
 
         <div className="space-y-12">

@@ -21,6 +21,9 @@ import Resources from './pages/HeaderPages/Resources';
 import Contact from './pages/HeaderPages/Contact';
 import About from './pages/HeaderPages/About';
 import HotlinePage from './pages/HeaderPages/HotlinePage';
+import ScaleSurvey from './pages/HeaderPages/ScaleSurvey'; 
+import TechSurvey from './pages/HeaderPages/TechSurvey';
+import LifestyleSurvey from './pages/HeaderPages/LifestyleSurvey';
 
 import Login from './pages/HeaderPages/Login'
 import Signup from './pages/HeaderPages/SignUp'
@@ -83,6 +86,9 @@ function App() {
             <Route path='/about' element={<About />} />
             <Route path='/hotlines' element={<HotlinePage />} />
             <Route path='/research-development' element={<ResearchDevelopment />} />
+            <Route path="/ScaleSurvey" element={<ScaleSurvey />} /> {/* adjust path if needed */}
+            <Route path="/TechSurvey" element={<TechSurvey />} /> {/* adjust path if needed */}
+            <Route path="/LifestyleSurvey" element={<LifestyleSurvey />} /> {/* adjust path if needed */}
 
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<Signup />} />

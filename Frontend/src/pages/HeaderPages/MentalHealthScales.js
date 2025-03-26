@@ -1,8 +1,15 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { FaChartLine, FaClipboardCheck, FaChartBar, FaBrain } from 'react-icons/fa';
+import { useNavigate } from 'react-router-dom';
 
 const MentalHealthScales = () => {
+  const navigate = useNavigate();
+
+  const handleJoinSurvey = () => {
+    navigate('/ScaleSurvey');
+  };
+
   const researchSections = [
     {
       title: "Anxiety Scale Development",
@@ -79,10 +86,16 @@ const MentalHealthScales = () => {
               Mental Health Assessment Tools
             </h1>
           </div>
-          <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+          <p className="text-xl text-gray-600 max-w-3xl mx-auto mb-6">
             Development and validation of comprehensive mental health assessment tools 
             for accurate diagnosis and treatment monitoring.
           </p>
+          <button
+            onClick={handleJoinSurvey}
+            className="mt-4 bg-[#6d8ded] text-white px-6 py-3 rounded-full text-lg font-medium shadow-md hover:bg-[#5b7cc8] transition"
+          >
+            Join Mental Health Survey
+          </button>
         </motion.div>
 
         <div className="space-y-12">
@@ -151,4 +164,4 @@ const MentalHealthScales = () => {
   );
 };
 
-export default MentalHealthScales; 
+export default MentalHealthScales;

@@ -1,71 +1,64 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { FaLaptop, FaMobile, FaDesktop, FaTabletAlt } from 'react-icons/fa';
-import { useNavigate } from 'react-router-dom';
+import { FaChartLine, FaClipboardCheck, FaChartBar, FaBrain } from 'react-icons/fa';
 
-const TechUsage = () => {
-  const navigate = useNavigate();
-
-  const handleJoinSurvey = () => {
-    navigate('/TechSurvey');
-  };
-
+const MentalHealthScales = () => {
   const researchSections = [
     {
-      title: "Digital Wellbeing Assessment",
-      icon: <FaDesktop className="text-3xl text-[#6d8ded]" />,
-      description: "Comprehensive evaluation of technology's impact on mental health",
+      title: "Anxiety Scale Development",
+      icon: <FaClipboardCheck className="text-3xl text-[#6d8ded]" />,
+      description: "Creation and validation of anxiety assessment tools",
       findings: [
-        "Increased screen time correlates with higher stress levels",
-        "Social media usage affects sleep patterns",
-        "Digital detox programs show positive mental health outcomes",
-        "Screen time before bed disrupts sleep quality",
-        "Digital mindfulness practices improve focus"
+        "New anxiety scale shows 95% accuracy",
+        "Digital assessment tools prove effective",
+        "Real-time monitoring improves treatment outcomes",
+        "Early detection reduces severity",
+        "Combined approach increases accuracy"
       ],
       recommendations: [
-        "Implement regular digital breaks",
-        "Use blue light filters in the evening",
-        "Practice mindful technology use",
-        "Set screen time limits",
-        "Create tech-free zones"
+        "Regular anxiety screening",
+        "Use validated assessment tools",
+        "Track symptoms over time",
+        "Combine multiple assessment methods",
+        "Seek professional evaluation"
       ]
     },
     {
-      title: "Screen Time Analysis",
-      icon: <FaMobile className="text-3xl text-[#6d8ded]" />,
-      description: "Study of screen time patterns and mental health outcomes",
+      title: "Depression Screening Tools",
+      icon: <FaChartBar className="text-3xl text-[#6d8ded]" />,
+      description: "Development of depression screening instruments",
       findings: [
-        "Excessive screen time linked to anxiety and depression",
-        "Blue light exposure affects sleep quality",
-        "Digital breaks improve focus and productivity",
-        "Social media scrolling increases stress",
-        "Device notifications impact concentration"
+        "Early detection improves treatment success",
+        "Digital screening tools increase accessibility",
+        "Combined assessment approach enhances accuracy",
+        "Regular screening prevents escalation",
+        "Personalized assessment improves outcomes"
       ],
       recommendations: [
-        "Track daily screen time",
-        "Schedule offline activities",
-        "Use app timers and limits",
-        "Practice digital mindfulness",
-        "Create balanced tech habits"
+        "Regular depression screening",
+        "Use comprehensive assessment tools",
+        "Monitor mood patterns",
+        "Track treatment progress",
+        "Maintain assessment records"
       ]
     },
     {
-      title: "Social Media Impact",
-      icon: <FaTabletAlt className="text-3xl text-[#6d8ded]" />,
-      description: "Research on social media's influence on mental health",
+      title: "Cognitive Assessment Tools",
+      icon: <FaBrain className="text-3xl text-[#6d8ded]" />,
+      description: "Development of cognitive function assessment tools",
       findings: [
-        "Social comparison affects self-esteem",
-        "FOMO leads to anxiety",
-        "Online interactions impact real relationships",
-        "Social media addiction patterns",
-        "Digital well-being interventions"
+        "Digital cognitive tests show high reliability",
+        "Regular assessment tracks progress",
+        "Combined metrics improve accuracy",
+        "Early detection of cognitive changes",
+        "Personalized assessment approaches"
       ],
       recommendations: [
-        "Curate positive social feeds",
-        "Limit social media usage",
-        "Practice digital boundaries",
-        "Engage in offline activities",
-        "Build healthy online habits"
+        "Regular cognitive screening",
+        "Use validated assessment tools",
+        "Track cognitive changes",
+        "Combine multiple assessment methods",
+        "Maintain assessment records"
       ]
     }
   ];
@@ -80,22 +73,16 @@ const TechUsage = () => {
         >
           <div className="flex items-center justify-center mb-6">
             <div className="p-4 bg-blue-50 rounded-full mr-4">
-              <FaLaptop className="text-4xl text-[#6d8ded]" />
+              <FaChartLine className="text-4xl text-[#6d8ded]" />
             </div>
             <h1 className="text-4xl font-bold text-gray-900">
-              Technology Usage Research
+              Mental Health Assessment Tools
             </h1>
           </div>
-          <p className="text-xl text-gray-600 max-w-3xl mx-auto mb-6">
-            Comprehensive research on how technology affects mental health and well-being, 
-            including screen time analysis, digital wellbeing assessment, and social media impact studies.
+          <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+            Development and validation of comprehensive mental health assessment tools 
+            for accurate diagnosis and treatment monitoring.
           </p>
-          <button
-            onClick={handleJoinSurvey}
-            className="mt-4 bg-[#6d8ded] text-white px-6 py-3 rounded-full text-lg font-medium shadow-md hover:bg-[#5b7cc8] transition"
-          >
-            Join Technology Usage Survey
-          </button>
         </motion.div>
 
         <div className="space-y-12">
@@ -164,4 +151,4 @@ const TechUsage = () => {
   );
 };
 
-export default TechUsage;
+export default MentalHealthScales; 
