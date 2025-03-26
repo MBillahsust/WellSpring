@@ -1,70 +1,153 @@
-# Getting Started with Create React App
+# WellSpring - Mental Health Platform
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+A comprehensive mental health platform built with React that provides mental health assessments, resources, and support.
 
-## Available Scripts
+<br>
 
-In the project directory, you can run:
+___
 
-### `yarn start`
+<br>
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+## Prerequisites
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+Before you begin, ensure you have the following installed:
+- Node.js (v14.0.0 or higher)
+- npm (v6.0.0 or higher)
 
-### `yarn test`
+<br>
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+___
 
-### `yarn build`
+<br>
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+## Project Structure
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+```
+Frontend/
+├── public/
+│   ├── index.html
+│   └── assets/
+├── src/
+│   ├── components/
+│   │   ├── Assessment/
+│   │   │   ├── AnxietyAssessment.js
+│   │   │   ├── DepressionAssessment.js
+│   │   │   ├── OCDAssessment.js
+│   │   │   ├── PanicDisorderAssessment.js
+│   │   │   ├── PTSDAssessment.js
+│   │   │   ├── SocialAnxietyAssessment.js
+│   │   │   └── StressAssessment.js
+│   │   ├── Auth/
+│   │   │   ├── Login.js
+│   │   │   └── Register.js
+│   │   ├── Dashboard/
+│   │   │   └── Dashboard.js
+│   │   └── Layout/
+│   │       ├── Footer.js
+│   │       └── Header.js
+│   ├── pages/
+│   │   ├── Home/
+│   │   │   ├── Home.js
+│   │   │   └── Home.css
+│   │   └── HeaderPages/
+│   │       ├── About.js
+│   │       ├── Conditions.js
+│   │       ├── Contact.js
+│   │       ├── Hotlines.js
+│   │       ├── Privacy.js
+│   │       ├── ResearchDevelopment.js
+│   │       ├── Resources.js
+│   │       └── Terms.js
+│   ├── Allcss/
+│   │   ├── Assessment/
+│   │   │   └── Assessment.css
+│   │   └── HeaderPages/
+│   │       ├── About.css
+│   │       ├── Conditions.css
+│   │       ├── Contact.css
+│   │       ├── Hotlines.css
+│   │       ├── Privacy.css
+│   │       ├── ResearchDevelopment.css
+│   │       ├── Resources.css
+│   │       └── Terms.css
+│   ├── App.js
+│   ├── index.js
+│   └── index.css
+├── package.json
+└── README.md
+```
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+<br>
 
-### `yarn eject`
+___
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+<br>
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+## Installation
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+1. Clone the repository:
+```bash
+git clone https://github.com/MBillahsust/WellSpring.git
+```
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+2. Navigate to the Frontend directory:
+```bash
+cd Frontend
+```
 
-## Learn More
+3. Install dependencies:
+```bash
+npm install
+```
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+## Running the Application
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+To start the development server:
+```bash
+npm start
+```
 
-### Code Splitting
+The application will open in your default browser at `http://localhost:3000`.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+<br>
 
-### Analyzing the Bundle Size
+___
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+<br>
 
-### Making a Progressive Web App
+## Features
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+- Mental Health Assessments
+  - Anxiety Assessment
+  - Depression Assessment
+  - OCD Assessment
+  - Panic Disorder Assessment
+  - PTSD Assessment
+  - Social Anxiety Assessment
+  - Stress Assessment
+- User Authentication
+- Dashboard
+- Resources and Hotlines
+- Research & Development Section
+- Responsive Design
 
-### Advanced Configuration
+<br>
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+___
 
-### Deployment
+<br>
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+## Technologies Used
 
-### `yarn build` fails to minify
+- React.js
+- Framer Motion (for animations)
+- Tailwind CSS
+- React Router
+- Context API
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+
+<br>
+
+___
+
+<br>
