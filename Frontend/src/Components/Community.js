@@ -6,6 +6,8 @@ import { FaUsers, FaRobot } from 'react-icons/fa';
 export default function CommunityFeatures() {
   const navigate = useNavigate();
 
+
+  
   const features = [
     {
       title: "Connect with Experts",
