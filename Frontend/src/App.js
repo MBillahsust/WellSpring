@@ -10,11 +10,11 @@ import ResearchDevelopment from './pages/HeaderPages/ResearchDevelopment';
 import AnxietyAssessment from './pages/AssessmentPages/AnxietyAssessment';
 import DepressionScreening from './pages/AssessmentPages/DepressionScreening';
 import StressEvaluation from './pages/AssessmentPages/StressEvaluation';
-import Social_Anxiety from './pages/AssessmentPages/Social_Anxiety';
-import Panic_Disorder from './pages/AssessmentPages/Panic_Disorder';
-import ADHD_Assesment from './pages/AssessmentPages/ADHD_Assesment';
-import OCD_Assesment from './pages/AssessmentPages/OCD_Assesment';
-import PTSD_Assesment from './pages/AssessmentPages/PTSD_Assesment';
+import SocialAnxiety from './pages/AssessmentPages/Social_Anxiety';
+import PanicDisorder from './pages/AssessmentPages/Panic_Disorder';
+import ADHDAssesment from './pages/AssessmentPages/ADHD_Assesment';
+import OCDAssesment from './pages/AssessmentPages/OCD_Assesment';
+import PTSDAssesment from './pages/AssessmentPages/PTSD_Assesment';
 
 import Conditions from './pages/HeaderPages/Conditions';
 import Resources from './pages/HeaderPages/Resources';
@@ -74,11 +74,11 @@ function App() {
             <Route path='/anxiety-assessment' element={<AnxietyAssessment />} />
             <Route path='/depression-screening' element={<DepressionScreening />} />
             <Route path='/stress-evaluation' element={<StressEvaluation />} />
-            <Route path='/social_anxiety_gauge' element={<Social_Anxiety />} />
-            <Route path='/panic_monitor' element={<Panic_Disorder />} />
-            <Route path='/adhd_clarity_check' element={<ADHD_Assesment />} />
-            <Route path='/ocd_check' element={<OCD_Assesment />} />
-            <Route path='/ptsd_clarity_check' element={<PTSD_Assesment />} />
+            <Route path='/social_anxiety_gauge' element={<SocialAnxiety />} />
+            <Route path='/panic_monitor' element={<PanicDisorder />} />
+            <Route path='/adhd_clarity_check' element={<ADHDAssesment />} />
+            <Route path='/ocd_check' element={<OCDAssesment />} />
+            <Route path='/ptsd_clarity_check' element={<PTSDAssesment />} />
 
             <Route path='/conditions' element={<Conditions />} />
             <Route path='/resources' element={<Resources />} />
