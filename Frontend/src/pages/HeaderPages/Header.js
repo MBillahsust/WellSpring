@@ -117,7 +117,7 @@ export default function Header() {
                     </MenuItem>
                     <MenuItem>
                       <Link to="/profile" className="block px-4 py-2 text-white">
-                        Profile
+                        Profilel
                       </Link>
                     </MenuItem>
                     <MenuItem>
