@@ -6,7 +6,9 @@ import { Disclosure, Menu, MenuButton, MenuItem, MenuItems, DisclosureButton, Di
 
 import { Bars3Icon, BellIcon, XMarkIcon } from '@heroicons/react/24/outline';
 
+import { FaTachometerAlt } from 'react-icons/fa'; // Import the dashboard icon
 
+import { FaSignInAlt, FaUserPlus } from 'react-icons/fa'; // Import login and signup icons
 
 
 const navigation = [
@@ -126,16 +128,23 @@ export default function Header() {
                   </>
                 ) : (
                   <>
-                    <MenuItem>
-                      <Link to="/login" className="block px-4 py-2 text-white">
-                        Login
-                      </Link>
-                    </MenuItem>
-                    <MenuItem>
-                      <Link to="/signup" className="block px-4 py-2 text-white">
-                        Sign Up
-                      </Link>
-                    </MenuItem>
+
+                      <MenuItem>
+                        <Link to="/dashboard" className="block px-4 py-2 text-white">
+                          <FaTachometerAlt className="inline mr-2" /> Dashboard
+                        </Link>
+                      </MenuItem>
+                   
+                      <MenuItem>
+                        <Link to="/login" className="block px-4 py-2 text-white">
+                          <FaSignInAlt className="inline mr-2" /> Login
+                        </Link>
+                      </MenuItem>
+                      <MenuItem>
+                        <Link to="/signup" className="block px-4 py-2 text-white">
+                          <FaUserPlus className="inline mr-2" /> Sign Up
+                        </Link>
+                      </MenuItem>
                   </>
                 )}
               </MenuItems>
