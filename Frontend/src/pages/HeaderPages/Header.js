@@ -12,11 +12,12 @@ import { FaSignInAlt, FaUserPlus } from 'react-icons/fa'; // Import login and si
 
 
 const navigation = [
-  { name: 'AI Counsellor', href: '/conditions' },
+  { name: 'AI Counsellor', href: '/ai-counselor' },
   { name: 'Assessments', href: '/assessment' },
   { name: 'Learn Conditions', href: '/conditions' },
   { name: 'Resources', href: '/resources' },
   { name: 'Research & Development', href: '/research-development' },
+  { name: 'Games', href: '/games' },
   // { name: 'About', href: '/about' },
 ];
 
@@ -88,8 +89,7 @@ export default function Header() {
             {/* Notification Icon */}
             <button
               type="button"
-              className="relative rounded-full bg-[#1a1a1a] p-1 text-gray-400 hover:text-white focus:ring-2 focus:ring-white"
-            >
+              className="relative rounded-full bg-[#1a1a1a] p-1 text-gray-400 hover:text-white focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-[#09090b]">
               <span className="absolute -inset-1.5" />
               <span className="sr-only">View notifications</span>
               <BellIcon aria-hidden="true" className="h-6 w-6" />

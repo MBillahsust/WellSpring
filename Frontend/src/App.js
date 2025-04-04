@@ -4,6 +4,10 @@ import Footer from "./pages/FooterPages/Footer";
 import Layout from './IndexPage';
 import Counsellor from './pages/CommunityPages/Counsellor';
 import CounsellorBotChat from './pages/CommunityPages/CounsellorBotChat';
+import AICounselor from './pages/AICounselorPages/AICounselor';
+import Routine from './pages/AICounselorPages/Routine';
+import Games from './pages/GamesPages/Games';
+import FlappyBird from './pages/GamesPages/FlappyBird';
 
 import MentalHealthAssessments from './Components/Assesment';
 import ResearchDevelopment from './pages/HeaderPages/ResearchDevelopment';
@@ -27,7 +31,6 @@ import LifestyleSurvey from './pages/HeaderPages/LifestyleSurvey';
 
 import Login from './pages/HeaderPages/Login'
 import Signup from './pages/HeaderPages/SignUp'
-import Dashboard from './pages/HeaderPages/Dashboard'
 
 import MoodTracking from './pages/KeyFeaturePages/MoodTracking';
 import ActivityLogging from './pages/KeyFeaturePages/ActivityLogging';
@@ -42,10 +45,8 @@ import ED from './pages/ConditionPages/ED';
 import ADHD from './pages/ConditionPages/ADHD';
 import Schizophrenia from './pages/ConditionPages/Schizophrenia';
 
-
 import Privacy from './pages/FooterPages/Privacy';
 import Terms from './pages/FooterPages/Terms';
-
 
 import { Route, Routes } from "react-router-dom";
 import { UserContextProvider } from './UserContext';
@@ -56,6 +57,7 @@ import './index.css';
 import TechUsage from './pages/HeaderPages/TechUsage';
 import LifestylePsychosocial from './pages/HeaderPages/LifestylePsychosocial';
 import MentalHealthScales from './pages/HeaderPages/MentalHealthScales';
+import UserDashboard from './pages/UserDashboard';
 
 function App() {
   return (
@@ -66,6 +68,8 @@ function App() {
         <div className="content-wrapper">
           <Routes>
             <Route path="/" element={<Layout />} />
+            <Route path="/games" element={<Games />} />
+            <Route path="/games/flappy-bird" element={<FlappyBird />} />
 
             <Route path='/counsellors' element={<Counsellor />} />
             <Route path="/counsellor-bot" element={<CounsellorBotChat />} />
@@ -86,13 +90,12 @@ function App() {
             <Route path='/about' element={<About />} />
             <Route path='/hotlines' element={<HotlinePage />} />
             <Route path='/research-development' element={<ResearchDevelopment />} />
-            <Route path="/ScaleSurvey" element={<ScaleSurvey />} /> {/* adjust path if needed */}
-            <Route path="/TechSurvey" element={<TechSurvey />} /> {/* adjust path if needed */}
-            <Route path="/LifestyleSurvey" element={<LifestyleSurvey />} /> {/* adjust path if needed */}
+            <Route path="/ScaleSurvey" element={<ScaleSurvey />} />
+            <Route path="/TechSurvey" element={<TechSurvey />} />
+            <Route path="/LifestyleSurvey" element={<LifestyleSurvey />} />
 
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<Signup />} />
-            <Route path="/dashboard" element={<Dashboard />} />
 
             <Route path="/conditions/anxiety" element={<Anxiety />} />
             <Route path="/conditions/depression" element={<Depression />} />
@@ -114,6 +117,10 @@ function App() {
             <Route path="/research/tech-usage" element={<TechUsage />} />
             <Route path="/research/lifestyle-psychosocial" element={<LifestylePsychosocial />} />
             <Route path="/research/mental-health-scales" element={<MentalHealthScales />} />
+
+            <Route path="/ai-counselor" element={<AICounselor />} />
+            <Route path="/routine" element={<Routine />} />
+            <Route path="/dashboard" element={<UserDashboard />} />
           </Routes>
         </div>
         <Footer />
