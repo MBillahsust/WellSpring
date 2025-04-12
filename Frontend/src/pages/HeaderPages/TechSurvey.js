@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../../Allcss/AssessmentPages/Assessment.css';
 
@@ -29,9 +29,39 @@ const TechnologyUsageSurvey = () => {
   const navigate = useNavigate();
   const [responses, setResponses] = useState({});
   const [showConfirmation, setShowConfirmation] = useState(false);
+  const [showEmailModal, setShowEmailModal] = useState(false);
+  const [email, setEmail] = useState('');
+  const [emailError, setEmailError] = useState('');
   const totalQuestions = techUsageScale.questions.length;
   const answeredQuestions = Object.keys(responses).length;
   const progress = (answeredQuestions / totalQuestions) * 100;
+
+  useEffect(() => {
+    // Check if email exists in localStorage
+    const savedEmail = localStorage.getItem('userEmail');
+    if (!savedEmail) {
+      setShowEmailModal(true);
+    }
+  }, []);
+
+  const validateEmail = (email) => {
+    const re = /^[^\s@]+@gmail\.com$/i;
+    return re.test(email);
+  };
+
+  const handleEmailSubmit = () => {
+    if (!email) {
+      setEmailError('Please enter your email address');
+      return;
+    }
+    if (!validateEmail(email)) {
+      setEmailError('Please enter a valid Gmail address');
+      return;
+    }
+    localStorage.setItem('userEmail', email);
+    setShowEmailModal(false);
+    setEmailError('');
+  };
 
   const handleSelect = (questionIndex, value) => {
     const updated = { ...responses };
@@ -53,6 +83,46 @@ const TechnologyUsageSurvey = () => {
 
   return (
     <div className="assessment-container">
+      {/* Email Modal */}
+      {showEmailModal && (
+        <div className="fixed inset-0 flex items-center justify-center z-50">
+          <div className="absolute inset-0 bg-gray-900 bg-opacity-75 backdrop-blur-sm"></div>
+          
+          <div className="relative bg-white rounded-lg shadow-xl max-w-md w-full mx-4 border border-gray-200">
+            <div className="px-6 py-4 border-b border-gray-200">
+              <h3 className="text-xl font-semibold text-gray-900">
+                Welcome to the Technology Usage Survey
+              </h3>
+            </div>
+
+            <div className="px-6 py-4">
+              <div className="mb-4">
+                <p className="text-gray-800 font-medium mb-2">Please enter your Gmail address to continue</p>
+                <input
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="your.email@gmail.com"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                />
+                {emailError && (
+                  <p className="mt-2 text-sm text-red-600">{emailError}</p>
+                )}
+              </div>
+            </div>
+
+            <div className="px-6 py-4 bg-gray-50 rounded-b-lg flex justify-end">
+              <button
+                onClick={handleEmailSubmit}
+                className="px-4 py-2 bg-blue-600 border border-transparent rounded-md text-white font-medium hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors"
+              >
+                Continue to Survey
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       <div className="assessment-card">
         <div className="assessment-header adhd" style={{ background: 'linear-gradient(135deg, #0284c7, #0ea5e9)' }}>
           <h2 className="assessment-title">Technology Usage Survey</h2>
