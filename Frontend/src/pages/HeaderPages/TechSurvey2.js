@@ -2,8 +2,8 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../../Allcss/AssessmentPages/Assessment.css';
 
-const techUsageScale = {
-  title: "Technology Usage Scale",
+const lifestyleScale = {
+  title: "Lifestyle & Psychosocial Scale",
   options: [
     { value: "1", label: "Never" },
     { value: "2", label: "Rarely" },
@@ -12,24 +12,24 @@ const techUsageScale = {
     { value: "5", label: "Always" }
   ],
   questions: [
-    "How often do you use multiple digital devices simultaneously?",
-    "How frequently do you check your phone notifications?",
-    "How often do you spend more than 2 hours continuously on digital devices?",
-    "How frequently do you use social media platforms?",
-    "How often do you feel the need to immediately respond to messages?",
-    "How frequently do you use digital devices before bedtime?",
-    "How often do you exceed your planned screen time?",
-    "How frequently do you use technology for entertainment?",
-    "How often do you use digital devices during meals?",
-    "How frequently do you multitask with different applications?"
+    "How often do you engage in physical exercise or outdoor activities?",
+    "How frequently do you maintain a regular sleep schedule?",
+    "How often do you feel socially connected with others in person?",
+    "How frequently do you practice stress-management techniques?",
+    "How often do you maintain a balanced diet?",
+    "How frequently do you take breaks from digital devices?",
+    "How often do you engage in face-to-face social interactions?",
+    "How frequently do you participate in hobbies not involving screens?",
+    "How often do you feel satisfied with your work-life balance?",
+    "How frequently do you spend quality time with family/friends without devices?"
   ]
 };
 
-const TechnologyUsageSurvey = () => {
+const TechnologyUsageSurvey2 = () => {
   const navigate = useNavigate();
   const [responses, setResponses] = useState({});
   const [showConfirmation, setShowConfirmation] = useState(false);
-  const totalQuestions = techUsageScale.questions.length;
+  const totalQuestions = lifestyleScale.questions.length;
   const answeredQuestions = Object.keys(responses).length;
   const progress = (answeredQuestions / totalQuestions) * 100;
 
@@ -45,10 +45,21 @@ const TechnologyUsageSurvey = () => {
 
   const handleConfirm = () => {
     // Store responses
-    localStorage.setItem('techSurvey1Responses', JSON.stringify(responses));
+    localStorage.setItem('techSurvey2Responses', JSON.stringify(responses));
+    
+    // Combine responses
+    const survey1Responses = JSON.parse(localStorage.getItem('techSurvey1Responses') || '{}');
+    
+    const allResponses = {
+      techUsage: survey1Responses,
+      lifestyle: responses
+    };
+
+    // Store combined responses
+    localStorage.setItem('completeResearchResponses', JSON.stringify(allResponses));
     
     // Navigate to next survey
-    navigate('/TechSurvey2');
+    navigate('/TechSurvey3');
   };
 
   return (
@@ -74,16 +85,16 @@ const TechnologyUsageSurvey = () => {
         <div className="assessment-content">
           <div className="scale-section">
             <h3 className="scale-title" style={{ fontSize: '1.5rem', fontWeight: '700', marginBottom: '1.5rem' }}>
-              {techUsageScale.title}
+              {lifestyleScale.title}
               <p className="text-sm text-gray-600 mt-2 font-normal">
                 Please rate how often you experience each of the following behaviors
               </p>
             </h3>
-            {techUsageScale.questions.map((question, qIdx) => (
+            {lifestyleScale.questions.map((question, qIdx) => (
               <div key={qIdx} className="question-block" style={{ marginBottom: '2rem' }}>
                 <p className="question-text" style={{ fontSize: '1.125rem', fontWeight: '500', marginBottom: '1rem' }}>{question}</p>
                 <div className="options-grid">
-                  {techUsageScale.options.map((option) => (
+                  {lifestyleScale.options.map((option) => (
                     <label key={option.value} className={`option-item ${responses[qIdx] === option.value ? 'selected' : ''}`}>
                       <input
                         type="radio"
@@ -172,4 +183,4 @@ const TechnologyUsageSurvey = () => {
   );
 };
 
-export default TechnologyUsageSurvey;
+export default TechnologyUsageSurvey2; 

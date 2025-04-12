@@ -2,34 +2,34 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../../Allcss/AssessmentPages/Assessment.css';
 
-const techUsageScale = {
-  title: "Technology Usage Scale",
+const attentionScale = {
+  title: "Attention and Focus Scale",
   options: [
     { value: "1", label: "Never" },
     { value: "2", label: "Rarely" },
     { value: "3", label: "Sometimes" },
     { value: "4", label: "Often" },
-    { value: "5", label: "Always" }
+    { value: "5", label: "Very Often" }
   ],
   questions: [
-    "How often do you use multiple digital devices simultaneously?",
-    "How frequently do you check your phone notifications?",
-    "How often do you spend more than 2 hours continuously on digital devices?",
-    "How frequently do you use social media platforms?",
-    "How often do you feel the need to immediately respond to messages?",
-    "How frequently do you use digital devices before bedtime?",
-    "How often do you exceed your planned screen time?",
-    "How frequently do you use technology for entertainment?",
-    "How often do you use digital devices during meals?",
-    "How frequently do you multitask with different applications?"
+    "How often do you have difficulty keeping your attention when doing boring or repetitive work?",
+    "How often do you get distracted by activity or noise around you?",
+    "How often do you have problems remembering appointments or obligations?",
+    "How often do you misplace or have difficulty finding things at home or at work?",
+    "How often do you rush through activities without being fully attentive to them?",
+    "How often do you forget a person's name almost as soon as you've been told it for the first time?",
+    "How often do you find yourself preoccupied with the future or the past instead of focusing on the present?",
+    "How often do you find it difficult to stay focused on what's happening in the present?",
+    "How often do you start tasks but have difficulty finishing them?",
+    "How often do you make careless mistakes when working on a boring or difficult project?"
   ]
 };
 
-const TechnologyUsageSurvey = () => {
+const TechnologyUsageSurvey3 = () => {
   const navigate = useNavigate();
   const [responses, setResponses] = useState({});
   const [showConfirmation, setShowConfirmation] = useState(false);
-  const totalQuestions = techUsageScale.questions.length;
+  const totalQuestions = attentionScale.questions.length;
   const answeredQuestions = Object.keys(responses).length;
   const progress = (answeredQuestions / totalQuestions) * 100;
 
@@ -45,10 +45,23 @@ const TechnologyUsageSurvey = () => {
 
   const handleConfirm = () => {
     // Store responses
-    localStorage.setItem('techSurvey1Responses', JSON.stringify(responses));
+    localStorage.setItem('techSurvey3Responses', JSON.stringify(responses));
     
-    // Navigate to next survey
-    navigate('/TechSurvey2');
+    // Combine all responses
+    const survey1Responses = JSON.parse(localStorage.getItem('techSurvey1Responses') || '{}');
+    const survey2Responses = JSON.parse(localStorage.getItem('techSurvey2Responses') || '{}');
+    
+    const allResponses = {
+      techUsage: survey1Responses,
+      lifestyle: survey2Responses,
+      attention: responses
+    };
+
+    // Store combined responses
+    localStorage.setItem('completeResearchResponses', JSON.stringify(allResponses));
+    
+    // Navigate to TechSurvey4
+    navigate('/TechSurvey4');
   };
 
   return (
@@ -74,16 +87,16 @@ const TechnologyUsageSurvey = () => {
         <div className="assessment-content">
           <div className="scale-section">
             <h3 className="scale-title" style={{ fontSize: '1.5rem', fontWeight: '700', marginBottom: '1.5rem' }}>
-              {techUsageScale.title}
+              {attentionScale.title}
               <p className="text-sm text-gray-600 mt-2 font-normal">
-                Please rate how often you experience each of the following behaviors
+                Please rate how often you experience each of the following situations
               </p>
             </h3>
-            {techUsageScale.questions.map((question, qIdx) => (
+            {attentionScale.questions.map((question, qIdx) => (
               <div key={qIdx} className="question-block" style={{ marginBottom: '2rem' }}>
                 <p className="question-text" style={{ fontSize: '1.125rem', fontWeight: '500', marginBottom: '1rem' }}>{question}</p>
                 <div className="options-grid">
-                  {techUsageScale.options.map((option) => (
+                  {attentionScale.options.map((option) => (
                     <label key={option.value} className={`option-item ${responses[qIdx] === option.value ? 'selected' : ''}`}>
                       <input
                         type="radio"
@@ -118,51 +131,28 @@ const TechnologyUsageSurvey = () => {
         </div>
       </div>
 
-      {/* Professional Confirmation Modal */}
+      {/* Confirmation Modal */}
       {showConfirmation && (
-        <div className="fixed inset-0 flex items-center justify-center z-50">
-          {/* Modal Backdrop with better opacity */}
-          <div className="absolute inset-0 bg-gray-900 bg-opacity-75 backdrop-blur-sm"></div>
-          
-          {/* Modal Content */}
-          <div className="relative bg-white rounded-lg shadow-xl max-w-md w-full mx-4 border border-gray-200">
-            {/* Modal Header */}
-            <div className="px-6 py-4 border-b border-gray-200">
-              <h3 className="text-xl font-semibold text-gray-900">
-                Confirm Your Responses
-              </h3>
-            </div>
-
-            {/* Modal Body */}
-            <div className="px-6 py-4">
-              <div className="flex items-center mb-4">
-                <div className="flex-shrink-0 w-12 h-12 bg-blue-50 rounded-full flex items-center justify-center">
-                  <svg className="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                  </svg>
-                </div>
-                <div className="ml-4">
-                  <p className="text-gray-800 font-medium mb-1">Ready to proceed?</p>
-                  <p className="text-gray-600 text-sm">
-                    Please ensure you have reviewed all your answers carefully before proceeding to the next survey.
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            {/* Modal Footer */}
-            <div className="px-6 py-4 bg-gray-50 rounded-b-lg flex justify-end space-x-3">
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-8 max-w-md w-full mx-4">
+            <h3 className="text-xl font-semibold text-gray-900 mb-4">
+              Confirm Submission
+            </h3>
+            <p className="text-gray-600 mb-6">
+              Please review your answers before proceeding to the next survey. Are you sure you want to continue?
+            </p>
+            <div className="flex justify-end space-x-4">
               <button
                 onClick={() => setShowConfirmation(false)}
-                className="px-4 py-2 bg-white border border-gray-300 rounded-md text-gray-700 font-medium hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors"
+                className="px-4 py-2 text-gray-600 hover:text-gray-800"
               >
                 Review Answers
               </button>
               <button
                 onClick={handleConfirm}
-                className="px-4 py-2 bg-blue-600 border border-transparent rounded-md text-white font-medium hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors"
+                className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
               >
-                Continue to Next Survey
+                Confirm & Continue
               </button>
             </div>
           </div>
@@ -172,4 +162,4 @@ const TechnologyUsageSurvey = () => {
   );
 };
 
-export default TechnologyUsageSurvey;
+export default TechnologyUsageSurvey3; 

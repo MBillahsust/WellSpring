@@ -2,8 +2,8 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../../Allcss/AssessmentPages/Assessment.css';
 
-const techUsageScale = {
-  title: "Technology Usage Scale",
+const impulsivityScale = {
+  title: "Behavioral Impulsivity Scale",
   options: [
     { value: "1", label: "Never" },
     { value: "2", label: "Rarely" },
@@ -12,24 +12,24 @@ const techUsageScale = {
     { value: "5", label: "Always" }
   ],
   questions: [
-    "How often do you use multiple digital devices simultaneously?",
-    "How frequently do you check your phone notifications?",
-    "How often do you spend more than 2 hours continuously on digital devices?",
-    "How frequently do you use social media platforms?",
-    "How often do you feel the need to immediately respond to messages?",
-    "How frequently do you use digital devices before bedtime?",
-    "How often do you exceed your planned screen time?",
-    "How frequently do you use technology for entertainment?",
-    "How often do you use digital devices during meals?",
-    "How frequently do you multitask with different applications?"
+    "I act on impulse without thinking things through.",
+    "I make decisions quickly without considering consequences.",
+    "I find it hard to resist checking my phone notifications immediately.",
+    "I switch between apps/tasks frequently without completing them.",
+    "I tend to interrupt others during online conversations.",
+    "I make online purchases without careful consideration.",
+    "I post on social media without thinking about potential impacts.",
+    "I click on links or download files without verifying their safety.",
+    "I share information online without fact-checking.",
+    "I find it difficult to maintain focus on one digital task at a time."
   ]
 };
 
-const TechnologyUsageSurvey = () => {
+const TechnologyUsageSurvey5 = () => {
   const navigate = useNavigate();
   const [responses, setResponses] = useState({});
   const [showConfirmation, setShowConfirmation] = useState(false);
-  const totalQuestions = techUsageScale.questions.length;
+  const totalQuestions = impulsivityScale.questions.length;
   const answeredQuestions = Object.keys(responses).length;
   const progress = (answeredQuestions / totalQuestions) * 100;
 
@@ -45,10 +45,27 @@ const TechnologyUsageSurvey = () => {
 
   const handleConfirm = () => {
     // Store responses
-    localStorage.setItem('techSurvey1Responses', JSON.stringify(responses));
+    localStorage.setItem('techSurvey5Responses', JSON.stringify(responses));
     
-    // Navigate to next survey
-    navigate('/TechSurvey2');
+    // Combine all responses
+    const survey1Responses = JSON.parse(localStorage.getItem('techSurvey1Responses') || '{}');
+    const survey2Responses = JSON.parse(localStorage.getItem('techSurvey2Responses') || '{}');
+    const survey3Responses = JSON.parse(localStorage.getItem('techSurvey3Responses') || '{}');
+    const survey4Responses = JSON.parse(localStorage.getItem('techSurvey4Responses') || '{}');
+    
+    const allResponses = {
+      techUsage: survey1Responses,
+      lifestyle: survey2Responses,
+      attention: survey3Responses,
+      cognitiveLoad: survey4Responses,
+      impulsivity: responses
+    };
+
+    // Store combined responses
+    localStorage.setItem('completeResearchResponses', JSON.stringify(allResponses));
+    
+    // Navigate to research development page after completing all surveys
+    navigate('/research-development');
   };
 
   return (
@@ -74,16 +91,16 @@ const TechnologyUsageSurvey = () => {
         <div className="assessment-content">
           <div className="scale-section">
             <h3 className="scale-title" style={{ fontSize: '1.5rem', fontWeight: '700', marginBottom: '1.5rem' }}>
-              {techUsageScale.title}
+              {impulsivityScale.title}
               <p className="text-sm text-gray-600 mt-2 font-normal">
                 Please rate how often you experience each of the following behaviors
               </p>
             </h3>
-            {techUsageScale.questions.map((question, qIdx) => (
+            {impulsivityScale.questions.map((question, qIdx) => (
               <div key={qIdx} className="question-block" style={{ marginBottom: '2rem' }}>
                 <p className="question-text" style={{ fontSize: '1.125rem', fontWeight: '500', marginBottom: '1rem' }}>{question}</p>
                 <div className="options-grid">
-                  {techUsageScale.options.map((option) => (
+                  {impulsivityScale.options.map((option) => (
                     <label key={option.value} className={`option-item ${responses[qIdx] === option.value ? 'selected' : ''}`}>
                       <input
                         type="radio"
@@ -108,7 +125,7 @@ const TechnologyUsageSurvey = () => {
             className="next-button"
             disabled={answeredQuestions < totalQuestions}
           >
-            Next Survey
+            Submit Survey
           </button>
           {answeredQuestions < totalQuestions && (
             <p className="text-sm text-gray-500 mt-2">
@@ -118,7 +135,7 @@ const TechnologyUsageSurvey = () => {
         </div>
       </div>
 
-      {/* Professional Confirmation Modal */}
+      {/* Confirmation Modal */}
       {showConfirmation && (
         <div className="fixed inset-0 flex items-center justify-center z-50">
           {/* Modal Backdrop with better opacity */}
@@ -162,7 +179,7 @@ const TechnologyUsageSurvey = () => {
                 onClick={handleConfirm}
                 className="px-4 py-2 bg-blue-600 border border-transparent rounded-md text-white font-medium hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors"
               >
-                Continue to Next Survey
+                Complete Survey
               </button>
             </div>
           </div>
@@ -172,4 +189,4 @@ const TechnologyUsageSurvey = () => {
   );
 };
 
-export default TechnologyUsageSurvey;
+export default TechnologyUsageSurvey5; 

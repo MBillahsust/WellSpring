@@ -2,8 +2,8 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../../Allcss/AssessmentPages/Assessment.css';
 
-const techUsageScale = {
-  title: "Technology Usage Scale",
+const cognitiveLoadScale = {
+  title: "Cognitive Load Scale",
   options: [
     { value: "1", label: "Never" },
     { value: "2", label: "Rarely" },
@@ -12,24 +12,24 @@ const techUsageScale = {
     { value: "5", label: "Always" }
   ],
   questions: [
-    "How often do you use multiple digital devices simultaneously?",
-    "How frequently do you check your phone notifications?",
-    "How often do you spend more than 2 hours continuously on digital devices?",
-    "How frequently do you use social media platforms?",
-    "How often do you feel the need to immediately respond to messages?",
-    "How frequently do you use digital devices before bedtime?",
-    "How often do you exceed your planned screen time?",
-    "How frequently do you use technology for entertainment?",
-    "How often do you use digital devices during meals?",
-    "How frequently do you multitask with different applications?"
+    "I find it difficult to concentrate when using multiple digital devices simultaneously.",
+    "I feel mentally exhausted after extended periods of screen time.",
+    "I have trouble remembering information from different digital sources at once.",
+    "I find it challenging to switch between different apps or platforms.",
+    "My attention span has decreased due to frequent technology use.",
+    "I often feel overwhelmed by the amount of information on my devices.",
+    "I have difficulty maintaining focus during online meetings or virtual classes.",
+    "I notice a decline in my productivity when multitasking with technology.",
+    "I experience mental fatigue from constant notifications and updates.",
+    "I find it easier to understand information from physical books than digital screens."
   ]
 };
 
-const TechnologyUsageSurvey = () => {
+const TechnologyUsageSurvey4 = () => {
   const navigate = useNavigate();
   const [responses, setResponses] = useState({});
   const [showConfirmation, setShowConfirmation] = useState(false);
-  const totalQuestions = techUsageScale.questions.length;
+  const totalQuestions = cognitiveLoadScale.questions.length;
   const answeredQuestions = Object.keys(responses).length;
   const progress = (answeredQuestions / totalQuestions) * 100;
 
@@ -45,10 +45,25 @@ const TechnologyUsageSurvey = () => {
 
   const handleConfirm = () => {
     // Store responses
-    localStorage.setItem('techSurvey1Responses', JSON.stringify(responses));
+    localStorage.setItem('techSurvey4Responses', JSON.stringify(responses));
+    
+    // Combine all responses
+    const survey1Responses = JSON.parse(localStorage.getItem('techSurvey1Responses') || '{}');
+    const survey2Responses = JSON.parse(localStorage.getItem('techSurvey2Responses') || '{}');
+    const survey3Responses = JSON.parse(localStorage.getItem('techSurvey3Responses') || '{}');
+    
+    const allResponses = {
+      techUsage: survey1Responses,
+      lifestyle: survey2Responses,
+      attention: survey3Responses,
+      cognitiveLoad: responses
+    };
+
+    // Store combined responses
+    localStorage.setItem('completeResearchResponses', JSON.stringify(allResponses));
     
     // Navigate to next survey
-    navigate('/TechSurvey2');
+    navigate('/TechSurvey5');
   };
 
   return (
@@ -74,16 +89,16 @@ const TechnologyUsageSurvey = () => {
         <div className="assessment-content">
           <div className="scale-section">
             <h3 className="scale-title" style={{ fontSize: '1.5rem', fontWeight: '700', marginBottom: '1.5rem' }}>
-              {techUsageScale.title}
+              {cognitiveLoadScale.title}
               <p className="text-sm text-gray-600 mt-2 font-normal">
-                Please rate how often you experience each of the following behaviors
+                Please rate how often you experience each of the following situations
               </p>
             </h3>
-            {techUsageScale.questions.map((question, qIdx) => (
+            {cognitiveLoadScale.questions.map((question, qIdx) => (
               <div key={qIdx} className="question-block" style={{ marginBottom: '2rem' }}>
                 <p className="question-text" style={{ fontSize: '1.125rem', fontWeight: '500', marginBottom: '1rem' }}>{question}</p>
                 <div className="options-grid">
-                  {techUsageScale.options.map((option) => (
+                  {cognitiveLoadScale.options.map((option) => (
                     <label key={option.value} className={`option-item ${responses[qIdx] === option.value ? 'selected' : ''}`}>
                       <input
                         type="radio"
@@ -118,7 +133,7 @@ const TechnologyUsageSurvey = () => {
         </div>
       </div>
 
-      {/* Professional Confirmation Modal */}
+      {/* Confirmation Modal */}
       {showConfirmation && (
         <div className="fixed inset-0 flex items-center justify-center z-50">
           {/* Modal Backdrop with better opacity */}
@@ -172,4 +187,4 @@ const TechnologyUsageSurvey = () => {
   );
 };
 
-export default TechnologyUsageSurvey;
+export default TechnologyUsageSurvey4; 

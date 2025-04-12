@@ -1,34 +1,14 @@
 import React, { useState, useRef, useEffect, useContext } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { FaUser, FaUserCircle } from 'react-icons/fa';
+import { motion, AnimatePresence } from 'framer-motion';
+import { FaUser, FaUserCircle, FaBars, FaTimes } from 'react-icons/fa';
 import { UserContext } from '../../UserContext';
-import { Disclosure, Menu, MenuButton, MenuItem, MenuItems, DisclosureButton, DisclosurePanel } from '@headlessui/react';
-
-import { Bars3Icon, BellIcon, XMarkIcon } from '@heroicons/react/24/outline';
-
-import { FaTachometerAlt } from 'react-icons/fa'; // Import the dashboard icon
-
-import { FaSignInAlt, FaUserPlus } from 'react-icons/fa'; // Import login and signup icons
-
-
-const navigation = [
-  { name: 'AI Counsellor', href: '/ai-counselor' },
-  { name: 'Assessments', href: '/assessment' },
-  { name: 'Learn Conditions', href: '/conditions' },
-  { name: 'Resources', href: '/resources' },
-  { name: 'Research & Development', href: '/research-development' },
-  { name: 'Games', href: '/games' },
-  // { name: 'About', href: '/about' },
-];
-
-function classNames(...classes) {
-  return classes.filter(Boolean).join(' ');
-}
 
 export default function Header() {
   const navigate = useNavigate();
   const { user, setUser } = useContext(UserContext);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const dropdownRef = useRef(null);
 
   useEffect(() => {
@@ -48,129 +28,201 @@ export default function Header() {
   };
 
   return (
-    <Disclosure as="nav" className="bg-[#09090b] text-white">
-      <div className="mx-auto max-w-7xl px-2 sm:px-6 lg:px-8">
-        <div className="relative flex h-16 items-center justify-between">
-          {/* Mobile menu button */}
-          <div className="absolute inset-y-0 left-0 flex items-center sm:hidden">
-            <DisclosureButton className="group relative inline-flex items-center justify-center rounded-md p-2 text-gray-400 hover:bg-gray-700 hover:text-white focus:ring-2 focus:ring-white focus:outline-hidden focus:ring-inset">
-              <span className="sr-only">Open main menu</span>
-              <Bars3Icon aria-hidden="true" className="block h-6 w-6" />
-              <XMarkIcon aria-hidden="true" className="hidden h-6 w-6" />
-            </DisclosureButton>
-          </div>
+    <header className="fixed top-0 left-0 right-0 z-50 bg-[#09090b] text-white py-4">
+      <div className="max-w-[1600px] mx-auto px-6">
+        <div className="flex items-center justify-between">
+          {/* Logo - Left side */}
+          <Link to="/" className="flex items-center space-x-2 hover:opacity-80 transition-opacity">
+            <span className="text-xl font-bold">WellSpring</span>
+          </Link>
 
-          {/* Logo and Desktop Navigation */}
-          <div className="flex flex-1 items-center justify-center sm:items-stretch sm:justify-start">
-            <div className="flex shrink-0 items-center">
-                  <Link to="/" className="text-xl font-bold">
-                       WellSpring
-                  </Link>
-            </div>
-            <div className="hidden sm:ml-6 sm:block">
-              <div className="flex space-x-4">
-                {navigation.map((item) => (
-                  <Link
-                    key={item.name}
-                    to={item.href}
-                    className={classNames(
-                      'text-sm font-medium rounded-md px-3 py-2 hover:bg-[#6d8ded] transition-colors',
-                    )}
+          {/* Desktop Navigation - Center */}
+          <nav className="hidden md:flex items-center justify-center space-x-6">
+            <Link to="/assessment" className="nav-link hover:text-[#6d8ded] transition-colors text-sm">
+              Assessment
+            </Link>
+            <Link to="/conditions" className="nav-link hover:text-[#6d8ded] transition-colors text-sm">
+              Conditions
+            </Link>
+            <Link to="/resources" className="nav-link hover:text-[#6d8ded] transition-colors text-sm">
+              Resources
+            </Link>
+            <Link to="/research-development" className="nav-link hover:text-[#6d8ded] transition-colors text-sm">
+              Research
+            </Link>
+            <Link to="/about" className="nav-link hover:text-[#6d8ded] transition-colors text-sm">
+              About
+            </Link>
+          </nav>
+
+          {/* User Profile & Mobile Menu - Right side */}
+          <div className="flex items-center ml-auto">
+            {/* Desktop User Profile */}
+            <div className="hidden md:block relative" ref={dropdownRef}>
+              <div
+                onMouseEnter={() => setIsDropdownOpen(true)}
+                onMouseLeave={() => setIsDropdownOpen(false)}
+                className="flex items-center justify-center w-8 h-8 rounded-full bg-[#1a1a1a] hover:bg-[#2a2a2a] transition-colors duration-300 cursor-pointer"
+              >
+                {user ? <FaUserCircle className="text-lg" /> : <FaUser className="text-lg" />}
+              </div>
+
+              <AnimatePresence>
+                {isDropdownOpen && (
+                  <motion.div
+                    initial={{ opacity: 0, y: -10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -10 }}
+                    className="absolute right-0 mt-2 w-48 bg-[#1a1a1a] rounded-lg shadow-lg py-2 z-50 border border-gray-800"
+                    onMouseEnter={() => setIsDropdownOpen(true)}
+                    onMouseLeave={() => setIsDropdownOpen(false)}
                   >
-                    {item.name}
-                  </Link>
-                ))}
-              </div>
+                    {user ? (
+                      <>
+                        <Link
+                          to="/dashboard"
+                          className="block px-4 py-2 text-white hover:bg-[#2a2a2a] transition-colors duration-200"
+                        >
+                          Dashboard
+                        </Link>
+                        <Link
+                          to="/profile"
+                          className="block px-4 py-2 text-white hover:bg-[#2a2a2a] transition-colors duration-200"
+                        >
+                          Profile
+                        </Link>
+                        <div
+                          onClick={handleLogout}
+                          className="block px-4 py-2 text-white hover:bg-[#2a2a2a] transition-colors duration-200 cursor-pointer"
+                        >
+                          Logout
+                        </div>
+                      </>
+                    ) : (
+                      <>
+                        <Link
+                          to="/login"
+                          className="block px-4 py-2 text-white hover:bg-[#2a2a2a] transition-colors duration-200"
+                        >
+                          Login
+                        </Link>
+                        <Link
+                          to="/signup"
+                          className="block px-4 py-2 text-white hover:bg-[#2a2a2a] transition-colors duration-200"
+                        >
+                          Sign Up
+                        </Link>
+                      </>
+                    )}
+                  </motion.div>
+                )}
+              </AnimatePresence>
             </div>
-          </div>
 
-          {/* Right-side icons */}
-          <div className="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
-            {/* Notification Icon */}
+            {/* Mobile Menu Button */}
             <button
-              type="button"
-              className="relative rounded-full bg-[#1a1a1a] p-1 text-gray-400 hover:text-white focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-[#09090b]">
-              <span className="absolute -inset-1.5" />
-              <span className="sr-only">View notifications</span>
-              <BellIcon aria-hidden="true" className="h-6 w-6" />
+              className="flex md:hidden items-center justify-center w-12 h-12 text-white hover:text-[#6d8ded] transition-colors"
+              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+            >
+              {isMobileMenuOpen ? <FaTimes size={24} /> : <FaBars size={24} />}
             </button>
+          </div>
+        </div>
 
-            {/* Profile dropdown */}
-            <Menu as="div" className="relative ml-3">
-              <div>
-                <MenuButton className="flex rounded-full bg-[#1a1a1a] text-sm focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-[#09090b]">
-                  <span className="sr-only">Open user menu</span>
-                  {user ? (
-                    <FaUserCircle className="h-8 w-8 rounded-full text-white" />
-                  ) : (
-                    <FaUser className="h-8 w-8 rounded-full text-white" />
-                  )}
-                </MenuButton>
-              </div>
-              <MenuItems className="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-[#1a1a1a] shadow-lg py-1 ring-1 ring-black/5">
+        {/* Mobile Navigation */}
+        <AnimatePresence>
+          {isMobileMenuOpen && (
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: "auto" }}
+              exit={{ opacity: 0, height: 0 }}
+              className="absolute top-full left-0 right-0 bg-[#09090b] border-t border-gray-800 md:hidden"
+            >
+              <div className="px-6 py-4 space-y-4">
+                <Link
+                  to="/assessment"
+                  className="block text-white hover:text-[#6d8ded] transition-colors py-2"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
+                  Assessment
+                </Link>
+                <Link
+                  to="/conditions"
+                  className="block text-white hover:text-[#6d8ded] transition-colors py-2"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
+                  Conditions
+                </Link>
+                <Link
+                  to="/resources"
+                  className="block text-white hover:text-[#6d8ded] transition-colors py-2"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
+                  Resources
+                </Link>
+                <Link
+                  to="/research-development"
+                  className="block text-white hover:text-[#6d8ded] transition-colors py-2"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
+                  Research
+                </Link>
+                <Link
+                  to="/about"
+                  className="block text-white hover:text-[#6d8ded] transition-colors py-2"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
+                  About
+                </Link>
                 {user ? (
                   <>
-                    <MenuItem>
-                      <Link to="/dashboard" className="block px-4 py-2 text-white">
-                        Dashboard
-                      </Link>
-                    </MenuItem>
-                    <MenuItem>
-                      <Link to="/profile" className="block px-4 py-2 text-white">
-                        Profilel
-                      </Link>
-                    </MenuItem>
-                    <MenuItem>
-                      <div onClick={handleLogout} className="block px-4 py-2 text-white cursor-pointer">
-                        Logout
-                      </div>
-                    </MenuItem>
+                    <Link
+                      to="/dashboard"
+                      className="block text-white hover:text-[#6d8ded] transition-colors py-2"
+                      onClick={() => setIsMobileMenuOpen(false)}
+                    >
+                      Dashboard
+                    </Link>
+                    <Link
+                      to="/profile"
+                      className="block text-white hover:text-[#6d8ded] transition-colors py-2"
+                      onClick={() => setIsMobileMenuOpen(false)}
+                    >
+                      Profile
+                    </Link>
+                    <div
+                      onClick={() => {
+                        handleLogout();
+                        setIsMobileMenuOpen(false);
+                      }}
+                      className="block text-white hover:text-[#6d8ded] transition-colors py-2 cursor-pointer"
+                    >
+                      Logout
+                    </div>
                   </>
                 ) : (
                   <>
-
-                      <MenuItem>
-                        <Link to="/dashboard" className="block px-4 py-2 text-white">
-                          <FaTachometerAlt className="inline mr-2" /> Dashboard
-                        </Link>
-                      </MenuItem>
-                   
-                      <MenuItem>
-                        <Link to="/login" className="block px-4 py-2 text-white">
-                          <FaSignInAlt className="inline mr-2" /> Login
-                        </Link>
-                      </MenuItem>
-                      <MenuItem>
-                        <Link to="/signup" className="block px-4 py-2 text-white">
-                          <FaUserPlus className="inline mr-2" /> Sign Up
-                        </Link>
-                      </MenuItem>
+                    <Link
+                      to="/login"
+                      className="block text-white hover:text-[#6d8ded] transition-colors py-2"
+                      onClick={() => setIsMobileMenuOpen(false)}
+                    >
+                      Login
+                    </Link>
+                    <Link
+                      to="/signup"
+                      className="block text-white hover:text-[#6d8ded] transition-colors py-2"
+                      onClick={() => setIsMobileMenuOpen(false)}
+                    >
+                      Sign Up
+                    </Link>
                   </>
                 )}
-              </MenuItems>
-            </Menu>
-          </div>
-        </div>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
-
-      {/* Mobile menu */}
-      <DisclosurePanel className="sm:hidden">
-        <div className="space-y-1 px-2 pt-2 pb-3">
-          {navigation.map((item) => (
-            <DisclosureButton
-              key={item.name}
-              as="a"
-              href={item.href}
-              className={classNames(
-                'block rounded-md px-3 py-2 text-base font-medium',
-                item.current ? 'bg-gray-900 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white'
-              )}
-            >
-              {item.name}
-            </DisclosureButton>
-          ))}
-        </div>
-      </DisclosurePanel>
-    </Disclosure>
+    </header>
   );
 }
