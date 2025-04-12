@@ -1,28 +1,85 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
   directUrl = env("DIRECT_URL")
 }
 
-
 model User {
-  id       Int    @id @default(autoincrement())
-  email    String @unique
-  password String
-  name     String
-  age      Int
-  weight   Float
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id        Int      @id @default(autoincrement())
+  email     String   @unique
+  password  String
+  name      String
+  age       Int
+  weight    Float    @db.Real
+  createdAt DateTime @default(now()) @db.Timestamp(6)
+  updatedAt DateTime @default(now()) @updatedAt @db.Timestamp(6)
 }
 
+model ResearchQuestionnaire {
+  id        Int      @id @default(autoincrement())
+  email     String
+  Q1        Int
+  Q2        Int
+  Q3        Int
+  Q4        Int
+  Q5        Int
+  Q6        Int
+  Q7        Int
+  Q8        Int
+  Q9        Int
+  Q10       Int
+  Q11       Int
+  Q12       Int
+  Q13       Int
+  Q14       Int
+  Q15       Int
+  Q16       Int
+  Q17       Int
+  Q18       Int
+  Q19       Int
+  Q20       Int
+  Q21       Int
+  Q22       Int
+  Q23       Int
+  Q24       Int
+  Q25       Int
+  Q26       Int
+  Q27       Int
+  Q28       Int
+  Q29       Int
+  Q30       Int
+  Q31       Int
+  Q32       Int
+  Q33       Int
+  Q34       Int
+  Q35       Int
+  Q36       Int
+  Q37       Int
+  Q38       Int
+  Q39       Int
+  Q40       Int
+  Q41       Int
+  Q42       Int
+  Q43       Int
+  Q44       Int
+  Q45       Int
+  Q46       Int
+  Q47       Int
+  Q48       Int
+  Q49       Int
+  Q50       Int
+  Q51       Int
+  Q52       Int
+  Q53       Int
+  Q54       Int
+  Q55       Int
+  createdAt DateTime @default(now()) @map("createdAt")
+  updatedAt DateTime @updatedAt @map("updatedAt")
+
+  @@index([email])
+  @@map("ResearchQuestionnaire")
+}

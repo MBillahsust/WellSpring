@@ -12,6 +12,7 @@ app.use(bodyParser.json());
 
 
 app.use("/auth", Router);
+app.use("/research", Router)
 
 
 
