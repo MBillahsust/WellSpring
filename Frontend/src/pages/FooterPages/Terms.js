@@ -8,7 +8,7 @@ export default function TermsPage() {
       <section style={{ marginBottom: '30px', padding: '20px', backgroundColor: '#ffffff', borderRadius: '8px', boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)' }}>
         <h2 style={{ fontSize: '28px', fontWeight: '600', marginBottom: '15px', color: '#007bff' }}>Introduction</h2>
         <p style={{ fontSize: '18px', lineHeight: '1.6', color: '#555' }}>
-          Welcome to MindCare. By accessing or using our services, you agree to comply with and be bound by these Terms of Service. If you do not agree with these terms, please do not use our services.
+          Welcome to WellSpring. By accessing or using our services, you agree to comply with and be bound by these Terms of Service. If you do not agree with these terms, please do not use our services.
         </p>
       </section>
       
@@ -22,14 +22,14 @@ export default function TermsPage() {
       <section style={{ marginBottom: '30px', padding: '20px', backgroundColor: '#ffffff', borderRadius: '8px', boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)' }}>
         <h2 style={{ fontSize: '28px', fontWeight: '600', marginBottom: '15px', color: '#007bff' }}>Intellectual Property</h2>
         <p style={{ fontSize: '18px', lineHeight: '1.6', color: '#555' }}>
-          All content, trademarks, and other intellectual property on our website are the property of MindCare or our licensors. You must not use any of our intellectual property without our prior written consent.
+          All content, trademarks, and other intellectual property on our website are the property of WellSpring or our licensors. You must not use any of our intellectual property without our prior written consent.
         </p>
       </section>
       
       <section style={{ marginBottom: '30px', padding: '20px', backgroundColor: '#ffffff', borderRadius: '8px', boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)' }}>
         <h2 style={{ fontSize: '28px', fontWeight: '600', marginBottom: '15px', color: '#007bff' }}>Limitation of Liability</h2>
         <p style={{ fontSize: '18px', lineHeight: '1.6', color: '#555' }}>
-          To the fullest extent permitted by law, MindCare shall not be liable for any direct, indirect, incidental, or consequential damages arising from the use of our services or inability to use our services.
+          To the fullest extent permitted by law, WellSpring shall not be liable for any direct, indirect, incidental, or consequential damages arising from the use of our services or inability to use our services.
         </p>
       </section>
       
