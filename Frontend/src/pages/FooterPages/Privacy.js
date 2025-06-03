@@ -8,7 +8,7 @@ export default function PrivacyPage() {
       <section style={{ marginBottom: '30px', padding: '20px', backgroundColor: '#ffffff', borderRadius: '8px', boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)' }}>
         <h2 style={{ fontSize: '28px', fontWeight: '600', marginBottom: '15px', color: '#007bff' }}>Introduction</h2>
         <p style={{ fontSize: '18px', lineHeight: '1.6', color: '#555' }}>
-          Welcome to MindCare's Privacy Policy. We are committed to protecting your personal information. This policy explains how we collect, use, and safeguard your information.
+          Welcome to WellSpring's Privacy Policy. We are committed to protecting your personal information. This policy explains how we collect, use, and safeguard your information.
         </p>
       </section>
       
