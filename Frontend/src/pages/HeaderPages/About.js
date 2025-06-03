@@ -101,24 +101,24 @@ const AboutPage = () => {
   return (
     <div style={pageStyle}>
       <h1 style={headingStyle}>
-        MindCare: Your AI-Powered Mental Health Companion
+        WellSpring: Your AI-Powered Mental Health Companion
         <div style={underlineStyle}></div>
       </h1>
 
       <section style={sectionStyle}>
         <p style={paragraphStyle}>
-          MindCare is a revolutionary web-based platform dedicated to providing personalized mental health support. Using advanced AI technology, we offer tailored tips, scenario-based advice, and a wealth of resources to individuals struggling with various mental health conditions.
+          WellSpring is a revolutionary web-based platform dedicated to providing personalized mental health support. Using advanced AI technology, we offer tailored tips, scenario-based advice, and a wealth of resources to individuals struggling with various mental health conditions.
         </p>
       </section>
 
       <section style={sectionStyle}>
         <p style={paragraphStyle}>
-          Our platform fosters a supportive community, empowering users to connect, share experiences, and learn effective coping strategies. With MindCare, individuals can access personalized assistance, cultivate resilience, and embark on a journey toward improved mental well-being.
+          Our platform fosters a supportive community, empowering users to connect, share experiences, and learn effective coping strategies. With WellSpring, individuals can access personalized assistance, cultivate resilience, and embark on a journey toward improved mental well-being.
         </p>
       </section>
 
       <section style={sectionStyle}>
-        <h2 style={developerSectionHeadingStyle}>The Minds Behind MindCare</h2>
+        <h2 style={developerSectionHeadingStyle}>The Minds Behind WellSpring</h2>
         <p style={developerSectionParagraphStyle}>
           Passionate individuals dedicated to making a difference in mental health.
         </p>
