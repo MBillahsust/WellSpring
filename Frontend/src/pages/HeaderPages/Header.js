@@ -29,6 +29,7 @@ export default function Header() {
   const navigate = useNavigate();
   const { user, setUser } = useContext(UserContext);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const dropdownRef = useRef(null);
 
   useEffect(() => {
