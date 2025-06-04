@@ -49,9 +49,11 @@ export default function SignUp() {
       });
       console.log('Signup response:', res.data);
       setSuccess('Account created successfully! Redirecting to login...');
+      window.alert('Signup successful!');
       setTimeout(() => navigate('/login'), 1500);
     } catch (err) {
       setError(err.response?.data?.error || 'Signup failed');
+      window.alert('Signup failed!');
       console.log('Signup error:', err);
     } finally {
       setIsLoading(false);

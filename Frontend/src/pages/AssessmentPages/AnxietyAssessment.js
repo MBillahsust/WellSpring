@@ -1,5 +1,5 @@
 import React, { useState, useContext } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import axios from 'axios';
 import { UserContext } from '../../UserContext';
 import '../../Allcss/AssessmentPages/Assessment.css';
@@ -32,6 +32,7 @@ export default function AnxietyAssessment() {
   const [saveStatus, setSaveStatus] = useState(null);
   const { userInfo } = useContext(UserContext);
   const navigate = useNavigate();
+  const location = useLocation();
 
   const handleAnswer = (value) => {
     const newAnswers = [...answers];
@@ -78,20 +79,29 @@ export default function AnxietyAssessment() {
 
   const handleSaveScore = async () => {
     if (!userInfo || !userInfo.userId) {
-      navigate('/login');
+      navigate('/login', { state: { from: location.pathname } });
       return;
     }
     setSaveStatus('saving');
+    const payload = {
+      userId: userInfo.userId,
+      assessmentName: 'Anxiety Level Test',
+      assessmentResult: result.severity,
+      assessmentScore: `${result.score} out of ${result.maxScore}`,
+      assessmentRecommendation: result.recommendation,
+      takenAt: new Date().toISOString(),
+    };
+    console.log('Assessment payload:', JSON.stringify(payload, null, 2));
     try {
-      const payload = {
-        userId: userInfo.userId,
-        assessmentName: 'Anxiety Level Test',
-        assessmentResult: result.severity,
-        assessmentScore: `${result.score} out of ${result.maxScore}`,
-        assessmentRecommendation: result.recommendation,
-        takenAt: new Date().toISOString(),
-      };
-      await axios.post('/api/assessments/save', payload);
+      await axios.post(
+        `${process.env.REACT_APP_BACKEND_URL}/addassesment/assessments`,
+        payload,
+        {
+          headers: {
+            Authorization: `Bearer ${userInfo.token}`
+          }
+        }
+      );
       setSaveStatus('success');
     } catch (err) {
       setSaveStatus('error');

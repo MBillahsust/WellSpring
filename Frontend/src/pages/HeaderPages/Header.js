@@ -44,6 +44,7 @@ export default function Header() {
 
   const handleLogout = () => {
     console.log('Logging out. Previous userInfo:', userInfo);
+    window.alert('Logged out successfully!');
     setUserInfo(null);
     setIsDropdownOpen(false);
     navigate('/');
