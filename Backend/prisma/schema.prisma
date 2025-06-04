@@ -83,3 +83,23 @@ model ResearchQuestionnaire {
   @@index([email])
   @@map("ResearchQuestionnaire")
 }
+
+
+
+
+
+
+model Assessments {
+  id                Int      @id @default(autoincrement())
+  userId            Int
+  assessmentName    String
+  assessmentResult  String
+  assessmentScore   String
+  recommendation    String
+  takenAt           DateTime @default(now())
+
+  user              User     @relation(fields: [userId], references: [id])
+
+  @@map("Assessments")
+  @@index([userId])
+}

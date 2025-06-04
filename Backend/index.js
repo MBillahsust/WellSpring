@@ -13,6 +13,7 @@ app.use(bodyParser.json());
 
 app.use("/auth", Router);
 app.use("/research", Router)
+app.use("/addassesment", Router)
 
 
 
