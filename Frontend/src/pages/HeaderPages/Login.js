@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import axios from 'axios';
+import { UserContext } from '../../UserContext';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
@@ -12,6 +13,7 @@ export default function Login() {
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const navigate = useNavigate();
+  const { setUserInfo } = useContext(UserContext);
 
   const onSubmitHandler = async (e) => {
     e.preventDefault();
@@ -24,9 +26,12 @@ export default function Login() {
         password
       });
       setSuccess('Login successful! Redirecting...');
+      console.log('Login token:', res.data.token);
+      setUserInfo({ token: res.data.token, email });
       setTimeout(() => navigate('/'), 1500);
     } catch (err) {
       setError(err.response?.data?.error || 'Login failed');
+      console.log('Login error:', err);
     } finally {
       setIsLoading(false);
     }

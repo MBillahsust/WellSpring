@@ -27,7 +27,7 @@ function classNames(...classes) {
 
 export default function Header() {
   const navigate = useNavigate();
-  const { user, setUser } = useContext(UserContext);
+  const { userInfo, setUserInfo } = useContext(UserContext);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const dropdownRef = useRef(null);
@@ -43,7 +43,8 @@ export default function Header() {
   }, []);
 
   const handleLogout = () => {
-    setUser(null);
+    console.log('Logging out. Previous userInfo:', userInfo);
+    setUserInfo(null);
     setIsDropdownOpen(false);
     navigate('/');
   };
@@ -102,7 +103,7 @@ export default function Header() {
               <div>
                 <MenuButton className="flex rounded-full bg-[#1a1a1a] text-sm focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-[#09090b]">
                   <span className="sr-only">Open user menu</span>
-                  {user ? (
+                  {userInfo ? (
                     <FaUserCircle className="h-8 w-8 rounded-full text-white" />
                   ) : (
                     <FaUser className="h-8 w-8 rounded-full text-white" />
@@ -110,7 +111,7 @@ export default function Header() {
                 </MenuButton>
               </div>
               <MenuItems className="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-[#1a1a1a] shadow-lg py-1 ring-1 ring-black/5">
-                {user ? (
+                {userInfo ? (
                   <>
                     <MenuItem>
                       <Link to="/dashboard" className="block px-4 py-2 text-white">
@@ -119,7 +120,7 @@ export default function Header() {
                     </MenuItem>
                     <MenuItem>
                       <Link to="/profile" className="block px-4 py-2 text-white">
-                        Profilel
+                        Profile
                       </Link>
                     </MenuItem>
                     <MenuItem>
@@ -130,23 +131,21 @@ export default function Header() {
                   </>
                 ) : (
                   <>
-
-                      <MenuItem>
-                        <Link to="/dashboard" className="block px-4 py-2 text-white">
-                          <FaTachometerAlt className="inline mr-2" /> Dashboard
-                        </Link>
-                      </MenuItem>
-                   
-                      <MenuItem>
-                        <Link to="/login" className="block px-4 py-2 text-white">
-                          <FaSignInAlt className="inline mr-2" /> Login
-                        </Link>
-                      </MenuItem>
-                      <MenuItem>
-                        <Link to="/signup" className="block px-4 py-2 text-white">
-                          <FaUserPlus className="inline mr-2" /> Sign Up
-                        </Link>
-                      </MenuItem>
+                    <MenuItem>
+                      <Link to="/dashboard" className="block px-4 py-2 text-white">
+                        <FaTachometerAlt className="inline mr-2" /> Dashboard
+                      </Link>
+                    </MenuItem>
+                    <MenuItem>
+                      <Link to="/login" className="block px-4 py-2 text-white">
+                        <FaSignInAlt className="inline mr-2" /> Login
+                      </Link>
+                    </MenuItem>
+                    <MenuItem>
+                      <Link to="/signup" className="block px-4 py-2 text-white">
+                        <FaUserPlus className="inline mr-2" /> Sign Up
+                      </Link>
+                    </MenuItem>
                   </>
                 )}
               </MenuItems>

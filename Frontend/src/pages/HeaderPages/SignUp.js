@@ -47,10 +47,12 @@ export default function SignUp() {
         age: Number(formData.age),
         weight: parseFloat(formData.weight)
       });
+      console.log('Signup response:', res.data);
       setSuccess('Account created successfully! Redirecting to login...');
       setTimeout(() => navigate('/login'), 1500);
     } catch (err) {
       setError(err.response?.data?.error || 'Signup failed');
+      console.log('Signup error:', err);
     } finally {
       setIsLoading(false);
     }
