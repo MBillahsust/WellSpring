@@ -1,16 +1,35 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
+import axios from 'axios';
+
+const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
 export default function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
+  const navigate = useNavigate();
 
   const onSubmitHandler = async (e) => {
     e.preventDefault();
+    setError('');
+    setSuccess('');
     setIsLoading(true);
-    setTimeout(() => setIsLoading(false), 2000); 
+    try {
+      const res = await axios.post(`${BACKEND_URL}/auth/Login`, {
+        email,
+        password
+      });
+      setSuccess('Login successful! Redirecting...');
+      setTimeout(() => navigate('/'), 1500);
+    } catch (err) {
+      setError(err.response?.data?.error || 'Login failed');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -45,6 +64,9 @@ export default function Login() {
               <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">Welcome Back</h2>
               <p className="text-gray-600">Sign in to continue your journey</p>
             </div>
+
+            {error && <div className="text-red-600 mb-4 text-center">{error}</div>}
+            {success && <div className="text-green-600 mb-4 text-center">{success}</div>}
 
             <div className="space-y-4">
               <motion.div whileHover={{ scale: 1.01 }} className="group">

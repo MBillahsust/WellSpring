@@ -1,15 +1,23 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
+import axios from 'axios';
+
+const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
 export default function SignUp() {
   const [formData, setFormData] = useState({
     name: '',
     email: '',
     password: '',
-    confirmPassword: ''
+    confirmPassword: '',
+    age: '',
+    weight: ''
   });
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     setFormData({
@@ -20,8 +28,32 @@ export default function SignUp() {
 
   const onSubmitHandler = async (e) => {
     e.preventDefault();
+    setError('');
+    setSuccess('');
+    if (formData.password !== formData.confirmPassword) {
+      setError('Passwords do not match');
+      return;
+    }
+    if (!formData.name || !formData.email || !formData.password || !formData.age || !formData.weight) {
+      setError('All fields are required');
+      return;
+    }
     setIsLoading(true);
-    setTimeout(() => setIsLoading(false), 2000); 
+    try {
+      const res = await axios.post(`${BACKEND_URL}/auth/SignUp`, {
+        name: formData.name,
+        email: formData.email,
+        password: formData.password,
+        age: Number(formData.age),
+        weight: parseFloat(formData.weight)
+      });
+      setSuccess('Account created successfully! Redirecting to login...');
+      setTimeout(() => navigate('/login'), 1500);
+    } catch (err) {
+      setError(err.response?.data?.error || 'Signup failed');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -56,6 +88,9 @@ export default function SignUp() {
               <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">Create Account</h2>
               <p className="text-gray-600">Join our community of support</p>
             </div>
+
+            {error && <div className="text-red-600 mb-4 text-center">{error}</div>}
+            {success && <div className="text-green-600 mb-4 text-center">{success}</div>}
 
             <div className="space-y-4">
               <motion.div whileHover={{ scale: 1.01 }} className="group">
@@ -102,6 +137,30 @@ export default function SignUp() {
                   type="password"
                   className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-500 transition-all duration-200"
                   placeholder="Confirm Password"
+                  required
+                />
+              </motion.div>
+
+              <motion.div whileHover={{ scale: 1.01 }} className="group">
+                <input
+                  name="age"
+                  onChange={handleChange}
+                  value={formData.age}
+                  type="number"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-500 transition-all duration-200"
+                  placeholder="Age"
+                  required
+                />
+              </motion.div>
+
+              <motion.div whileHover={{ scale: 1.01 }} className="group">
+                <input
+                  name="weight"
+                  onChange={handleChange}
+                  value={formData.weight}
+                  type="number"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-500 transition-all duration-200"
+                  placeholder="Weight (kg)"
                   required
                 />
               </motion.div>

@@ -1,4 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
+import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
+import { UserContext } from '../../UserContext';
 import '../../Allcss/AssessmentPages/Assessment.css';
 
 const questions = [
@@ -26,6 +29,9 @@ export default function AnxietyAssessment() {
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [answers, setAnswers] = useState([]);
   const [result, setResult] = useState('');
+  const [saveStatus, setSaveStatus] = useState(null);
+  const { userInfo } = useContext(UserContext);
+  const navigate = useNavigate();
 
   const handleAnswer = (value) => {
     const newAnswers = [...answers];
@@ -70,6 +76,28 @@ export default function AnxietyAssessment() {
 
   const progress = ((currentQuestion + 1) / questions.length) * 100;
 
+  const handleSaveScore = async () => {
+    if (!userInfo || !userInfo.userId) {
+      navigate('/login');
+      return;
+    }
+    setSaveStatus('saving');
+    try {
+      const payload = {
+        userId: userInfo.userId,
+        assessmentName: 'Anxiety Level Test',
+        assessmentResult: result.severity,
+        assessmentScore: `${result.score} out of ${result.maxScore}`,
+        assessmentRecommendation: result.recommendation,
+        takenAt: new Date().toISOString(),
+      };
+      await axios.post('/api/assessments/save', payload);
+      setSaveStatus('success');
+    } catch (err) {
+      setSaveStatus('error');
+    }
+  };
+
   return (
     <div className="assessment-container">
       <div className="assessment-card">
@@ -95,6 +123,12 @@ export default function AnxietyAssessment() {
                 Note: This is a screening tool and not a diagnostic instrument. 
                 Please consult with a mental health professional for a proper evaluation.
               </p>
+              <button className="next-button" onClick={handleSaveScore} style={{marginTop: '1rem'}}>
+                Save Score
+              </button>
+              {saveStatus === 'saving' && <p style={{color: '#6366f1'}}>Saving...</p>}
+              {saveStatus === 'success' && <p style={{color: 'green'}}>Score saved successfully!</p>}
+              {saveStatus === 'error' && <p style={{color: 'red'}}>Failed to save score. Please try again.</p>}
             </div>
           ) : (
             <>
