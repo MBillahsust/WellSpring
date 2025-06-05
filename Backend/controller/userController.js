@@ -8,20 +8,32 @@ const SignUp = async (req, res) => {
   try {
     const { email, password, name, age, weight } = req.body;
 
+    
+
     if (!email || !password || !name || !age || !weight) {
       return res.status(400).json({ error: "All fields are required" });
     }
+
+    
 
     const existingUser = await prisma.user.findUnique({ where: { email } });
     if (existingUser) {
       return res.status(400).json({ error: "User already exists" });
     }
 
+    console.log(email)
+
+    
+
+    
+
     const hashedPassword = await bcrypt.hash(password, 10);
 
     const newUser = await prisma.user.create({
       data: { email, password: hashedPassword, name, age, weight },
     });
+
+    
 
     const token = jwt.sign({ userId: newUser.id }, process.env.JWT_SECRET, { expiresIn: "7d" });
 

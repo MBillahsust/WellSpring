@@ -20,7 +20,7 @@
     "jsonwebtoken": "^9.0.2",
     "pg": "^8.14.1",
     "pg-hstore": "^2.3.4",
-    "prisma": "^6.5.0",
+    "prisma": "^6.6.0",
     "sequelize": "^6.37.6"
   },
   "devDependencies": {
