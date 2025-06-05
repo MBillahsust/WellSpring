@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import axios from 'axios';
+import { toast } from 'react-toastify';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
@@ -49,11 +50,11 @@ export default function SignUp() {
       });
       console.log('Signup response:', res.data);
       setSuccess('Account created successfully! Redirecting to login...');
-      window.alert('Signup successful!');
+      toast.success('Signup successful!');
       setTimeout(() => navigate('/login'), 1500);
     } catch (err) {
       setError(err.response?.data?.error || 'Signup failed');
-      window.alert('Signup failed!');
+      toast.error('Signup failed!');
       console.log('Signup error:', err);
     } finally {
       setIsLoading(false);

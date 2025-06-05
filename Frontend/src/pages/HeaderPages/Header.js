@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { FaUser, FaUserCircle } from 'react-icons/fa';
 import { UserContext } from '../../UserContext';
 import { Disclosure, Menu, MenuButton, MenuItem, MenuItems, DisclosureButton, DisclosurePanel } from '@headlessui/react';
+import { toast } from 'react-toastify';
 
 import { Bars3Icon, BellIcon, XMarkIcon } from '@heroicons/react/24/outline';
 
@@ -44,7 +45,7 @@ export default function Header() {
 
   const handleLogout = () => {
     console.log('Logging out. Previous userInfo:', userInfo);
-    window.alert('Logged out successfully!');
+    toast.success('Logged out successfully!');
     setUserInfo(null);
     setIsDropdownOpen(false);
     navigate('/');

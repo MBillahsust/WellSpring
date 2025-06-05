@@ -62,6 +62,9 @@ import TechUsage from './pages/HeaderPages/TechUsage';
 import LifestylePsychosocial from './pages/HeaderPages/LifestylePsychosocial';
 import MentalHealthScales from './pages/HeaderPages/MentalHealthScales';
 import UserDashboard from './pages/UserDashboard';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import './toastify-custom.css';
 
 function App() {
   return (
@@ -69,6 +72,7 @@ function App() {
       <UserContextProvider>
         <Header />
         <ScrollToTop />
+        <ToastContainer position="top-right" autoClose={3000} hideProgressBar={false} newestOnTop closeOnClick pauseOnFocusLoss draggable pauseOnHover />
         <div className="content-wrapper">
           <Routes>
             <Route path="/" element={<Layout />} />

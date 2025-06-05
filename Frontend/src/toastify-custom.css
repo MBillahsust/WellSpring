@@ -1,0 +1,20 @@
+/* Toastify one-liner style override */
+.Toastify__toast {
+  min-width: 250px;
+  max-width: 400px;
+  font-size: 1rem;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  line-height: 1.5;
+  padding: 12px 20px;
+  border-radius: 8px;
+}
+
+.Toastify__toast-body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  display: flex;
+  align-items: center;
+} 

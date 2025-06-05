@@ -4,6 +4,7 @@ import { motion } from 'framer-motion';
 import axios from 'axios';
 import { UserContext } from '../../UserContext';
 import { jwtDecode } from 'jwt-decode';
+import { toast } from 'react-toastify';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
@@ -28,7 +29,7 @@ export default function Login() {
         password
       });
       setSuccess('Login successful! Redirecting...');
-      window.alert('Login successful!');
+      toast.success('Login successful!');
       console.log('Login token:', res.data.token);
       const decoded = jwtDecode(res.data.token);
       console.log('Decoded userId:', decoded.userId);
@@ -37,7 +38,7 @@ export default function Login() {
       setTimeout(() => navigate(redirectTo), 1000);
     } catch (err) {
       setError(err.response?.data?.error || 'Login failed');
-      window.alert('Login failed!');
+      toast.error('Login failed!');
       console.log('Login error:', err);
     } finally {
       setIsLoading(false);
