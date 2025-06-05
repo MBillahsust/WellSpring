@@ -1,15 +1,19 @@
-// prismaClient.js
-const { PrismaClient } = require('@prisma/client');
+const { PrismaClient } = require("@prisma/client");
 
-let prisma;
-
-if (process.env.NODE_ENV === 'production') {
-  prisma = new PrismaClient();
-} else {
-  if (!global.prisma) {
-    global.prisma = new PrismaClient();
+const prisma = new PrismaClient({
+  datasources: {
+    db: {
+      url: process.env.DATABASE_URL
+    }
+  },
+  __internal: {
+    engine: {
+      enableQueryLogging: false,
+      // disable prepared statements
+      enableEngineDebugMode: false,
+      maxPreparedStatements: 0
+    }
   }
-  prisma = global.prisma;
-}
+});
 
 module.exports = prisma;

@@ -19,6 +19,20 @@ model User {
   updatedAt DateTime @default(now()) @updatedAt @db.Timestamp(6)
 }
 
+
+
+model Assessments {
+  id               Int      @id @default(autoincrement())
+  userId           Int
+  assessmentName   String
+  assessmentResult String
+  assessmentScore  String
+  recommendation   String
+  takenAt          String
+}
+
+
+
 model ResearchQuestionnaire {
   id        Int      @id @default(autoincrement())
   email     String
@@ -86,13 +100,4 @@ model ResearchQuestionnaire {
 
 
 
-model Assessments {
-  id               Int      @id @default(autoincrement())
-  userId           Int
-  assessmentName   String
-  assessmentResult String
-  assessmentScore  String
-  recommendation   String
-  takenAt          String
-}
 
