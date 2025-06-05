@@ -93,7 +93,6 @@ model Assessments {
   assessmentResult String
   assessmentScore  String
   recommendation   String
-  takenAt          DateTime @default(now())
-
+  takenAt          String
 }
 

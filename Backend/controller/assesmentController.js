@@ -1,10 +1,15 @@
 const prisma = require("../db");
 
-// Store a new assessment
+// Remove all null bytes from a string
+const removeNullBytes = (str) => {
+  if (typeof str !== "string") return str;
+  return str.replace(/\0/g, "");
+};
+
 const store = async (req, res) => {
   try {
     const userId = req.userId;
-    const {
+    let {
       assessmentName,
       assessmentResult,
       assessmentScore,
@@ -12,12 +17,20 @@ const store = async (req, res) => {
       takenAt
     } = req.body;
 
-    
-
     if (!assessmentName || !assessmentResult || !assessmentScore || !recommendation || !takenAt) {
       return res.status(400).json({ error: "All fields are required" });
     }
 
+    assessmentName = removeNullBytes(assessmentName);
+    assessmentResult = removeNullBytes(assessmentResult);
+    assessmentScore = removeNullBytes(assessmentScore);
+    recommendation = removeNullBytes(recommendation);
+    takenAt = removeNullBytes(takenAt);
+
+    // Optional: further validation for takenAt (e.g., valid ISO date string)
+    if (isNaN(Date.parse(takenAt))) {
+      return res.status(400).json({ error: "takenAt must be a valid date string" });
+    }
 
     const newAssessment = await prisma.assessments.create({
       data: {
@@ -26,7 +39,7 @@ const store = async (req, res) => {
         assessmentResult,
         assessmentScore,
         recommendation,
-        takenAt: new Date(takenAt)
+        takenAt
       }
     });
 
@@ -40,7 +53,8 @@ const store = async (req, res) => {
 
 
 
-// Delete an assessment by ID
+
+
 const remove = async (req, res) => {
   try {
     const userId = req.userId;
