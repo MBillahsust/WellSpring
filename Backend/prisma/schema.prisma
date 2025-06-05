@@ -95,7 +95,5 @@ model Assessments {
   recommendation   String
   takenAt          DateTime @default(now())
 
-  @@index([userId])
-  @@map("Assessments")
 }
 

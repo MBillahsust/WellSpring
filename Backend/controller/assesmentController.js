@@ -8,13 +8,16 @@ const store = async (req, res) => {
       assessmentName,
       assessmentResult,
       assessmentScore,
-      assessmentRecommendation,
+      recommendation,
       takenAt
     } = req.body;
 
-    if (!assessmentName || !assessmentResult || !assessmentScore || !assessmentRecommendation || !takenAt) {
+    
+
+    if (!assessmentName || !assessmentResult || !assessmentScore || !recommendation || !takenAt) {
       return res.status(400).json({ error: "All fields are required" });
     }
+
 
     const newAssessment = await prisma.assessments.create({
       data: {
@@ -22,7 +25,7 @@ const store = async (req, res) => {
         assessmentName,
         assessmentResult,
         assessmentScore,
-        assessmentRecommendation,
+        recommendation,
         takenAt: new Date(takenAt)
       }
     });
@@ -33,6 +36,9 @@ const store = async (req, res) => {
     res.status(500).json({ error: "Internal Server Error" });
   }
 };
+
+
+
 
 // Delete an assessment by ID
 const remove = async (req, res) => {
