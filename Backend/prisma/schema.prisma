@@ -33,6 +33,22 @@ model Assessments {
 
 
 
+model MoodEntry {
+  id     Int    @id @default(autoincrement())
+  userId Int
+  mood   String
+  notes  String
+  time   String
+
+  @@map("MoodEntry")
+}
+
+
+
+
+
+
+
 model ResearchQuestionnaire {
   id        Int      @id @default(autoincrement())
   email     String
