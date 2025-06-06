@@ -12,10 +12,16 @@ Router.post("/SignUp", Controller.SignUp);
 Router.post("/Login", Controller.Login)
 Router.post("/research", ResearchController.submitResearch)
 
+
+// Assessment
 Router.post("/assessments", isLogin, assesmentController.store);
 Router.delete("/assessments/:id", isLogin, assesmentController.remove);
-Router.post("/addmood", isLogin, moodAndActivityController.addMood);
 
+
+// Mood
+Router.post("/addmood", isLogin, moodAndActivityController.addMood);
+Router.delete("/delmood/:id", isLogin, moodAndActivityController.deleteMoodById);
+Router.get("/getMood", isLogin, moodAndActivityController.getMoodByUser);
 
 
 

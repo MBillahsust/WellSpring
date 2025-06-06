@@ -85,6 +85,26 @@
 }
 ```
 
+---
+
+
+# Delete Mood
+
+**http://localhost:5004/mood/delmood/2**
+
+**Header**
+"Authorization" : "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjMsImlhdCI6MTc0OTIyNTE1OCwiZXhwIjoxNzQ5ODI5OTU4fQ.ynbnzUJrPyEnNLh_EVdNA8kJlPbK-ufC4oBRSbKRo6A"
+
+
+
+---
+
+
+
+
+
+
+
 
 
 
