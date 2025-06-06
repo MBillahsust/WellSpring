@@ -2,6 +2,7 @@ import React, { useState, useContext, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { UserContext } from '../../UserContext';
 import axios from 'axios';
+import { FaTrash } from 'react-icons/fa';
 
 export default function MoodTracking() {
   const [mood, setMood] = useState('');
@@ -32,11 +33,16 @@ export default function MoodTracking() {
             ? res.data
             : (res.data.moods || []);
           setMoodEntries(
-            moodArray.map(entry => ({
-              mood: entry.mood,
-              notes: entry.notes,
-              date: new Date(entry.time).toLocaleDateString()
-            }))
+            moodArray.map(entry => {
+              const d = new Date(entry.time);
+              return {
+                id: entry.id,
+                mood: entry.mood,
+                notes: entry.notes,
+                date: d.toLocaleDateString(),
+                time: d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+              };
+            })
           );
         } catch (err) {
           console.log('Error fetching mood history:', err);
@@ -79,11 +85,16 @@ export default function MoodTracking() {
           ? res.data
           : (res.data.moods || []);
         setMoodEntries(
-          moodArray.map(entry => ({
-            mood: entry.mood,
-            notes: entry.notes,
-            date: new Date(entry.time).toLocaleDateString()
-          }))
+          moodArray.map(entry => {
+            const d = new Date(entry.time);
+            return {
+              id: entry.id,
+              mood: entry.mood,
+              notes: entry.notes,
+              date: d.toLocaleDateString(),
+              time: d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+            };
+          })
         );
         setMood('');
         setNotes('');
@@ -94,16 +105,60 @@ export default function MoodTracking() {
     }
   };
 
+  const handleDeleteMood = async (moodId) => {
+    if (!window.confirm('Are you sure you want to delete this mood log?')) return;
+    try {
+      await axios.delete(
+        `${process.env.REACT_APP_BACKEND_URL}/mood/delmood/${moodId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${userInfo.token}`
+          }
+        }
+      );
+      // Refetch mood history after delete
+      const res = await axios.get(
+        `${process.env.REACT_APP_BACKEND_URL}/mood/getMood/`,
+        {
+          headers: {
+            Authorization: `Bearer ${userInfo.token}`
+          }
+        }
+      );
+      const moodArray = Array.isArray(res.data)
+        ? res.data
+        : (res.data.moods || []);
+      setMoodEntries(
+        moodArray.map(entry => {
+          const d = new Date(entry.time);
+          return {
+            id: entry.id,
+            mood: entry.mood,
+            notes: entry.notes,
+            date: d.toLocaleDateString(),
+            time: d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+          };
+        })
+      );
+    } catch (err) {
+      console.log('Error deleting mood log:', err);
+      alert('Failed to delete mood log. Please try again.');
+    }
+  };
+
   return (
-    <section className="w-full max-w-3xl mx-auto p-5 box-border">
-      <h2 className="text-3xl font-bold mb-5 text-center">Mood Tracking</h2>
-      <div className="flex flex-col md:flex-row gap-8">
-        <div className="bg-gray-50 p-6 rounded-lg shadow-md mb-0 flex-1">
-          <h3 className="text-xl font-semibold mb-4">How are you feeling today?</h3>
+    <section className="w-full min-h-screen bg-gradient-to-br from-indigo-50 via-white to-blue-100 py-10 px-2 md:px-0 flex flex-col items-center">
+      <h2 className="text-4xl font-extrabold mb-2 text-center text-indigo-700 tracking-tight drop-shadow">Mood Tracking</h2>
+      <p className="text-lg text-gray-500 mb-8 text-center max-w-2xl">Log your mood and keep track of your emotional well-being. Review your mood history to spot trends and patterns over time.</p>
+      {/* Mood Entry Card and Mood History Card side by side */}
+      <div className="flex flex-col md:flex-row gap-10 w-full max-w-5xl items-start">
+        {/* Mood Entry Card */}
+        <div className="bg-white p-5 rounded-2xl shadow-xl border border-indigo-100 w-full max-w-sm flex flex-col items-stretch md:mb-0 mb-8">
+          <h3 className="text-2xl font-semibold mb-3 text-indigo-600 text-center">How are you feeling now?</h3>
           <select
             value={mood}
             onChange={(e) => setMood(e.target.value)}
-            className="w-full mt-2 p-2 rounded border border-gray-300 text-base"
+            className="w-full p-2 rounded-lg border border-gray-300 text-base focus:ring-2 focus:ring-indigo-400 focus:border-indigo-400 transition mb-2"
           >
             <option value="" disabled>Select your mood...</option>
             <option value="happy">Happy</option>
@@ -136,31 +191,54 @@ export default function MoodTracking() {
             value={notes}
             onChange={(e) => setNotes(e.target.value)}
             placeholder="Add notes about your mood..."
-            className="w-full mt-5 p-2 rounded border border-gray-300 text-base min-h-[100px] resize-y"
+            className="w-full p-2 rounded-lg border border-gray-300 text-base min-h-[70px] resize-y focus:ring-2 focus:ring-indigo-400 focus:border-indigo-400 transition mb-2"
           ></textarea>
-          <button onClick={handleMoodSubmit} className="mt-5 w-full bg-indigo-500 hover:bg-indigo-600 text-white font-semibold py-2 px-4 rounded transition">Log Mood</button>
+          <button onClick={handleMoodSubmit} className="w-full bg-indigo-500 hover:bg-indigo-600 text-white font-semibold py-2 px-4 rounded-lg transition text-base shadow-md">Log Mood</button>
         </div>
-        <div className="mt-8 md:mt-0 flex-1">
-          <h3 className="text-xl font-semibold mb-4">Your Mood History</h3>
+        {/* Mood History Card */}
+        <div className="bg-white p-8 rounded-2xl shadow-xl flex-1 border border-indigo-100 min-w-[420px] max-w-3xl mx-auto">
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-4 gap-2">
+            <div>
+              <h3 className="text-2xl font-semibold text-indigo-600">Mood History</h3>
+              <p className="text-gray-500 text-sm">Your recent mood logs</p>
+            </div>
+          </div>
           <div className="overflow-x-auto">
-            <table className="w-full bg-white rounded-lg shadow-md">
-              <thead>
-                <tr>
-                  <th className="px-4 py-2 text-left bg-gray-100">Date</th>
-                  <th className="px-4 py-2 text-left bg-gray-100">Mood</th>
-                  <th className="px-4 py-2 text-left bg-gray-100">Notes</th>
-                </tr>
-              </thead>
-              <tbody>
-                {moodEntries.map((entry, index) => (
-                  <tr key={index} className="bg-gray-200 even:bg-gray-100">
-                    <td className="px-4 py-2 rounded-l">{entry.date}</td>
-                    <td className="px-4 py-2">{entry.mood}</td>
-                    <td className="px-4 py-2 rounded-r">{entry.notes}</td>
+            {moodEntries.length === 0 ? (
+              <div className="text-center text-gray-400 py-12 text-lg">No mood logs yet. Start by logging your mood!</div>
+            ) : (
+              <table className="w-full bg-white rounded-lg shadow-md border border-gray-100">
+                <thead className="sticky top-0 z-10 bg-indigo-50">
+                  <tr>
+                    <th className="px-4 py-3 text-left text-indigo-700 font-semibold">Date & Time</th>
+                    <th className="px-4 py-3 text-left text-indigo-700 font-semibold">Mood</th>
+                    <th className="px-4 py-3 text-left text-indigo-700 font-semibold max-w-xs">Notes</th>
+                    <th className="px-4 py-3 text-center text-indigo-700 font-semibold">Delete</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {moodEntries.map((entry, index) => (
+                    <tr
+                      key={entry.id || index}
+                      className="bg-white even:bg-indigo-50 hover:bg-indigo-100 transition-all duration-200 group"
+                    >
+                      <td className="px-4 py-3 rounded-l-lg text-gray-700 font-medium align-middle whitespace-nowrap">{entry.date} {entry.time || ''}</td>
+                      <td className="px-4 py-3 text-gray-600 align-middle capitalize">{entry.mood}</td>
+                      <td className="px-4 py-3 rounded-r-lg text-gray-500 align-middle max-w-xs overflow-x-auto whitespace-nowrap scrollbar-thin scrollbar-thumb-indigo-200 scrollbar-track-indigo-50" style={{maxWidth:'180px'}} title={entry.notes}>{entry.notes}</td>
+                      <td className="px-4 py-3 text-center align-middle">
+                        <button
+                          onClick={() => handleDeleteMood(entry.id)}
+                          className="inline-flex items-center justify-center w-9 h-9 rounded-full bg-red-50 hover:bg-red-100 text-red-500 hover:text-red-700 transition group-hover:scale-110 shadow-sm border border-red-100"
+                          title="Delete this mood log"
+                        >
+                          <FaTrash className="w-5 h-5" />
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            )}
           </div>
         </div>
       </div>
