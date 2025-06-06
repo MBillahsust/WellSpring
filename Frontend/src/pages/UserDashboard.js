@@ -1,7 +1,9 @@
 import React, { useState, useEffect, useContext } from 'react';
+import { FaTimes } from 'react-icons/fa';
+
 import { 
   FaEdit, 
-  FaTimes, 
+  FaTrash, 
   FaUser, 
   FaEnvelope, 
   FaPhone, 
@@ -16,7 +18,12 @@ import {
   FaBalanceScale,
   FaClock,
   FaCheck,
-  FaTasks
+  FaTasks,
+  FaUsers,
+  FaBolt,
+  FaClipboardCheck,
+  FaSync,
+  FaShieldAlt
 } from 'react-icons/fa';
 import { UserContext } from '../UserContext';
 import axios from 'axios';
@@ -189,16 +196,18 @@ const UserDashboard = () => {
         let arr = Array.isArray(res.data) ? res.data : (res.data.assessments || []);
         if (!Array.isArray(arr)) arr = [];
         setAssessments(arr.map(a => {
-          // Icon/emoji mapping by assessment type/name
+          // Exact icon mapping as in assessment pages
           let icon = null;
           const typeName = (a.assessmentName || a.title || a.type || a.assessmentType || '').toLowerCase();
-          if (typeName.includes('depression')) icon = <FaBrain className="w-6 h-6 text-blue-500" title="Depression" />;
-          else if (typeName.includes('anxiety')) icon = <FaHeartbeat className="w-6 h-6 text-red-500" title="Anxiety" />;
-          else if (typeName.includes('sleep')) icon = <FaBed className="w-6 h-6 text-purple-500" title="Sleep" />;
-          else if (typeName.includes('wellbeing')) icon = <FaSmile className="w-6 h-6 text-yellow-500" title="Wellbeing" />;
-          else if (typeName.includes('activity')) icon = <FaRunning className="w-6 h-6 text-green-500" title="Activity" />;
-          else if (typeName.includes('balance')) icon = <FaBalanceScale className="w-6 h-6 text-teal-500" title="Work-Life Balance" />;
-          else icon = <FaTasks className="w-6 h-6 text-gray-400" title="Assessment" />;
+          if (typeName.includes('anxiety') && !typeName.includes('social')) icon = <FaHeartbeat className="w-7 h-7 text-indigo-500" title="Anxiety" />;
+          else if (typeName.includes('depression')) icon = <FaBrain className="w-7 h-7 text-indigo-500" title="Depression" />;
+          else if (typeName.includes('stress')) icon = <FaBalanceScale className="w-7 h-7 text-indigo-500" title="Stress" />;
+          else if (typeName.includes('social')) icon = <FaUsers className="w-7 h-7 text-indigo-500" title="Social Anxiety" />;
+          else if (typeName.includes('panic')) icon = <FaBolt className="w-7 h-7 text-indigo-500" title="Panic" />;
+          else if (typeName.includes('adhd')) icon = <FaClipboardCheck className="w-7 h-7 text-indigo-500" title="ADHD" />;
+          else if (typeName.includes('ocd')) icon = <FaSync className="w-7 h-7 text-indigo-500" title="OCD" />;
+          else if (typeName.includes('ptsd')) icon = <FaShieldAlt className="w-7 h-7 text-indigo-500" title="PTSD" />;
+          else icon = <FaTasks className="w-7 h-7 text-indigo-400" title="Assessment" />;
 
           // Date and time formatting
           let dateStr = '-';
@@ -233,9 +242,57 @@ const UserDashboard = () => {
     fetchAssessments();
   }, [userInfo]);
 
-  const handleDeleteAssessment = (id) => {
-    // Handle deletion logic here
-    console.log('Delete assessment:', id);
+  const handleDeleteAssessment = async (id) => {
+    if (!window.confirm('Are you sure you want to delete this assessment?')) return;
+    try {
+      await axios.delete(
+        `${BACKEND_URL}/addassesment/assessments/${id}`,
+        { headers: { Authorization: `Bearer ${userInfo.token}` } }
+      );
+      // Refetch assessments after delete
+      const res = await axios.get(
+        `${BACKEND_URL}/addassesment/getassessments`,
+        { headers: { Authorization: `Bearer ${userInfo.token}` } }
+      );
+      let arr = Array.isArray(res.data) ? res.data : (res.data.assessments || []);
+      if (!Array.isArray(arr)) arr = [];
+      setAssessments(arr.map(a => {
+        // Exact icon mapping as in assessment pages
+        let icon = null;
+        const typeName = (a.assessmentName || a.title || a.type || a.assessmentType || '').toLowerCase();
+        if (typeName.includes('anxiety') && !typeName.includes('social')) icon = <FaHeartbeat className="w-7 h-7 text-indigo-500" title="Anxiety" />;
+        else if (typeName.includes('depression')) icon = <FaBrain className="w-7 h-7 text-indigo-500" title="Depression" />;
+        else if (typeName.includes('stress')) icon = <FaBalanceScale className="w-7 h-7 text-indigo-500" title="Stress" />;
+        else if (typeName.includes('social')) icon = <FaUsers className="w-7 h-7 text-indigo-500" title="Social Anxiety" />;
+        else if (typeName.includes('panic')) icon = <FaBolt className="w-7 h-7 text-indigo-500" title="Panic" />;
+        else if (typeName.includes('adhd')) icon = <FaClipboardCheck className="w-7 h-7 text-indigo-500" title="ADHD" />;
+        else if (typeName.includes('ocd')) icon = <FaSync className="w-7 h-7 text-indigo-500" title="OCD" />;
+        else if (typeName.includes('ptsd')) icon = <FaShieldAlt className="w-7 h-7 text-indigo-500" title="PTSD" />;
+        else icon = <FaTasks className="w-7 h-7 text-indigo-400" title="Assessment" />;
+        // Date and time formatting
+        let dateStr = '-';
+        let timeStr = '';
+        if (a.takenAt || a.createdAt) {
+          const d = new Date(a.takenAt || a.createdAt);
+          dateStr = d.toLocaleDateString();
+          timeStr = d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        } else if (a.date) {
+          dateStr = a.date;
+        }
+        return {
+          id: a.id,
+          type: a.assessmentName || a.title || a.type || a.assessmentType || 'Assessment',
+          icon,
+          date: dateStr,
+          time: timeStr,
+          score: a.assessmentScore !== undefined ? (a.assessmentMaxScore ? `${a.assessmentScore} / ${a.assessmentMaxScore}` : a.assessmentScore) : (a.score || '-'),
+          severity: a.assessmentResult || a.severity || '-',
+          recommendations: a.recommendation || a.assessmentRecommendation || a.recommendations || '-'
+        };
+      }));
+    } catch (err) {
+      alert('Failed to delete assessment. Please try again.');
+    }
   };
 
   // Calculate average mood score
@@ -299,8 +356,8 @@ const UserDashboard = () => {
     <div className="min-h-screen bg-gray-50 py-8">
       <div className="max-w-7xl mx-auto px-4">
         {/* User Information Card */}
-        <div className="bg-white rounded-xl shadow-md overflow-hidden mb-8">
-          <div className="bg-gradient-to-r from-teal-500 to-emerald-500 p-6">
+        <div className="bg-white rounded-xl shadow-md overflow-hidden mb-8 border border-indigo-100">
+          <div className="bg-gradient-to-r from-indigo-500 to-blue-500 p-6">
             <div className="flex justify-between items-start">
               <div className="flex items-center space-x-4">
                 <div className="w-20 h-20 bg-white/30 rounded-xl flex items-center justify-center backdrop-blur-sm">
@@ -328,28 +385,28 @@ const UserDashboard = () => {
               <div className="col-span-4 text-red-600 font-semibold">Failed to load user profile. Check console for details.</div>
             )}
             <div className="flex items-center space-x-3">
-              <FaEnvelope className="text-teal-500 w-5 h-5" />
+              <FaEnvelope className="text-indigo-500 w-5 h-5" />
               <div>
                 <p className="text-sm text-gray-500">Email</p>
                 <p className="text-gray-700">{loadingUser ? <span className="h-4 w-24 bg-gray-100 rounded animate-pulse inline-block"></span> : userData?.email || '-'}</p>
               </div>
             </div>
             <div className="flex items-center space-x-3">
-              <FaLeaf className="text-teal-500 w-5 h-5" />
+              <FaLeaf className="text-indigo-500 w-5 h-5" />
               <div>
                 <p className="text-sm text-gray-500">Weight</p>
                 <p className="text-gray-700">{loadingUser ? <span className="h-4 w-10 bg-gray-100 rounded animate-pulse inline-block"></span> : userData?.weight ? userData.weight + ' kg' : '-'}</p>
               </div>
             </div>
             <div className="flex items-center space-x-3">
-              <FaLeaf className="text-teal-500 w-5 h-5" />
+              <FaLeaf className="text-indigo-500 w-5 h-5" />
               <div>
                 <p className="text-sm text-gray-500">Age</p>
                 <p className="text-gray-700">{loadingUser ? <span className="h-4 w-10 bg-gray-100 rounded animate-pulse inline-block"></span> : userData?.age ? userData.age : '-'}</p>
               </div>
             </div>
             <div className="flex items-center space-x-3">
-              <FaCalendarAlt className="text-teal-500 w-5 h-5" />
+              <FaCalendarAlt className="text-indigo-500 w-5 h-5" />
               <div>
                 <p className="text-sm text-gray-500">Joined</p>
                 <p className="text-gray-700">{loadingUser ? <span className="h-4 w-16 bg-gray-100 rounded animate-pulse inline-block"></span> : userData?.createdAt ? new Date(userData.createdAt).toLocaleDateString() : '-'}</p>
@@ -378,9 +435,10 @@ const UserDashboard = () => {
                       </div>
                       <button 
                         onClick={() => handleDeleteAssessment(assessment.id)}
-                        className="w-8 h-8 flex items-center justify-center bg-red-100 hover:bg-red-200 text-red-600 rounded-full transition-colors"
+                        className="w-9 h-9 flex items-center justify-center bg-indigo-50 hover:bg-indigo-200 text-indigo-500 hover:text-indigo-700 rounded-full transition group-hover:scale-110 shadow-sm border border-indigo-100"
+                        title="Delete this assessment"
                       >
-                        <FaTimes className="w-4 h-4" />
+                        <FaTrash className="w-5 h-5" />
                       </button>
                     </div>
                     <div className="grid grid-cols-1 gap-4">
@@ -394,9 +452,22 @@ const UserDashboard = () => {
                       </div>
                     </div>
                     <div className="mt-4">
-                      <p className="text-sm text-gray-500">Recommendations</p>
-                      <div className="text-gray-700 max-w-xs overflow-x-auto whitespace-nowrap scrollbar-thin scrollbar-thumb-indigo-200 scrollbar-track-indigo-50" style={{maxWidth:'180px'}} title={assessment.recommendations}>{assessment.recommendations}</div>
-                    </div>
+  <p className="text-sm text-gray-500">Recommendations</p>
+  <div
+    className="text-gray-700 text-sm max-w-xs overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-indigo-200 scrollbar-track-indigo-50"
+    style={{
+      maxHeight: '3rem',        // allows 2 lines max (1.5rem * 2)
+      lineHeight: '1.5rem',     // adjust to your font size
+      maxWidth: '180px',        // width constraint
+      whiteSpace: 'normal',     // allow line wrapping
+      wordBreak: 'break-word',  // prevent overflow from long words
+    }}
+    title={assessment.recommendations}
+  >
+    {assessment.recommendations}
+  </div>
+</div>
+
                   </div>
                 </div>
               ))
