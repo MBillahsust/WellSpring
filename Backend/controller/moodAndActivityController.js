@@ -81,4 +81,97 @@ const getMoodByUser = async (req, res) => {
   }
 };
 
-module.exports = { addMood, getMoodByUser, deleteMoodById };
+
+
+
+// Add a new activity entry
+const addActivity = async (req, res) => {
+  try {
+    const userId = req.userId;
+    const { activity, notes, time } = req.body;
+
+    if (!activity || !notes || !time) {
+      return res.status(400).json({ error: "All fields are required" });
+    }
+
+    const newActivity = await prisma.activityEntry.create({
+      data: {
+        userId,
+        activity,
+        notes,
+        time
+      }
+    });
+
+    res.status(201).json({ message: "Activity entry added successfully", activity: newActivity });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
+
+
+
+
+
+// Get all activity entries for the logged-in user
+const getActivityByUser = async (req, res) => {
+  try {
+    const userId = req.userId;
+
+    const activities = await prisma.activityEntry.findMany({
+      where: { userId },
+      orderBy: { id: "desc" }
+    });
+
+    res.status(200).json({ activities });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
+
+
+
+
+
+// Delete activity by ID
+const deleteActivityById = async (req, res) => {
+  try {
+    const userId = req.userId;
+    const activityId = parseInt(req.params.id);
+
+    if (isNaN(activityId)) {
+      return res.status(400).json({ error: "Invalid activity id" });
+    }
+
+    const existingActivity = await prisma.activityEntry.findUnique({
+      where: { id: activityId }
+    });
+
+    if (!existingActivity || existingActivity.userId !== userId) {
+      return res.status(404).json({ error: "Activity entry not found or access denied" });
+    }
+
+    await prisma.activityEntry.delete({
+      where: { id: activityId }
+    });
+
+    res.status(200).json({ message: "Activity entry deleted successfully" });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
+module.exports = {
+  addMood,
+  getMoodByUser,
+  deleteMoodById,
+  addActivity,
+  getActivityByUser,
+  deleteActivityById
+};
+

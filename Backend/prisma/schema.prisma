@@ -44,6 +44,16 @@ model MoodEntry {
 }
 
 
+model ActivityEntry {
+  id       Int    @id @default(autoincrement())
+  userId   Int
+  activity String
+  notes    String
+  time     String
+
+  @@map("ActivityEntry")
+}
+
 
 
 

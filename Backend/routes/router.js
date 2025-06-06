@@ -24,5 +24,12 @@ Router.delete("/delmood/:id", isLogin, moodAndActivityController.deleteMoodById)
 Router.get("/getMood", isLogin, moodAndActivityController.getMoodByUser);
 
 
+// Activity
+Router.post("/addactivity", isLogin, moodAndActivityController.addActivity);
+Router.delete("/delactivity/:id", isLogin, moodAndActivityController.deleteActivityById);
+Router.get("/getActivity", isLogin, moodAndActivityController.getActivityByUser);
+
+
+
 
 module.exports = Router;

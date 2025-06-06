@@ -31,7 +31,7 @@
 
 ---
 
-# Add Assesment result 
+# Add Assesment result : POST
 
 **http://localhost:5004/addassesment/assessments**
 
@@ -53,7 +53,7 @@
 ---
 
 
-# Delete Assessment
+# Delete Assessment : DELETE
 
 **http://localhost:5004/addassesment/assessments/109**
 
@@ -67,7 +67,7 @@
 
 
 
-# Add Mood 
+# Add Mood  : Post
 
 **http://localhost:5004/mood/addmood/**
 
@@ -88,7 +88,7 @@
 ---
 
 
-# Delete Mood
+# Delete Mood :DELETE
 
 **http://localhost:5004/mood/delmood/2**
 
@@ -100,13 +100,76 @@
 ---
 
 
+# GEt mood my User :GET
+
+**http://localhost:5004/mood/getMood/**
+
+**Header**
+"Authorization" : "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjMsImlhdCI6MTc0OTIyNTE1OCwiZXhwIjoxNzQ5ODI5OTU4fQ.ynbnzUJrPyEnNLh_EVdNA8kJlPbK-ufC4oBRSbKRo6A"
+
+
+---
 
 
 
 
 
 
+# Add activity : Post 
 
+**http://localhost:5004/activity/addactivity/**
+
+**Header**
+
+Authorization : "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjMsImlhdCI6MTc0OTIyNTE1OCwiZXhwIjoxNzQ5ODI5OTU4fQ.ynbnzUJrPyEnNLh_EVdNA8kJlPbK-ufC4oBRSbKRo6A"
+
+
+
+```
+{
+  "activity": "Happy",
+  "notes": "Had a great day at work",
+  "time": "2025-06-07T18:30:00"
+}
+
+```
+
+
+---
+
+
+# Delete Activity : delete
+
+**http://localhost:5004/activity/delactivity/2**
+
+
+**Header**
+
+"Autheraztion" : "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjMsImlhdCI6MTc0OTIyNTE1OCwiZXhwIjoxNzQ5ODI5OTU4fQ.ynbnzUJrPyEnNLh_EVdNA8kJlPbK-ufC4oBRSbKRo6A"
+
+
+---
+
+
+
+# Get Activity By User 
+
+
+**http://localhost:5004/activity/getActivity/**
+
+
+**Header**
+
+Authorization : "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjMsImlhdCI6MTc0OTIyNTE1OCwiZXhwIjoxNzQ5ODI5OTU4fQ.ynbnzUJrPyEnNLh_EVdNA8kJlPbK-ufC4oBRSbKRo6A"
+
+
+
+
+---
+
+
+
+ 
 
 
 
