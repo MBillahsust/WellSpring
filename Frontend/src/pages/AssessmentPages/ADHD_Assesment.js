@@ -1,4 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
+import axios from 'axios';
+import { UserContext } from '../../UserContext';
 import '../../Allcss/AssessmentPages/Assessment.css';
 
 const asrsQuestions = [
@@ -34,6 +37,10 @@ export default function ADHD_Assesment() {
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [answers, setAnswers] = useState([]);
   const [result, setResult] = useState(null);
+  const [saveStatus, setSaveStatus] = useState(null);
+  const { userInfo } = useContext(UserContext);
+  const navigate = useNavigate();
+  const location = useLocation();
 
   const handleAnswer = (value) => {
     setAnswers([...answers.slice(0, currentQuestion), value]);
@@ -80,6 +87,35 @@ export default function ADHD_Assesment() {
 
   const progress = ((currentQuestion + 1) / asrsQuestions.length) * 100;
 
+  const handleSaveScore = async () => {
+    if (!userInfo || !userInfo.token) {
+      navigate('/login', { state: { from: location.pathname } });
+      return;
+    }
+    setSaveStatus('saving');
+    const payload = {
+      assessmentName: 'Adult ADHD Self-Report Scale (ASRS-v1.1)',
+      assessmentResult: result.severity,
+      assessmentScore: `Total: ${result.totalScore} / ${result.maxScore} | Inattention: ${result.inattentionScore} / 24 | Hyperactivity/Impulsivity: ${result.hyperImpulsivityScore} / 48`,
+      recommendation: result.recommendation,
+      takenAt: new Date().toISOString(),
+    };
+    try {
+      await axios.post(
+        `${process.env.REACT_APP_BACKEND_URL}/addassesment/assessments`,
+        payload,
+        {
+          headers: {
+            Authorization: `Bearer ${userInfo.token}`
+          }
+        }
+      );
+      setSaveStatus('success');
+    } catch (err) {
+      setSaveStatus('error');
+    }
+  };
+
   return (
     <div className="assessment-container">
       <div className="assessment-card">
@@ -109,6 +145,12 @@ export default function ADHD_Assesment() {
                 Note: This is a screening tool and not a diagnostic instrument. 
                 Please consult with a mental health professional for a proper evaluation.
               </p>
+              <button className="next-button" onClick={handleSaveScore} style={{marginTop: '1rem'}}>
+                Save Score
+              </button>
+              {saveStatus === 'saving' && <p style={{color: '#6366f1'}}>Saving...</p>}
+              {saveStatus === 'success' && <p style={{color: 'green'}}>Score saved successfully!</p>}
+              {saveStatus === 'error' && <p style={{color: 'red'}}>Failed to save score. Please try again.</p>}
             </div>
           ) : (
             <>
