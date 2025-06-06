@@ -11,6 +11,9 @@ export default function MoodTracking() {
   const { userInfo } = useContext(UserContext);
   const navigate = useNavigate();
   const location = useLocation();
+  const [visibleCount, setVisibleCount] = useState(8);
+  const [page, setPage] = useState(0);
+  const pageSize = 8;
 
   useEffect(() => {
     if (!userInfo || !userInfo.token) {
@@ -207,37 +210,55 @@ export default function MoodTracking() {
             {moodEntries.length === 0 ? (
               <div className="text-center text-gray-400 py-12 text-lg">No mood logs yet. Start by logging your mood!</div>
             ) : (
-              <table className="w-full bg-white rounded-lg shadow-md border border-gray-100">
-                <thead className="sticky top-0 z-10 bg-indigo-50">
-                  <tr>
-                    <th className="px-4 py-3 text-left text-indigo-700 font-semibold">Date & Time</th>
-                    <th className="px-4 py-3 text-left text-indigo-700 font-semibold">Mood</th>
-                    <th className="px-4 py-3 text-left text-indigo-700 font-semibold max-w-xs">Notes</th>
-                    <th className="px-4 py-3 text-center text-indigo-700 font-semibold">Delete</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {moodEntries.map((entry, index) => (
-                    <tr
-                      key={entry.id || index}
-                      className="bg-white even:bg-indigo-50 hover:bg-indigo-100 transition-all duration-200 group"
-                    >
-                      <td className="px-4 py-3 rounded-l-lg text-gray-700 font-medium align-middle whitespace-nowrap">{entry.date} {entry.time || ''}</td>
-                      <td className="px-4 py-3 text-gray-600 align-middle capitalize">{entry.mood}</td>
-                      <td className="px-4 py-3 rounded-r-lg text-gray-500 align-middle max-w-xs overflow-x-auto whitespace-nowrap scrollbar-thin scrollbar-thumb-indigo-200 scrollbar-track-indigo-50" style={{maxWidth:'180px'}} title={entry.notes}>{entry.notes}</td>
-                      <td className="px-4 py-3 text-center align-middle">
-                        <button
-                          onClick={() => handleDeleteMood(entry.id)}
-                          className="inline-flex items-center justify-center w-9 h-9 rounded-full bg-red-50 hover:bg-red-100 text-red-500 hover:text-red-700 transition group-hover:scale-110 shadow-sm border border-red-100"
-                          title="Delete this mood log"
-                        >
-                          <FaTrash className="w-5 h-5" />
-                        </button>
-                      </td>
+              <>
+                <table className="w-full bg-white rounded-lg shadow-md border border-gray-100">
+                  <thead className="sticky top-0 z-10 bg-indigo-50">
+                    <tr>
+                      <th className="px-4 py-3 text-left text-indigo-700 font-semibold">Date & Time</th>
+                      <th className="px-4 py-3 text-left text-indigo-700 font-semibold">Mood</th>
+                      <th className="px-4 py-3 text-left text-indigo-700 font-semibold max-w-xs">Notes</th>
+                      <th className="px-4 py-3 text-center text-indigo-700 font-semibold">Delete</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
+                  </thead>
+                  <tbody>
+                    {moodEntries.slice(page * pageSize, (page + 1) * pageSize).map((entry, index) => (
+                      <tr
+                        key={entry.id || index}
+                        className="bg-white even:bg-indigo-50 hover:bg-indigo-100 transition-all duration-200 group"
+                      >
+                        <td className="px-4 py-3 rounded-l-lg text-gray-700 font-medium align-middle whitespace-nowrap">{entry.date} {entry.time || ''}</td>
+                        <td className="px-4 py-3 text-gray-600 align-middle capitalize">{entry.mood}</td>
+                        <td className="px-4 py-3 rounded-r-lg text-gray-500 align-middle max-w-xs overflow-x-auto whitespace-nowrap scrollbar-thin scrollbar-thumb-indigo-200 scrollbar-track-indigo-50" style={{maxWidth:'180px'}} title={entry.notes}>{entry.notes}</td>
+                        <td className="px-4 py-3 text-center align-middle">
+                          <button
+                            onClick={() => handleDeleteMood(entry.id)}
+                            className="inline-flex items-center justify-center w-9 h-9 rounded-full bg-red-50 hover:bg-red-100 text-red-500 hover:text-red-700 transition group-hover:scale-110 shadow-sm border border-red-100"
+                            title="Delete this mood log"
+                          >
+                            <FaTrash className="w-5 h-5" />
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+                <div className="flex justify-between mt-4">
+                  <button
+                    onClick={() => setPage(page - 1)}
+                    className="px-6 py-2 bg-indigo-100 hover:bg-indigo-200 text-indigo-700 font-semibold rounded-lg shadow-sm transition disabled:opacity-50"
+                    disabled={page === 0}
+                  >
+                    Previous
+                  </button>
+                  <button
+                    onClick={() => setPage(page + 1)}
+                    className="px-6 py-2 bg-indigo-100 hover:bg-indigo-200 text-indigo-700 font-semibold rounded-lg shadow-sm transition disabled:opacity-50"
+                    disabled={(page + 1) * pageSize >= moodEntries.length}
+                  >
+                    Next
+                  </button>
+                </div>
+              </>
             )}
           </div>
         </div>
