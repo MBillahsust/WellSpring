@@ -84,4 +84,24 @@ const remove = async (req, res) => {
   }
 };
 
-module.exports = { store, remove };
+
+// Get all assessments for the logged-in user
+const getAssessments = async (req, res) => {
+  try {
+    const userId = req.userId;
+
+    const assessments = await prisma.assessments.findMany({
+      where: { userId },
+      orderBy: { id: "desc" } // optional: latest first
+    });
+
+    res.status(200).json({ assessments });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
+
+
+module.exports = { store, remove, getAssessments };

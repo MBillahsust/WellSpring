@@ -16,6 +16,7 @@ Router.post("/research", ResearchController.submitResearch)
 // Assessment
 Router.post("/assessments", isLogin, assesmentController.store);
 Router.delete("/assessments/:id", isLogin, assesmentController.remove);
+Router.get("/getassessments", isLogin, assesmentController.getAssessments);
 
 
 // Mood
@@ -28,6 +29,9 @@ Router.get("/getMood", isLogin, moodAndActivityController.getMoodByUser);
 Router.post("/addactivity", isLogin, moodAndActivityController.addActivity);
 Router.delete("/delactivity/:id", isLogin, moodAndActivityController.deleteActivityById);
 Router.get("/getActivity", isLogin, moodAndActivityController.getActivityByUser);
+
+
+
 
 
 

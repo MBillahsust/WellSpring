@@ -67,6 +67,23 @@
 
 
 
+
+# Get assesment by User : GET
+
+**http://localhost:5004/addassesment/getassessments**
+
+**Header**
+
+Authorization : Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjMsImlhdCI6MTc0OTIyNTE1OCwiZXhwIjoxNzQ5ODI5OTU4fQ.ynbnzUJrPyEnNLh_EVdNA8kJlPbK-ufC4oBRSbKRo6A
+
+
+
+
+---
+
+
+
+
 # Add Mood  : Post
 
 **http://localhost:5004/mood/addmood/**
@@ -170,6 +187,14 @@ Authorization : "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjMsIml
 
 
  
+
+
+
+
+
+
+
+
 
 
 
