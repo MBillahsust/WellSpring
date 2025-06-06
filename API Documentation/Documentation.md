@@ -31,6 +31,26 @@
 
 ---
 
+
+
+
+# Get User Info : GET
+
+**http://localhost:5004/auth/User**
+
+
+
+"Authorization" : "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjMsImlhdCI6MTc0OTIyNTE1OCwiZXhwIjoxNzQ5ODI5OTU4fQ.ynbnzUJrPyEnNLh_EVdNA8kJlPbK-ufC4oBRSbKRo6A"
+
+
+
+---
+
+
+
+
+
+
 # Add Assesment result : POST
 
 **http://localhost:5004/addassesment/assessments**

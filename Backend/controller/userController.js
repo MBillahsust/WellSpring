@@ -72,7 +72,37 @@ const Login = async (req, res) => {
       };
 
 
+// Get the logged-in user's information
+const getUserInfo = async (req, res) => {
+  try {
+    const userId = req.userId;
+
+    const user = await prisma.user.findUnique({
+      where: { id: userId },
+      select: {
+        id: true,
+        email: true,
+        name: true,
+        age: true,
+        weight: true,
+        createdAt: true,
+        updatedAt: true
+      }
+    });
+
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    res.status(200).json({ user });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
 
 
 
-module.exports = { SignUp, Login };
+
+
+module.exports = { SignUp, Login, getUserInfo };

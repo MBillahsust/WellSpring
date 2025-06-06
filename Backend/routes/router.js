@@ -8,9 +8,13 @@ const isLogin = require("../middlewares/middlewares");
 
 const Router = express.Router();
 
+
+// Authenication
 Router.post("/SignUp", Controller.SignUp);
 Router.post("/Login", Controller.Login)
-Router.post("/research", ResearchController.submitResearch)
+Router.get("/User", isLogin, Controller.getUserInfo);
+
+
 
 
 // Assessment
@@ -34,6 +38,7 @@ Router.get("/getActivity", isLogin, moodAndActivityController.getActivityByUser)
 
 
 
-
+// Research
+Router.post("/research", ResearchController.submitResearch)
 
 module.exports = Router;
