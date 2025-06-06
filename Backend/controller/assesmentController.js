@@ -60,9 +60,14 @@ const remove = async (req, res) => {
     const userId = req.userId;
     const assessmentId = parseInt(req.params.id);
 
+    
+
     const existingAssessment = await prisma.assessments.findUnique({
       where: { id: assessmentId }
     });
+
+    
+
 
     if (!existingAssessment || existingAssessment.userId !== userId) {
       return res.status(404).json({ error: "Assessment not found or access denied" });

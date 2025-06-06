@@ -14,6 +14,7 @@
 
 ```
 
+---
 
 # Login api: POST:
 
@@ -28,7 +29,9 @@
 ```
 
 
-# Assesment result 
+---
+
+# Add Assesment result 
 
 **http://localhost:5004/addassesment/assessments**
 
@@ -47,8 +50,20 @@
 ```
 
 
+---
 
 
+# Delete Assessment
+
+**http://localhost:5004/addassesment/assessments/109**
+
+
+**Header**
+
+"Authorization":  "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsImlhdCI6MTc0OTE1NDY4MiwiZXhwIjoxNzQ5NzU5NDgyfQ.veKJMkAwIJcnafv2XOV9ZTu1zlQBJTHxc4-gzcbq6rk"
+
+
+---
 
 
 # research
