@@ -78,20 +78,20 @@ export default function AnxietyAssessment() {
   const progress = ((currentQuestion + 1) / questions.length) * 100;
 
   const handleSaveScore = async () => {
-    if (!userInfo || !userInfo.userId) {
+    if (!userInfo || !userInfo.token) {
       navigate('/login', { state: { from: location.pathname } });
       return;
     }
     setSaveStatus('saving');
     const payload = {
-      userId: userInfo.userId,
       assessmentName: 'Anxiety Level Test',
       assessmentResult: result.severity,
       assessmentScore: `${result.score} out of ${result.maxScore}`,
-      assessmentRecommendation: result.recommendation,
+      recommendation: result.recommendation,
       takenAt: new Date().toISOString(),
     };
     console.log('Assessment payload:', JSON.stringify(payload, null, 2));
+    console.log('Token used for Authorization:', userInfo.token);
     try {
       await axios.post(
         `${process.env.REACT_APP_BACKEND_URL}/addassesment/assessments`,
