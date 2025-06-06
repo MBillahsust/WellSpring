@@ -14,6 +14,35 @@ export default function MoodTracking() {
   useEffect(() => {
     if (!userInfo || !userInfo.token) {
       navigate('/login', { state: { from: '/mood-tracking' } });
+    } else {
+      // Fetch mood history from backend
+      const fetchMoodHistory = async () => {
+        try {
+          console.log('Fetching mood history with token:', userInfo.token);
+          const res = await axios.get(
+            `${process.env.REACT_APP_BACKEND_URL}/mood/getMood/`,
+            {
+              headers: {
+                Authorization: `Bearer ${userInfo.token}`
+              }
+            }
+          );
+          console.log('Mood history response:', res.data);
+          const moodArray = Array.isArray(res.data)
+            ? res.data
+            : (res.data.moods || []);
+          setMoodEntries(
+            moodArray.map(entry => ({
+              mood: entry.mood,
+              notes: entry.notes,
+              date: new Date(entry.time).toLocaleDateString()
+            }))
+          );
+        } catch (err) {
+          console.log('Error fetching mood history:', err);
+        }
+      };
+      fetchMoodHistory();
     }
   }, [userInfo, navigate]);
 
@@ -25,6 +54,8 @@ export default function MoodTracking() {
         time: new Date().toISOString(),
       };
       try {
+        console.log('Sending mood payload:', payload);
+        console.log('Token used for Authorization:', userInfo && userInfo.token);
         await axios.post(
           `${process.env.REACT_APP_BACKEND_URL}/mood/addmood/`,
           payload,
@@ -34,11 +65,30 @@ export default function MoodTracking() {
             }
           }
         );
-        const newEntry = { mood, notes, date: new Date().toLocaleDateString() };
-        setMoodEntries([newEntry, ...moodEntries]);
+        // Refetch mood history after successful POST
+        const res = await axios.get(
+          `${process.env.REACT_APP_BACKEND_URL}/mood/getMood/`,
+          {
+            headers: {
+              Authorization: `Bearer ${userInfo.token}`
+            }
+          }
+        );
+        console.log('Mood history response:', res.data);
+        const moodArray = Array.isArray(res.data)
+          ? res.data
+          : (res.data.moods || []);
+        setMoodEntries(
+          moodArray.map(entry => ({
+            mood: entry.mood,
+            notes: entry.notes,
+            date: new Date(entry.time).toLocaleDateString()
+          }))
+        );
         setMood('');
         setNotes('');
       } catch (err) {
+        console.log('Error adding mood:', err);
         alert('Failed to log mood. Please try again.');
       }
     }
