@@ -166,12 +166,83 @@ const deleteActivityById = async (req, res) => {
   }
 };
 
+// Helper: Categorize activity title
+function categorizeActivity(title) {
+  const t = title.toLowerCase();
+  // Mental Activities
+  const mental = [
+    'study', 'problem', 'read', 'plan', 'work', 'computer', 'teach', 'meeting', 'decision', 'analyz', 'manage emotion', 'learn', 'reason', 'think'
+  ];
+  // Physical Activities
+  const physical = [
+    'walk', 'exercise', 'sport', 'lift', 'clean', 'garden', 'dance', 'cook', 'commute', 'labor', 'run', 'jog', 'swim', 'yoga', 'bike', 'cycling'
+  ];
+  // Spiritual Activities
+  const spiritual = [
+    'prayer', 'meditat', 'religious', 'spiritual', 'mindful', 'contemplat', 'compassion', 'worship', 'faith', 'reflection'
+  ];
+  // Social Activities
+  const social = [
+    'convers', 'gather', 'team', 'call', 'family', 'help', 'group', 'event', 'social media', 'friend', 'meet', 'chat', 'party', 'hangout', 'neighbor'
+  ];
+  // Emotional Activities
+  const emotional = [
+    'journal', 'emotional', 'therapy', 'cry', 'laugh', 'love', 'anger', 'feel', 'express', 'vent', 'counsel', 'support', 'session'
+  ];
+  // Creative Activities
+  const creative = [
+    'draw', 'write', 'paint', 'design', 'play instrument', 'sing', 'act', 'craft', 'create', 'art', 'music', 'compose', 'sculpt', 'photograph', 'film'
+  ];
+
+  if (mental.some(k => t.includes(k))) return 'Mental Activities';
+  if (physical.some(k => t.includes(k))) return 'Physical Activities';
+  if (spiritual.some(k => t.includes(k))) return 'Spiritual Activities';
+  if (social.some(k => t.includes(k))) return 'Social Activities';
+  if (emotional.some(k => t.includes(k))) return 'Emotional Activities';
+  if (creative.some(k => t.includes(k))) return 'Creative Activities';
+  return 'Other';
+}
+
+// Endpoint: Get last 10 activities categorized for pie chart
+const getLast10ActivitiesPie = async (req, res) => {
+  try {
+    const userId = req.userId;
+    const activities = await prisma.activityEntry.findMany({
+      where: { userId },
+      orderBy: { id: 'desc' },
+      take: 10
+    });
+    // Count by category
+    const counts = {
+      'Mental Activities': 0,
+      'Physical Activities': 0,
+      'Spiritual Activities': 0,
+      'Social Activities': 0,
+      'Emotional Activities': 0,
+      'Creative Activities': 0,
+      'Other': 0
+    };
+    activities.forEach(a => {
+      const cat = categorizeActivity(a.activity);
+      counts[cat] = (counts[cat] || 0) + 1;
+    });
+    res.json({
+      data: Object.entries(counts).map(([category, value]) => ({ category, value })),
+      raw: activities.map(a => ({ id: a.id, activity: a.activity, category: categorizeActivity(a.activity) }))
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+};
+
 module.exports = {
   addMood,
   getMoodByUser,
   deleteMoodById,
   addActivity,
   getActivityByUser,
-  deleteActivityById
+  deleteActivityById,
+  getLast10ActivitiesPie
 };
 

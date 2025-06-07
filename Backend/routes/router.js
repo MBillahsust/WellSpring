@@ -34,6 +34,9 @@ Router.post("/addactivity", isLogin, moodAndActivityController.addActivity);
 Router.delete("/delactivity/:id", isLogin, moodAndActivityController.deleteActivityById);
 Router.get("/getActivity", isLogin, moodAndActivityController.getActivityByUser);
 
+// Add new route for last 10 activities pie chart
+Router.get("/activity/last10pie", isLogin, moodAndActivityController.getLast10ActivitiesPie);
+
 
 
 

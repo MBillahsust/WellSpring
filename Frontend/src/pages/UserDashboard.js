@@ -28,6 +28,7 @@ import {
 import { UserContext } from '../UserContext';
 import axios from 'axios';
 import MoodChart from '../Components/MoodChart';
+import ActivityPieChart from '../Components/ActivityPieChart';
 
 const UserDashboard = () => {
   const { userInfo } = useContext(UserContext);
@@ -390,6 +391,54 @@ const UserDashboard = () => {
         return 'text-gray-500';
     }
   };
+
+  // Add categorization helper (same as backend)
+  function categorizeActivity(title) {
+    const t = title?.toLowerCase?.() || '';
+    const mental = [
+      'study', 'problem', 'read', 'plan', 'work', 'computer', 'teach', 'meeting', 'decision', 'analyz', 'manage emotion', 'learn', 'reason', 'think'
+    ];
+    const physical = [
+      'walk', 'exercise', 'sport', 'lift', 'clean', 'garden', 'dance', 'cook', 'commute', 'labor', 'run', 'jog', 'swim', 'yoga', 'bike', 'cycling'
+    ];
+    const spiritual = [
+      'prayer', 'meditat', 'religious', 'spiritual', 'mindful', 'contemplat', 'compassion', 'worship', 'faith', 'reflection'
+    ];
+    const social = [
+      'convers', 'gather', 'team', 'call', 'family', 'help', 'group', 'event', 'social media', 'friend', 'meet', 'chat', 'party', 'hangout', 'neighbor'
+    ];
+    const emotional = [
+      'journal', 'emotional', 'therapy', 'cry', 'laugh', 'love', 'anger', 'feel', 'express', 'vent', 'counsel', 'support', 'session'
+    ];
+    const creative = [
+      'draw', 'write', 'paint', 'design', 'play instrument', 'sing', 'act', 'craft', 'create', 'art', 'music', 'compose', 'sculpt', 'photograph', 'film'
+    ];
+    if (mental.some(k => t.includes(k))) return 'Mental Activities';
+    if (physical.some(k => t.includes(k))) return 'Physical Activities';
+    if (spiritual.some(k => t.includes(k))) return 'Spiritual Activities';
+    if (social.some(k => t.includes(k))) return 'Social Activities';
+    if (emotional.some(k => t.includes(k))) return 'Emotional Activities';
+    if (creative.some(k => t.includes(k))) return 'Creative Activities';
+    return 'Other';
+  }
+
+  // Compute pie chart data from last 10 activity entries (most recent first)
+  const last10 = activityEntries.slice(0, 10);
+  console.log('Last 10 activities (most recent first):', last10.map(a => ({ title: a.activity, category: categorizeActivity(a.activity) })));
+  const counts = {
+    'Mental Activities': 0,
+    'Physical Activities': 0,
+    'Spiritual Activities': 0,
+    'Social Activities': 0,
+    'Emotional Activities': 0,
+    'Creative Activities': 0,
+    'Other': 0
+  };
+  last10.forEach(a => {
+    const cat = categorizeActivity(a.activity);
+    counts[cat] = (counts[cat] || 0) + 1;
+  });
+  const activityPieData = Object.entries(counts).map(([category, value]) => ({ category, value }));
 
   return (
     <div className="min-h-screen bg-gray-50 py-8">
@@ -771,6 +820,18 @@ const UserDashboard = () => {
               </div>
             </div>
           </div>
+        </div>
+
+        {/* Mood Chart Section */}
+        <div className="bg-white rounded-xl shadow p-6 mb-8 mt-8">
+          <h2 className="text-2xl font-bold mb-4 text-indigo-700">Mood Tracking Chart</h2>
+          {/* Replace with actual mood chart */}
+          <MoodChart moodData={moodEntries.map(e => ({...e, score: moodScoreMap[e.mood?.toLowerCase?.()] || 0}))} width={700} height={350} showTimeBelowDate={true} />
+        </div>
+        {/* Activity Pie Chart Section */}
+        <div className="bg-white rounded-xl shadow p-6 mb-8">
+          <h2 className="text-2xl font-bold mb-4 text-indigo-700">Activity Category Pie Chart (Last 10 Activities)</h2>
+          <ActivityPieChart data={activityPieData} />
         </div>
       </div>
     </div>
