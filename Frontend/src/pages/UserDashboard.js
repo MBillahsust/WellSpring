@@ -722,9 +722,9 @@ const UserDashboard = () => {
             </div>
           </div>
           {/* Mood Tracking Graph Segment - separate card */}
-          <div className="bg-white rounded-xl shadow-md overflow-hidden mt-8">
-            <div className="p-6">
-              <h3 className="text-xl font-semibold mb-4">Mood Tracking Graph</h3>
+          <div className="bg-white rounded-xl shadow p-6 mt-8 mb-8">
+            
+              <h3 className="text-2xl font-bold mb-4 text-indigo-700">Mood Tracking Graph</h3>
               {(() => {
                 // Sort by time descending (most recent first)
                 const sorted = [...moodEntries].sort((a, b) => {
@@ -750,7 +750,14 @@ const UserDashboard = () => {
                 return <MoodChart moodData={chartData} width={700} height={350} showTimeBelowDate={true} />;
               })()}
             </div>
-          </div>
+          
+        </div>
+
+
+        {/* Activity Pie Chart Section */}
+        <div className="bg-white rounded-xl shadow p-6 mt-10 mb-8">
+          <h2 className="text-2xl font-bold mb-4 text-indigo-700">Activity Pie Chart</h2>
+          <ActivityPieChart data={activityPieData} />
         </div>
 
         {/* Daily Routine Section */}
@@ -822,17 +829,8 @@ const UserDashboard = () => {
           </div>
         </div>
 
-        {/* Mood Chart Section */}
-        <div className="bg-white rounded-xl shadow p-6 mb-8 mt-8">
-          <h2 className="text-2xl font-bold mb-4 text-indigo-700">Mood Tracking Chart</h2>
-          {/* Replace with actual mood chart */}
-          <MoodChart moodData={moodEntries.map(e => ({...e, score: moodScoreMap[e.mood?.toLowerCase?.()] || 0}))} width={700} height={350} showTimeBelowDate={true} />
-        </div>
-        {/* Activity Pie Chart Section */}
-        <div className="bg-white rounded-xl shadow p-6 mb-8">
-          <h2 className="text-2xl font-bold mb-4 text-indigo-700">Activity Category Pie Chart (Last 10 Activities)</h2>
-          <ActivityPieChart data={activityPieData} />
-        </div>
+        
+        
       </div>
     </div>
   );

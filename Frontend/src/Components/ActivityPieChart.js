@@ -41,18 +41,21 @@ const ActivityPieChart = ({ data = [], width = 340, height = 340 }) => {
     const startAngle = cumulative;
     const endAngle = cumulative + angle;
     cumulative = endAngle;
+
     // SVG arc
     const x1 = center + radius * Math.cos(startAngle - Math.PI / 2);
     const y1 = center + radius * Math.sin(startAngle - Math.PI / 2);
     const x2 = center + radius * Math.cos(endAngle - Math.PI / 2);
     const y2 = center + radius * Math.sin(endAngle - Math.PI / 2);
     const largeArc = angle > Math.PI ? 1 : 0;
+
     const pathData = [
       `M ${center} ${center}`,
       `L ${x1} ${y1}`,
       `A ${radius} ${radius} 0 ${largeArc} 1 ${x2} ${y2}`,
       'Z'
     ].join(' ');
+
     return (
       <path
         key={d.category}
@@ -67,7 +70,16 @@ const ActivityPieChart = ({ data = [], width = 340, height = 340 }) => {
   // Legend
   const legend = data.map((d, i) => (
     <div key={d.category} className="flex items-center mb-1">
-      <span style={{ background: getColor(d.category), width: 16, height: 16, display: 'inline-block', borderRadius: 4, marginRight: 8 }}></span>
+      <span
+        style={{
+          background: getColor(d.category),
+          width: 16,
+          height: 16,
+          display: 'inline-block',
+          borderRadius: 4,
+          marginRight: 8
+        }}
+      ></span>
       <span className="font-medium text-gray-700">{d.category}</span>
       <span className="ml-2 text-gray-500">{d.value}</span>
     </div>
@@ -75,16 +87,16 @@ const ActivityPieChart = ({ data = [], width = 340, height = 340 }) => {
 
   return (
     <div className="flex flex-col md:flex-row items-center justify-center gap-6 bg-white rounded-xl shadow p-6 mt-6">
-      <svg width={width} height={height} style={{ background: '#fff', borderRadius: 8, boxShadow: '0 1px 4px #0001' }}>
+      <svg
+        width={width}
+        height={height}
+        style={{ background: '#fff', borderRadius: 8, boxShadow: '0 1px 4px #0001' }}
+      >
         {pieSlices}
-        {/* Center label */}
-        <text x={center} y={center} textAnchor="middle" fontSize="18" fill="#222" fontWeight="bold">
-          Last 10 Activities
-        </text>
       </svg>
       <div className="flex flex-col justify-center">{legend}</div>
     </div>
   );
 };
 
-export default ActivityPieChart; 
+export default ActivityPieChart;
