@@ -1,12 +1,12 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { FaTimes } from 'react-icons/fa';
 
-import { 
-  FaEdit, 
-  FaTrash, 
-  FaUser, 
-  FaEnvelope, 
-  FaPhone, 
+import {
+  FaEdit,
+  FaTrash,
+  FaUser,
+  FaEnvelope,
+  FaPhone,
   FaCalendarAlt,
   FaLeaf,
   FaArrowUp,
@@ -27,6 +27,7 @@ import {
 } from 'react-icons/fa';
 import { UserContext } from '../UserContext';
 import axios from 'axios';
+import MoodChart from '../Components/MoodChart';
 
 const UserDashboard = () => {
   const { userInfo } = useContext(UserContext);
@@ -114,6 +115,37 @@ const UserDashboard = () => {
 
   // Use backend URL from env
   const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
+
+  const [assessmentPage, setAssessmentPage] = useState(0);
+
+  // Mood score mapping
+  const moodScoreMap = {
+    happy: 1,
+    content: 2,
+    calm: 3,
+    relaxed: 4,
+    grateful: 5,
+    hopeful: 6,
+    confident: 7,
+    energetic: 8,
+    excited: 9,
+    bored: -1,
+    meh: -2,
+    indifferent: -3,
+    numb: -4,
+    tired: -5,
+    sad: -6,
+    lonely: -7,
+    anxious: -8,
+    stressed: -9,
+    frustrated: -10,
+    overwhelmed: -11,
+    angry: -12,
+    guilty: -13,
+    insecure: -14,
+    embarrassed: -15,
+    jealous: -16
+  };
 
   useEffect(() => {
     setIsClient(true);
@@ -242,6 +274,13 @@ const UserDashboard = () => {
     fetchAssessments();
   }, [userInfo]);
 
+  // Reset assessmentPage if assessments change and current page is out of range
+  useEffect(() => {
+    if (assessmentPage * 6 >= assessments.length) {
+      setAssessmentPage(0);
+    }
+  }, [assessments]);
+
   const handleDeleteAssessment = async (id) => {
     if (!window.confirm('Are you sure you want to delete this assessment?')) return;
     try {
@@ -358,7 +397,8 @@ const UserDashboard = () => {
         {/* User Information Card */}
         <div className="bg-white rounded-xl shadow-md overflow-hidden mb-8 border border-indigo-100">
           <div className="bg-gradient-to-r from-indigo-500 to-blue-500 p-6">
-            <div className="flex justify-between items-start">
+            <div className="flex flex-wrap items-start justify-start gap-4">
+              {/* User Info Section */}
               <div className="flex items-center space-x-4">
                 <div className="w-20 h-20 bg-white/30 rounded-xl flex items-center justify-center backdrop-blur-sm">
                   <FaUser className="w-10 h-10 text-white" />
@@ -369,51 +409,91 @@ const UserDashboard = () => {
                   ) : (
                     <>
                       <h1 className="text-2xl font-bold text-white">{userData?.name || '-'}</h1>
-                      <p className="text-teal-100">Member since {userData?.createdAt ? new Date(userData.createdAt).toLocaleDateString() : '-'}</p>
+                      <p className="text-teal-100">
+                        Member since{' '}
+                        {userData?.createdAt
+                          ? new Date(userData.createdAt).toLocaleDateString()
+                          : '-'}
+                      </p>
                     </>
                   )}
                 </div>
               </div>
-              <button className="bg-white/20 hover:bg-white/30 text-white px-4 py-2 rounded-lg flex items-center space-x-2 backdrop-blur-sm transition-colors">
-                <FaEdit />
-                <span>Edit Profile</span>
-              </button>
+
+              
+
             </div>
           </div>
+
           <div className="p-6 grid grid-cols-1 md:grid-cols-4 gap-6">
             {userData === null && !loadingUser && (
-              <div className="col-span-4 text-red-600 font-semibold">Failed to load user profile. Check console for details.</div>
+              <div className="col-span-4 text-red-600 font-semibold">
+                Failed to load user profile. Check console for details.
+              </div>
             )}
+
             <div className="flex items-center space-x-3">
               <FaEnvelope className="text-indigo-500 w-5 h-5" />
               <div>
                 <p className="text-sm text-gray-500">Email</p>
-                <p className="text-gray-700">{loadingUser ? <span className="h-4 w-24 bg-gray-100 rounded animate-pulse inline-block"></span> : userData?.email || '-'}</p>
+                <p className="text-gray-700">
+                  {loadingUser ? (
+                    <span className="h-4 w-24 bg-gray-100 rounded animate-pulse inline-block"></span>
+                  ) : (
+                    userData?.email || '-'
+                  )}
+                </p>
               </div>
             </div>
+
             <div className="flex items-center space-x-3">
               <FaLeaf className="text-indigo-500 w-5 h-5" />
               <div>
                 <p className="text-sm text-gray-500">Weight</p>
-                <p className="text-gray-700">{loadingUser ? <span className="h-4 w-10 bg-gray-100 rounded animate-pulse inline-block"></span> : userData?.weight ? userData.weight + ' kg' : '-'}</p>
+                <p className="text-gray-700">
+                  {loadingUser ? (
+                    <span className="h-4 w-10 bg-gray-100 rounded animate-pulse inline-block"></span>
+                  ) : userData?.weight ? (
+                    `${userData.weight} kg`
+                  ) : (
+                    '-'
+                  )}
+                </p>
               </div>
             </div>
+
             <div className="flex items-center space-x-3">
               <FaLeaf className="text-indigo-500 w-5 h-5" />
               <div>
                 <p className="text-sm text-gray-500">Age</p>
-                <p className="text-gray-700">{loadingUser ? <span className="h-4 w-10 bg-gray-100 rounded animate-pulse inline-block"></span> : userData?.age ? userData.age : '-'}</p>
+                <p className="text-gray-700">
+                  {loadingUser ? (
+                    <span className="h-4 w-10 bg-gray-100 rounded animate-pulse inline-block"></span>
+                  ) : (
+                    userData?.age || '-'
+                  )}
+                </p>
               </div>
             </div>
+
             <div className="flex items-center space-x-3">
               <FaCalendarAlt className="text-indigo-500 w-5 h-5" />
               <div>
                 <p className="text-sm text-gray-500">Joined</p>
-                <p className="text-gray-700">{loadingUser ? <span className="h-4 w-16 bg-gray-100 rounded animate-pulse inline-block"></span> : userData?.createdAt ? new Date(userData.createdAt).toLocaleDateString() : '-'}</p>
+                <p className="text-gray-700">
+                  {loadingUser ? (
+                    <span className="h-4 w-16 bg-gray-100 rounded animate-pulse inline-block"></span>
+                  ) : userData?.createdAt ? (
+                    new Date(userData.createdAt).toLocaleDateString()
+                  ) : (
+                    '-'
+                  )}
+                </p>
               </div>
             </div>
           </div>
         </div>
+
 
         {/* Assessments Section - 6 tables in two rows */}
         <div className="mb-8">
@@ -422,7 +502,7 @@ const UserDashboard = () => {
             {assessments.length === 0 ? (
               <div className="col-span-3 text-gray-400 text-center py-8">No assessments found.</div>
             ) : (
-              assessments.map((assessment) => (
+              assessments.slice(assessmentPage * 6, (assessmentPage + 1) * 6).map((assessment) => (
                 <div key={assessment.id} className="bg-white rounded-xl shadow-md overflow-hidden">
                   <div className="p-6">
                     <div className="flex justify-between items-start mb-4">
@@ -433,7 +513,7 @@ const UserDashboard = () => {
                           <p className="text-sm text-gray-500">Taken on {assessment.date} {assessment.time}</p>
                         </div>
                       </div>
-                      <button 
+                      <button
                         onClick={() => handleDeleteAssessment(assessment.id)}
                         className="w-9 h-9 flex items-center justify-center bg-indigo-50 hover:bg-indigo-200 text-indigo-500 hover:text-indigo-700 rounded-full transition group-hover:scale-110 shadow-sm border border-indigo-100"
                         title="Delete this assessment"
@@ -452,27 +532,47 @@ const UserDashboard = () => {
                       </div>
                     </div>
                     <div className="mt-4">
-  <p className="text-sm text-gray-500">Recommendations</p>
-  <div
-    className="text-gray-700 text-sm max-w-xs overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-indigo-200 scrollbar-track-indigo-50"
-    style={{
-      maxHeight: '3rem',        // allows 2 lines max (1.5rem * 2)
-      lineHeight: '1.5rem',     // adjust to your font size
-      maxWidth: '180px',        // width constraint
-      whiteSpace: 'normal',     // allow line wrapping
-      wordBreak: 'break-word',  // prevent overflow from long words
-    }}
-    title={assessment.recommendations}
-  >
-    {assessment.recommendations}
-  </div>
-</div>
-
+                      <p className="text-sm text-gray-500">Recommendations</p>
+                      <div
+                        className="text-gray-700 text-sm overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-indigo-200 scrollbar-track-indigo-50"
+                        style={{
+                          maxHeight: '3rem',        // allows 2 lines max (1.5rem * 2)
+                          lineHeight: '1.5rem',     // adjust to your font size
+                          maxWidth: '320px',        // wider for more words per row
+                          minWidth: '180px',
+                          whiteSpace: 'normal',     // allow line wrapping
+                          wordBreak: 'break-word',  // prevent overflow from long words
+                          direction: 'ltr',         // ensure scrollbar is on the right
+                        }}
+                        title={assessment.recommendations}
+                      >
+                        {assessment.recommendations}
+                      </div>
+                    </div>
                   </div>
                 </div>
               ))
             )}
           </div>
+          {/* Assessment Pagination Controls */}
+          {assessments.length > 6 && (
+            <div className="flex justify-center mt-4 space-x-4">
+              <button
+                onClick={() => setAssessmentPage((prev) => prev - 1)}
+                className="px-4 py-2 bg-indigo-100 hover:bg-indigo-200 text-indigo-700 font-semibold rounded-lg shadow-sm transition disabled:opacity-50"
+                disabled={assessmentPage === 0}
+              >
+                Previous
+              </button>
+              <button
+                onClick={() => setAssessmentPage((prev) => prev + 1)}
+                className="px-4 py-2 bg-indigo-100 hover:bg-indigo-200 text-indigo-700 font-semibold rounded-lg shadow-sm transition disabled:opacity-50"
+                disabled={(assessmentPage + 1) * 6 >= assessments.length}
+              >
+                Next
+              </button>
+            </div>
+          )}
         </div>
 
         {/* Mood Trends Section - replaced with two tables */}
@@ -572,6 +672,36 @@ const UserDashboard = () => {
               </div>
             </div>
           </div>
+          {/* Mood Tracking Graph Segment - separate card */}
+          <div className="bg-white rounded-xl shadow-md overflow-hidden mt-8">
+            <div className="p-6">
+              <h3 className="text-xl font-semibold mb-4">Mood Tracking Graph</h3>
+              {(() => {
+                // Sort by time descending (most recent first)
+                const sorted = [...moodEntries].sort((a, b) => {
+                  const da = new Date(a.date + ' ' + (a.time || ''));
+                  const db = new Date(b.date + ' ' + (b.time || ''));
+                  return db - da;
+                });
+                const chartData = sorted
+                  .slice(0, 10)
+                  .reverse()
+                  .map(entry => {
+                    const d = new Date(entry.date + ' ' + (entry.time || ''));
+                    // Format as 'MMM DD' (e.g., Jun 07)
+                    const dateLabel = !isNaN(d) ? d.toLocaleDateString(undefined, { month: 'short', day: '2-digit' }) : String(entry.date);
+                    // Format as 'HH:mm'
+                    const timeLabel = !isNaN(d) ? d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : (entry.time || '');
+                    return {
+                      date: dateLabel,
+                      time: timeLabel,
+                      score: Number(moodScoreMap[entry.mood?.toLowerCase()] ?? 0)
+                    };
+                  });
+                return <MoodChart moodData={chartData} width={700} height={350} showTimeBelowDate={true} />;
+              })()}
+            </div>
+          </div>
         </div>
 
         {/* Daily Routine Section */}
@@ -583,7 +713,7 @@ const UserDashboard = () => {
               <span>Edit Routine</span>
             </button>
           </div>
-          
+
           <div className="bg-white rounded-xl shadow-md overflow-hidden">
             <div className="p-6">
               <div className="overflow-x-auto">
