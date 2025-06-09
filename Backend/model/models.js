@@ -61,11 +61,45 @@ const researchSchema = new mongoose.Schema({
 });
 const ResearchQuestionnaire = mongoose.model('ResearchQuestionnaire', researchSchema);
 
+// GameScore Model
+const GameScoreSchema = new mongoose.Schema({
+  userId: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
+  game_name: { type: String, required: true },
+  game1Score: { type: Number, required: true },
+  game2Score: { type: Number, required: true },
+  game3Score: { type: Number, required: true },
+  LastAvgScore: { type: Number, required: true },
+  highestAvgScore: { type: Number, required: true }
+}, { timestamps: true });
+
+const GameScore = mongoose.model("GameScore", GameScoreSchema);
+
+// GameAssessment Model
+const GameAssessmentSchema = new mongoose.Schema({
+  userId: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
+  game_name: { type: String, required: true },
+  recommendation: { type: String, required: true },
+  attention: { type: Number, required: true },
+  focus: { type: Number, required: true },
+  short_term_memory: { type: Number, required: true },
+  reaction_time: { type: Number, required: true },
+  working_memory: { type: Number, required: true },
+  hand_eye_coordination: { type: Number, required: true },
+  stress_response: { type: Number, required: true },
+  feedback: { type: String }
+}, { timestamps: true });
+
+const GameAssessment = mongoose.model("GameAssessment", GameAssessmentSchema);
+
+
+
 // Export all models
 module.exports = {
   User,
   Assessment,
   MoodEntry,
   ActivityEntry,
-  ResearchQuestionnaire
+  ResearchQuestionnaire,
+  GameScore,
+  GameAssessment
 };

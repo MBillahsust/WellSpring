@@ -214,6 +214,86 @@ Authorization : "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjMsIml
 
 
 
+---
+----
+---
+---
+---
+
+# GAME
+
+
+# save game score and get game assesment : POST
+
+**http://localhost:5004/game/gameScore/**
+
+**Header**
+send autherization token
+
+
+```
+{
+  "game_name": "flappy bird",
+  "game1Score": 111,
+  "game2Score": 11,
+  "game3Score": 12
+}
+```
+
+---
+
+# GET game Rank : GET
+
+**http://localhost:5004/game//gameRank/flappy bird**
+
+**Header**
+AUtheraztion : token
+
+
+---
+
+
+
+# Post Game assessment : POST
+
+**http://localhost:5004/game/gameassessment**
+
+**Header**
+
+Autherization : Token
+
+
+
+```
+{
+  "game_name": "flappy bird",
+  "recommendation": "You have shown improvement. Focus on enhancing your reaction time and managing stress for better scores.",
+  "attention": 78,
+  "focus": 75,
+  "short_term_memory": 72,
+  "reaction_time": 68,
+  "working_memory": 74,
+  "hand_eye_coordination": 70,
+  "stress_response": 65,
+  "feedback": "Great progress this week!"
+}
+```
+
+---
+
+# Get User Game assessment Data : GET
+
+**http://localhost:5004/game/gameassessmentData**
+
+**Header**
+
+Autheraztion : Token
+
+
+---
+---
+
+
 
 
 
