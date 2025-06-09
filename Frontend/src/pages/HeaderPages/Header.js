@@ -19,6 +19,7 @@ const navigation = [
   { name: 'Resources', href: '/resources' },
   { name: 'Research & Development', href: '/research-development' },
   { name: 'Games', href: '/games' },
+  { name: 'Experts', href: '/counsellors' },
   // { name: 'About', href: '/about' },
 ];
 

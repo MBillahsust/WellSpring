@@ -1,13 +1,14 @@
 import React, { useState } from 'react';
+import { motion } from 'framer-motion';
+
 function PhoneIcon(props) {
   return (
-    <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"   
- strokeLinejoin="round">
-      <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0   
- 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
+    <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
     </svg>
   );
 }
+
 export default function Counsellor() {
   const [selectedCity, setSelectedCity] = useState('All');
 
@@ -19,8 +20,7 @@ export default function Counsellor() {
     'Khagrachhari', 'Lakshmipur', 'Noakhali', 'Rangamati', 'Faridpur', 'Gopalganj', 'Kishoreganj', 'Madaripur', 
     'Manikganj', 'Munshiganj', 'Narail', 'Rajbari', 'Shariatpur', 'Tangail', 'Bagerhat', 'Chuadanga', 'Jashore', 
     'Jhenaidah', 'Khulna', 'Kushtia', 'Magura', 'Meherpur', 'Narail', 'Satkhira', 'Jamalpur', 'Mymensingh', 
-    'Netrokona',   
-   
+    'Netrokona',   
     'Sherpur', 'Barguna', 'Barisal', 'Bhola', 'Jhalakathi', 'Patuakhali', 'Pirojpur', 'Habiganj', 
     'Moulvibazar', 'Sunamganj', 'Sylhet'
   ];
@@ -30,69 +30,73 @@ export default function Counsellor() {
     : profiles.filter(profile => profile.city === selectedCity);
 
   return (
-    <section style={{ padding: '20px', fontFamily: 'sans-serif' }}>
-      <h2 style={{ textAlign: 'center', marginBottom: '30px' }}>Our Psychiatrists</h2>
-
-      <select 
-        value={selectedCity} 
-        onChange={e => setSelectedCity(e.target.value)}
-        style={{ padding: '8px', marginBottom: '20px' }}
+    <section className="py-10 px-4 md:px-10 bg-gradient-to-br from-blue-50 to-white min-h-screen font-sans">
+      <motion.h2 
+        initial={{ opacity: 0, y: -30 }} 
+        animate={{ opacity: 1, y: 0 }} 
+        transition={{ duration: 0.7 }}
+        className="text-3xl md:text-4xl font-bold text-center mb-10 text-blue-900 drop-shadow-lg"
       >
-        {majorCities.map(city => (
-          <option key={city} value={city}>{city}</option>
-        ))}
-      </select>
+        Our Psychiatrists
+      </motion.h2>
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '20px' }}> 
+      <div className="flex justify-center mb-8">
+        <select 
+          value={selectedCity} 
+          onChange={e => setSelectedCity(e.target.value)}
+          className="px-4 py-2 rounded-lg border border-blue-200 shadow-sm focus:ring-2 focus:ring-blue-300 focus:outline-none text-blue-900 bg-white"
+        >
+          {majorCities.map(city => (
+            <option key={city} value={city}>{city}</option>
+          ))}
+        </select>
+      </div>
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
         {filteredProfiles.map((profile, index) => (
-          <div key={index} style={{ 
-            border: '1px solid #ccc', 
-            borderRadius: '8px',
-            padding: '20px', 
-            boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
-            backgroundColor: '#fff', 
-            transition: 'transform 0.2s',
-            '&:hover': {
-              transform: 'scale(1.02)',
-            }
-          }}> 
+          <motion.div
+            key={index}
+            initial={{ opacity: 0, y: 40 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.1 * index }}
+            whileHover={{ scale: 1.03, boxShadow: '0 8px 32px rgba(0,0,0,0.12)' }}
+            className="rounded-2xl bg-white shadow-lg p-6 border border-blue-100 transition-all duration-300 hover:shadow-2xl"
+          >
             <div>
-              <h3 style={{ margin: 0, fontSize: '1.2rem', fontWeight: 'bold' }}>{profile.name}</h3>
-              <p style={{ margin: '10px 0', color: '#555' }}>{profile.title}</p>
-              <p style={{ margin: '5px 0', color: '#777', fontSize: '0.9rem' }}>{profile.position}</p>
-              <p style={{ margin: '5px 0', color: '#777', fontSize: '0.9rem' }}>{profile.teaches}</p>
-
-              <p style={{ margin: '5px 0', color: '#777', fontSize: '0.9rem' }}>
-                <MapPinIcon style={{ marginRight: '5px', color: '#007bff', verticalAlign: 'middle' }} /> 
+              <h3 className="text-xl font-bold text-blue-800 mb-1">{profile.name}</h3>
+              <p className="text-blue-600 font-medium mb-1">{profile.title}</p>
+              <p className="text-gray-600 text-sm mb-1">{profile.position}</p>
+              <p className="text-gray-500 text-xs mb-1">{profile.teaches}</p>
+              <p className="text-blue-500 text-sm flex items-center mb-1">
+                <MapPinIcon className="inline-block mr-1 text-blue-400" />
                 {profile.city}
               </p>
-
               {profile.phone && (
-                <p style={{ margin: '5px 0', color: '#777', fontSize: '0.9rem' }}>
-                  <PhoneIcon style={{ marginRight: '5px', color: '#007bff', verticalAlign: 'middle' }} /> 
+                <p className="text-blue-500 text-sm flex items-center mb-1">
+                  <PhoneIcon className="inline-block mr-1 text-blue-400" />
                   {profile.phone}
                 </p>
-              )} 
+              )}
             </div>
             <Collapsible>
               <CollapsibleTrigger>
-                <Button variant="outline" style={{ marginTop: '20px', padding: '8px 15px', border: '1px solid #007bff', color: '#007bff', borderRadius: '5px', cursor: 'pointer' }}>
-                  <ChevronDownIcon style={{ marginRight: '5px', verticalAlign: 'middle' }} />
+                <Button variant="outline" className="mt-4 px-4 py-2 border border-blue-400 text-blue-700 rounded-lg hover:bg-blue-50 transition-all">
+                  <ChevronDownIcon className="inline-block mr-1" />
                   View Chambers
                 </Button>
               </CollapsibleTrigger>
               <CollapsibleContent>
-                <div style={{ marginTop: '15px' }}>
-                  {profile.chambers.map((chamber, index) => (
-                    <div key={index} style={{ display: 'flex', alignItems: 'center', marginTop: '8px' }}>
-                      <MapPinIcon style={{ marginRight: '5px', color: '#007bff' }} />
+                <div className="mt-3">
+                  {profile.chambers.map((chamber, idx) => (
+                    <div key={idx} className="flex items-center text-gray-700 text-sm mb-2">
+                      <MapPinIcon className="inline-block mr-1 text-blue-400" />
                       <span>{chamber}</span>
                     </div>
                   ))}
                 </div>
               </CollapsibleContent>
             </Collapsible>
-          </div>
+          </motion.div>
         ))}
       </div>
     </section>
