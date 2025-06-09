@@ -233,128 +233,36 @@ const FlappyBird = () => {
     return () => window.removeEventListener('keydown', handleKeyPress);
   }, [gameStarted, gameOver]);
 
-  // Animation for the right side
-  const [animationFrame, setAnimationFrame] = useState(0);
-  
-  // Draw raindrop animation
-  const drawCalmingAnimation = (ctx, width, height) => {
-    // Clear background
-    ctx.fillStyle = '#000';
-    ctx.fillRect(0, 0, width, height);
-    
-    // Draw raindrops
-    const time = animationFrame / 10;
-    const numDrops = 9;
-    
-    for (let i = 0; i < numDrops; i++) {
-      const duration = 2 + Math.random() * 1; // 2-3 seconds
-      const delay = Math.random() * 4; // 0-4 seconds
-      const xOffset = (Math.random() - 0.5) * 40; // -20 to 20
-      const yOffset = (Math.random() - 0.5) * 40; // -20 to 20
-      const scale = 0.9 + Math.random() * 0.4; // 0.9 to 1.3
-      
-      // Calculate position based on time and animation parameters
-      const dropX = width / 2 + xOffset;
-      const dropY = height / 2 + yOffset;
-      
-      // Draw drop
-      const dropProgress = ((time + delay) % duration) / duration;
-      if (dropProgress < 0.45) {
-        // Falling drop
-        const dropY = height / 2 + yOffset - (dropProgress / 0.45) * height;
-        ctx.fillStyle = '#fff';
-        ctx.fillRect(dropX - 1.5, dropY, 3, 100);
-      } else if (dropProgress < 0.5) {
-        // Splash
-        const splashScale = (dropProgress - 0.45) / 0.05;
-        ctx.fillStyle = '#fff';
-        ctx.beginPath();
-        ctx.moveTo(dropX - 20, dropY + 50);
-        ctx.quadraticCurveTo(dropX, dropY + 30, dropX + 20, dropY + 50);
-        ctx.quadraticCurveTo(dropX + 10, dropY + 40, dropX, dropY + 30);
-        ctx.quadraticCurveTo(dropX - 10, dropY + 40, dropX - 20, dropY + 50);
-        ctx.fill();
-      } else if (dropProgress < 0.9) {
-        // Waves
-        const waveProgress = (dropProgress - 0.5) / 0.4;
-        const waveRadius = waveProgress * 50;
-        const waveOpacity = 1 - waveProgress;
-        
-        ctx.strokeStyle = `rgba(255, 255, 255, ${waveOpacity})`;
-        ctx.lineWidth = 2;
-        ctx.beginPath();
-        ctx.arc(dropX, dropY + 50, waveRadius, 0, Math.PI * 2);
-        ctx.stroke();
-        
-        // Second wave
-        if (waveProgress > 0.3) {
-          const wave2Progress = (waveProgress - 0.3) / 0.7;
-          const wave2Radius = wave2Progress * 50;
-          const wave2Opacity = (1 - wave2Progress) * 0.7;
-          
-          ctx.strokeStyle = `rgba(255, 255, 255, ${wave2Opacity})`;
-          ctx.beginPath();
-          ctx.arc(dropX, dropY + 50, wave2Radius, 0, Math.PI * 2);
-          ctx.stroke();
-        }
-      }
-      
-      // Draw particles
-      if (dropProgress > 0.45 && dropProgress < 0.7) {
-        const particleProgress = (dropProgress - 0.45) / 0.25;
-        
-        // Left particle
-        const leftX = dropX - 50 * particleProgress;
-        const leftY = dropY + 50 - 90 * particleProgress;
-        const leftSize = 7 * (1 - particleProgress);
-        
-        ctx.fillStyle = '#fff';
-        ctx.beginPath();
-        ctx.arc(leftX, leftY, leftSize, 0, Math.PI * 2);
-        ctx.fill();
-        
-        // Right particle
-        const rightX = dropX + 30 * particleProgress;
-        const rightY = dropY + 50 - 80 * particleProgress;
-        const rightSize = 5 * (1 - particleProgress);
-        
-        ctx.beginPath();
-        ctx.arc(rightX, rightY, rightSize, 0, Math.PI * 2);
-        ctx.fill();
-      }
-    }
-  };
-
-  // Initialize raindrop animation
+  // Replace dummy scores with stateful playScores
+  const [playScores, setPlayScores] = useState([]);
+  // Update playScores on game over
   useEffect(() => {
-    const calmingCanvas = document.getElementById('calmingCanvas');
-    if (calmingCanvas) {
-      const ctx = calmingCanvas.getContext('2d');
-      const width = calmingCanvas.width;
-      const height = calmingCanvas.height;
-      
-      // Set up animation loop
-      let frameCount = 0;
-      const animate = () => {
-        // Update frame count
-        frameCount = (frameCount + 1) % 60;
-        setAnimationFrame(frameCount);
-        
-        // Clear and redraw
-        ctx.clearRect(0, 0, width, height);
-        drawCalmingAnimation(ctx, width, height);
-        
-        // Request next frame
-        requestAnimationFrame(animate);
-      };
-      
-      // Start animation immediately
-      animate();
+    if (gameOver && gameStarted) {
+      setPlayScores(prev => {
+        let updated = [...prev, score];
+        if (updated.length > 3) updated = [score]; // reset after 3 plays
+        return updated;
+      });
     }
+    // eslint-disable-next-line
+  }, [gameOver]);
+
+  // For display: fill with nulls for 'not played'
+  const scores = [0, 1, 2].map(i => playScores[i] !== undefined ? playScores[i] : null);
+  // Dummy ranking (animated)
+  const [ranking, setRanking] = useState(42);
+  useEffect(() => {
+    // Animate ranking for demo
+    let frame = 0;
+    const interval = setInterval(() => {
+      setRanking(40 + Math.floor(Math.abs(Math.sin(frame / 10)) * 5));
+      frame++;
+    }, 100);
+    return () => clearInterval(interval);
   }, []);
 
   return (
-    <div className="min-h-screen bg-gray-100 py-4">
+    <div className="min-h-screen bg-gray-100 py-4 pt-0">
       <div className="max-w-6xl mx-auto px-4">
         <div className="bg-white rounded-lg shadow-md overflow-hidden">
           <div className="bg-[#6d8ded] p-3">
@@ -363,29 +271,22 @@ const FlappyBird = () => {
           </div>
 
           <div className="flex flex-col md:flex-row">
-            {/* Left side - Encouraging messages */}
+            {/* Left side - Scores and How to play */}
             <div className="w-full md:w-1/4 p-4 bg-blue-50 flex flex-col justify-center">
-              <div className="text-center mb-4">
-                <h3 className="text-lg font-semibold text-blue-900 mb-2">Mental Health Tips</h3>
-                <div className="h-24 flex items-center justify-center">
-                  <div className="text-center">
-                    <div className="flex justify-center mb-2 text-2xl">
-                      {messages[messageIndex].icon}
-                    </div>
-                    <p className="text-blue-800 font-medium">
-                      {messages[messageIndex].text}
-                    </p>
-                  </div>
-                </div>
+              <div className="mb-6">
+                <h3 className="text-lg font-semibold text-blue-900 mb-2">Game Scores</h3>
+                <ul className="text-base text-blue-800 space-y-1">
+                  <li>1st game score: {scores[0] !== null ? scores[0] : <span className="italic text-gray-500">not played</span>}</li>
+                  <li>2nd game score: {scores[1] !== null ? scores[1] : <span className="italic text-gray-500">not played</span>}</li>
+                  <li>3rd game score: {scores[2] !== null ? scores[2] : <span className="italic text-gray-500">not played</span>}</li>
+                </ul>
               </div>
-              
               <div className="mt-4 p-3 bg-white rounded-lg shadow-sm">
-                <h4 className="text-sm font-semibold text-gray-800 mb-2">Benefits of Gaming</h4>
-                <ul className="text-xs text-gray-600 space-y-1">
-                  <li>• Improves focus and concentration</li>
-                  <li>• Reduces stress and anxiety</li>
-                  <li>• Enhances problem-solving skills</li>
-                  <li>• Provides a sense of accomplishment</li>
+                <h4 className="text-sm font-semibold text-gray-800 mb-2">How to play</h4>
+                <ul className="text-xs text-gray-600 space-y-1 list-disc pl-4">
+                  <li>Click the game area or press the spacebar to make the Apple logo jump.</li>
+                  <li>Avoid hitting the pipes or falling off the screen.</li>
+                  <li>Try to beat your high score!</li>
                 </ul>
               </div>
             </div>
@@ -434,27 +335,40 @@ const FlappyBird = () => {
                   <p className="text-xs text-gray-600">High Score: {highScore}</p>
                 </div>
               </div>
-              
               <div className="mt-2 text-center">
                 <p className="text-xs text-gray-500">Click or press space to make the Apple logo jump</p>
               </div>
             </div>
 
-            {/* Right side - Animation */}
-            <div className="w-full md:w-1/4 p-4 bg-blue-50">
-              <div className="text-center mb-2">
-                <h3 className="text-lg font-semibold text-blue-900">Raindrop Animation</h3>
+            {/* Right side - Ranking, Tips, Benefits */}
+            <div className="w-full md:w-1/4 p-4 bg-blue-50 flex flex-col items-center">
+              <div className="text-center mb-6">
+                <h3 className="text-lg font-semibold text-blue-900 mb-2">Your Ranking</h3>
+                <div className="flex items-center justify-center">
+                  <span className="text-4xl font-bold text-indigo-600 animate-bounce">#{ranking}</span>
+                </div>
               </div>
-              <div className="relative h-64 bg-black rounded-lg shadow-sm overflow-hidden">
-                <canvas 
-                  id="calmingCanvas" 
-                  width={300} 
-                  height={250}
-                  className="w-full"
-                />
+              <div className="text-center mb-4">
+                <h3 className="text-lg font-semibold text-blue-900 mb-2">Mental Health Tips</h3>
+                <div className="h-24 flex items-center justify-center">
+                  <div className="text-center">
+                    <div className="flex justify-center mb-2 text-2xl">
+                      {messages[messageIndex].icon}
+                    </div>
+                    <p className="text-blue-800 font-medium">
+                      {messages[messageIndex].text}
+                    </p>
+                  </div>
+                </div>
               </div>
-              <div className="mt-2 text-center">
-                <p className="text-xs text-gray-600">Watch the calming raindrops fall</p>
+              <div className="mt-4 p-3 bg-white rounded-lg shadow-sm w-full">
+                <h4 className="text-sm font-semibold text-gray-800 mb-2">Benefits of Gaming</h4>
+                <ul className="text-xs text-gray-600 space-y-1">
+                  <li>• Improves focus and concentration</li>
+                  <li>• Reduces stress and anxiety</li>
+                  <li>• Enhances problem-solving skills</li>
+                  <li>• Provides a sense of accomplishment</li>
+                </ul>
               </div>
             </div>
           </div>
