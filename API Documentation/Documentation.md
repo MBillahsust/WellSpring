@@ -331,7 +331,26 @@ Autherization : Token
 ---
 
 
+# Recommand a Doctor : POST 
 
+**http://localhost:5004/doctor/recommandDoctor**
+
+**Header**
+
+"Autherization": Token,
+
+
+```
+{
+  "assessmentData": true,
+  "moodData": true,
+  "activityData": false,
+  "city": "Sylhet"
+}
+```
+
+
+---
 
 
 

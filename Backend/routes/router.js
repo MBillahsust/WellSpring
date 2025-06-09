@@ -62,6 +62,7 @@ Router.get("/gameassessmentData", isLogin, gameController.getAllGameAssessments)
 // Doctor
 Router.post("/addDoctor", isLogin, doctorController.createDoctor);
 Router.get("/getallDoctor", doctorController.getAllDoctors);
+Router.post("/recommandDoctor", isLogin, doctorController.recommendDoctorsController);
 
 
 
