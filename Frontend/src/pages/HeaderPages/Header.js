@@ -120,11 +120,7 @@ export default function Header() {
                         Dashboard
                       </Link>
                     </MenuItem>
-                    <MenuItem>
-                      <Link to="/profile" className="block px-4 py-2 text-white">
-                        Profile
-                      </Link>
-                    </MenuItem>
+                    
                     <MenuItem>
                       <div onClick={handleLogout} className="block px-4 py-2 text-white cursor-pointer">
                         Logout

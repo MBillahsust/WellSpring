@@ -1,8 +1,11 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React, { useContext } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import { FaGamepad, FaDove, FaPuzzlePiece, FaBrain } from 'react-icons/fa';
+import { UserContext } from '../../UserContext';
 
 const Games = () => {
+  const { userInfo } = useContext(UserContext);
+  const navigate = useNavigate();
   const games = [
     {
       id: 'flappy-bird',
@@ -71,6 +74,20 @@ const Games = () => {
                   >
                     <FaGamepad />
                     <span>Coming Soon</span>
+                  </button>
+                ) : game.id === 'flappy-bird' ? (
+                  <button
+                    className="w-full bg-[#6d8ded] text-white px-6 py-3 rounded-lg flex items-center justify-center space-x-2 hover:bg-[#5a7ad9] transition-colors"
+                    onClick={() => {
+                      if (!userInfo || !userInfo.token) {
+                        navigate('/login', { state: { from: '/games/flappy-bird' } });
+                      } else {
+                        navigate('/games/flappy-bird');
+                      }
+                    }}
+                  >
+                    <FaGamepad />
+                    <span>Play Now</span>
                   </button>
                 ) : (
                   <Link

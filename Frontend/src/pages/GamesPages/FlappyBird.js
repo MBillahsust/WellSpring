@@ -1,5 +1,7 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useContext } from 'react';
 import { FaPlay, FaRedo, FaHeart, FaStar, FaSmile, FaThumbsUp } from 'react-icons/fa';
+import { useNavigate } from 'react-router-dom';
+import { UserContext } from '../../UserContext';
 
 const FlappyBird = () => {
   const [gameStarted, setGameStarted] = useState(false);
@@ -26,6 +28,8 @@ const FlappyBird = () => {
       positions: []
     }
   });
+  const { userInfo } = useContext(UserContext);
+  const navigate = useNavigate();
 
   // Encouraging messages
   const messages = [
@@ -199,6 +203,10 @@ const FlappyBird = () => {
   };
 
   const handleJump = () => {
+    if (!userInfo || !userInfo.token) {
+      navigate('/login', { state: { from: '/games/flappy-bird' } });
+      return;
+    }
     if (!gameStarted) {
       setGameStarted(true);
     } else if (!gameOver) {
