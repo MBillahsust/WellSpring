@@ -1,4 +1,4 @@
-const prisma = require("../db");
+const Assessment = require("../model/models").Assessment;  // adjust path and model name as needed
 
 // Remove all null bytes from a string
 const removeNullBytes = (str) => {
@@ -27,21 +27,20 @@ const store = async (req, res) => {
     recommendation = removeNullBytes(recommendation);
     takenAt = removeNullBytes(takenAt);
 
-    // Optional: further validation for takenAt (e.g., valid ISO date string)
     if (isNaN(Date.parse(takenAt))) {
       return res.status(400).json({ error: "takenAt must be a valid date string" });
     }
 
-    const newAssessment = await prisma.assessments.create({
-      data: {
-        userId,
-        assessmentName,
-        assessmentResult,
-        assessmentScore,
-        recommendation,
-        takenAt
-      }
+    const newAssessment = new Assessment({
+      userId,
+      assessmentName,
+      assessmentResult,
+      assessmentScore,
+      recommendation,
+      takenAt: new Date(takenAt)
     });
+
+    await newAssessment.save();
 
     res.status(201).json({ message: "Assessment saved successfully", assessment: newAssessment });
   } catch (error) {
@@ -50,32 +49,22 @@ const store = async (req, res) => {
   }
 };
 
-
-
-
-
-
 const remove = async (req, res) => {
   try {
     const userId = req.userId;
-    const assessmentId = parseInt(req.params.id);
+    const assessmentId = req.params.id;
 
-    
+    if (!assessmentId.match(/^[0-9a-fA-F]{24}$/)) {
+      return res.status(400).json({ error: "Invalid assessment id" });
+    }
 
-    const existingAssessment = await prisma.assessments.findUnique({
-      where: { id: assessmentId }
-    });
+    const existingAssessment = await Assessment.findById(assessmentId);
 
-    
-
-
-    if (!existingAssessment || existingAssessment.userId !== userId) {
+    if (!existingAssessment || existingAssessment.userId.toString() !== userId) {
       return res.status(404).json({ error: "Assessment not found or access denied" });
     }
 
-    await prisma.assessments.delete({
-      where: { id: assessmentId }
-    });
+    await Assessment.findByIdAndDelete(assessmentId);
 
     res.status(200).json({ message: "Assessment deleted successfully" });
   } catch (error) {
@@ -84,16 +73,12 @@ const remove = async (req, res) => {
   }
 };
 
-
-// Get all assessments for the logged-in user
 const getAssessments = async (req, res) => {
   try {
     const userId = req.userId;
 
-    const assessments = await prisma.assessments.findMany({
-      where: { userId },
-      orderBy: { id: "desc" } // optional: latest first
-    });
+    const assessments = await Assessment.find({ userId })
+      .sort({ _id: -1 }); // latest first
 
     res.status(200).json({ assessments });
   } catch (error) {
@@ -101,7 +86,5 @@ const getAssessments = async (req, res) => {
     res.status(500).json({ error: "Internal Server Error" });
   }
 };
-
-
 
 module.exports = { store, remove, getAssessments };

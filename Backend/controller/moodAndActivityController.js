@@ -1,5 +1,5 @@
-const prisma = require("../db");
-
+const { MoodEntry, ActivityEntry } = require("../model/models");
+const mongoose = require("mongoose");
 
 // Add a new mood entry
 const addMood = async (req, res) => {
@@ -11,14 +11,14 @@ const addMood = async (req, res) => {
       return res.status(400).json({ error: "All fields are required" });
     }
 
-    const newMood = await prisma.moodEntry.create({
-      data: {
-        userId,
-        mood,
-        notes,
-        time
-      }
+    const newMood = new MoodEntry({
+      userId,
+      mood,
+      notes,
+      time
     });
+
+    await newMood.save();
 
     res.status(201).json({ message: "Mood entry added successfully", mood: newMood });
   } catch (error) {
@@ -27,30 +27,23 @@ const addMood = async (req, res) => {
   }
 };
 
-
-
 // Delete Mood by id
-
 const deleteMoodById = async (req, res) => {
   try {
     const userId = req.userId;
-    const moodId = parseInt(req.params.id);
+    const moodId = req.params.id;
 
-    if (isNaN(moodId)) {
+    if (!mongoose.Types.ObjectId.isValid(moodId)) {
       return res.status(400).json({ error: "Invalid mood id" });
     }
 
-    const existingMood = await prisma.moodEntry.findUnique({
-      where: { id: moodId }
-    });
+    const existingMood = await MoodEntry.findById(moodId);
 
-    if (!existingMood || existingMood.userId !== userId) {
+    if (!existingMood || existingMood.userId.toString() !== userId) {
       return res.status(404).json({ error: "Mood entry not found or access denied" });
     }
 
-    await prisma.moodEntry.delete({
-      where: { id: moodId }
-    });
+    await MoodEntry.findByIdAndDelete(moodId);
 
     res.status(200).json({ message: "Mood entry deleted successfully" });
   } catch (error) {
@@ -59,20 +52,12 @@ const deleteMoodById = async (req, res) => {
   }
 };
 
-
-
-
-
-
 // Get all mood entries for the logged-in user
 const getMoodByUser = async (req, res) => {
   try {
     const userId = req.userId;
 
-    const moods = await prisma.moodEntry.findMany({
-      where: { userId },
-      orderBy: { id: "desc" } // optional: latest first
-    });
+    const moods = await MoodEntry.find({ userId }).sort({ _id: -1 });
 
     res.status(200).json({ moods });
   } catch (error) {
@@ -80,9 +65,6 @@ const getMoodByUser = async (req, res) => {
     res.status(500).json({ error: "Internal Server Error" });
   }
 };
-
-
-
 
 // Add a new activity entry
 const addActivity = async (req, res) => {
@@ -94,14 +76,14 @@ const addActivity = async (req, res) => {
       return res.status(400).json({ error: "All fields are required" });
     }
 
-    const newActivity = await prisma.activityEntry.create({
-      data: {
-        userId,
-        activity,
-        notes,
-        time
-      }
+    const newActivity = new ActivityEntry({
+      userId,
+      activity,
+      notes,
+      time
     });
+
+    await newActivity.save();
 
     res.status(201).json({ message: "Activity entry added successfully", activity: newActivity });
   } catch (error) {
@@ -110,20 +92,12 @@ const addActivity = async (req, res) => {
   }
 };
 
-
-
-
-
-
 // Get all activity entries for the logged-in user
 const getActivityByUser = async (req, res) => {
   try {
     const userId = req.userId;
 
-    const activities = await prisma.activityEntry.findMany({
-      where: { userId },
-      orderBy: { id: "desc" }
-    });
+    const activities = await ActivityEntry.find({ userId }).sort({ _id: -1 });
 
     res.status(200).json({ activities });
   } catch (error) {
@@ -132,32 +106,23 @@ const getActivityByUser = async (req, res) => {
   }
 };
 
-
-
-
-
-
 // Delete activity by ID
 const deleteActivityById = async (req, res) => {
   try {
     const userId = req.userId;
-    const activityId = parseInt(req.params.id);
+    const activityId = req.params.id;
 
-    if (isNaN(activityId)) {
+    if (!mongoose.Types.ObjectId.isValid(activityId)) {
       return res.status(400).json({ error: "Invalid activity id" });
     }
 
-    const existingActivity = await prisma.activityEntry.findUnique({
-      where: { id: activityId }
-    });
+    const existingActivity = await ActivityEntry.findById(activityId);
 
-    if (!existingActivity || existingActivity.userId !== userId) {
+    if (!existingActivity || existingActivity.userId.toString() !== userId) {
       return res.status(404).json({ error: "Activity entry not found or access denied" });
     }
 
-    await prisma.activityEntry.delete({
-      where: { id: activityId }
-    });
+    await ActivityEntry.findByIdAndDelete(activityId);
 
     res.status(200).json({ message: "Activity entry deleted successfully" });
   } catch (error) {
@@ -169,27 +134,21 @@ const deleteActivityById = async (req, res) => {
 // Helper: Categorize activity title
 function categorizeActivity(title) {
   const t = title.toLowerCase();
-  // Mental Activities
   const mental = [
     'study', 'problem', 'read', 'plan', 'work', 'computer', 'teach', 'meeting', 'decision', 'analyz', 'manage emotion', 'learn', 'reason', 'think'
   ];
-  // Physical Activities
   const physical = [
     'walk', 'exercise', 'sport', 'lift', 'clean', 'garden', 'dance', 'cook', 'commute', 'labor', 'run', 'jog', 'swim', 'yoga', 'bike', 'cycling'
   ];
-  // Spiritual Activities
   const spiritual = [
     'prayer', 'meditat', 'religious', 'spiritual', 'mindful', 'contemplat', 'compassion', 'worship', 'faith', 'reflection'
   ];
-  // Social Activities
   const social = [
     'convers', 'gather', 'team', 'call', 'family', 'help', 'group', 'event', 'social media', 'friend', 'meet', 'chat', 'party', 'hangout', 'neighbor'
   ];
-  // Emotional Activities
   const emotional = [
     'journal', 'emotional', 'therapy', 'cry', 'laugh', 'love', 'anger', 'feel', 'express', 'vent', 'counsel', 'support', 'session'
   ];
-  // Creative Activities
   const creative = [
     'draw', 'write', 'paint', 'design', 'play instrument', 'sing', 'act', 'craft', 'create', 'art', 'music', 'compose', 'sculpt', 'photograph', 'film'
   ];
@@ -207,12 +166,8 @@ function categorizeActivity(title) {
 const getLast10ActivitiesPie = async (req, res) => {
   try {
     const userId = req.userId;
-    const activities = await prisma.activityEntry.findMany({
-      where: { userId },
-      orderBy: { id: 'desc' },
-      take: 10
-    });
-    // Count by category
+    const activities = await ActivityEntry.find({ userId }).sort({ _id: -1 }).limit(10);
+
     const counts = {
       'Mental Activities': 0,
       'Physical Activities': 0,
@@ -222,13 +177,15 @@ const getLast10ActivitiesPie = async (req, res) => {
       'Creative Activities': 0,
       'Other': 0
     };
+
     activities.forEach(a => {
       const cat = categorizeActivity(a.activity);
       counts[cat] = (counts[cat] || 0) + 1;
     });
+
     res.json({
       data: Object.entries(counts).map(([category, value]) => ({ category, value })),
-      raw: activities.map(a => ({ id: a.id, activity: a.activity, category: categorizeActivity(a.activity) }))
+      raw: activities.map(a => ({ id: a._id, activity: a.activity, category: categorizeActivity(a.activity) }))
     });
   } catch (error) {
     console.error(error);
@@ -245,4 +202,3 @@ module.exports = {
   deleteActivityById,
   getLast10ActivitiesPie
 };
-
