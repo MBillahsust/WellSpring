@@ -2,6 +2,75 @@ const GameScore = require("../model/models").GameScore;
 const GameAssessment = require("../model/models").GameAssessment;
 
 
+const Groq = require("groq-sdk");
+const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
+
+
+
+function isValidReport(report) {
+  // Check if report has recommendation string and trait_scores object with all required keys as numbers
+  if (
+    typeof report !== "object" ||
+    typeof report.recommendation !== "string" ||
+    typeof report.trait_scores !== "object"
+  ) {
+    return false;
+  }
+  const traits = [
+    "attention",
+    "focus",
+    "short_term_memory",
+    "reaction_time",
+    "working_memory",
+    "hand_eye_coordination",
+    "stress_response",
+  ];
+  for (const trait of traits) {
+    if (
+      typeof report.trait_scores[trait] !== "number" ||
+      report.trait_scores[trait] < 0 ||
+      report.trait_scores[trait] > 100
+    ) {
+      return false;
+    }
+  }
+  return true;
+}
+
+async function getAIReport(aiPrompt, maxRetries = 3) {
+  for (let attempt = 1; attempt <= maxRetries; attempt++) {
+    try {
+      const aiResponse = await groq.chat.completions.create({
+        model: "llama-3.3-70b-versatile", // adjust model as per access
+        messages: [
+          { role: "system", content: "You are a data analysis agent. Respond ONLY with a JSON object following the structure described." },
+          { role: "user", content: aiPrompt },
+        ],
+        response_format: { type: "json_object" },
+      });
+
+      const report = aiResponse.choices[0].message.content;
+
+      // In case Groq returns JSON string or object, handle both
+      let parsedReport;
+      if (typeof report === "string") {
+        parsedReport = JSON.parse(report);
+      } else {
+        parsedReport = report;
+      }
+
+      if (isValidReport(parsedReport)) {
+        return parsedReport;
+      } else {
+        console.warn(`AI report format invalid on attempt ${attempt}, retrying...`);
+      }
+    } catch (err) {
+      console.error(`Error fetching AI report on attempt ${attempt}:`, err);
+    }
+  }
+  throw new Error("Failed to get a valid AI report after max retries.");
+}
+
 
 const updateAndGetGameScores = async (req, res) => {
   try {
@@ -13,9 +82,7 @@ const updateAndGetGameScores = async (req, res) => {
     }
 
     const lastAvg = Math.round((game1Score + game2Score + game3Score) / 3);
-
     let existing = await GameScore.findOne({ userId, game_name });
-
     let previousAvgScore = 0;
 
     if (!existing) {
@@ -26,20 +93,17 @@ const updateAndGetGameScores = async (req, res) => {
         game2Score,
         game3Score,
         LastAvgScore: lastAvg,
-        highestAvgScore: lastAvg
+        highestAvgScore: lastAvg,
       });
-
       await newEntry.save();
       existing = newEntry;
     } else {
       previousAvgScore = existing.LastAvgScore;
-
       existing.game1Score = game1Score;
       existing.game2Score = game2Score;
       existing.game3Score = game3Score;
       existing.LastAvgScore = lastAvg;
       existing.highestAvgScore = Math.max(existing.highestAvgScore || 0, lastAvg);
-
       await existing.save();
     }
 
@@ -49,56 +113,42 @@ const updateAndGetGameScores = async (req, res) => {
     const allScores = await GameScore.find({ game_name }).sort({ highestAvgScore: -1 });
     const rank = allScores.findIndex(score => score.userId.toString() === userId.toString()) + 1 || "Last";
 
-    // Prompt Template for AI-generated cognitive traits:
-    /*
-    Prompt Template:
+    const aiPrompt = `
+Generate a cognitive performance report for a player based on the following inputs:
+Game name: ${game_name}
+Current Average Score: ${lastAvg}
+Previous Average Score: ${previousAvgScore}
+User Highest Average Score: ${existing.highestAvgScore}
+Top Game Average Score: ${topScore}
+User rank: ${rank}
 
-    Generate a cognitive performance report for a player based on the following inputs:
+The report should include these sections as a JSON object:
 
-    * Current Average Score: [CURRENT_SCORE]
-    * Previous Average Score: [PREVIOUS_SCORE]
-    * Top Game Average Score: [TOP_SCORE]
+1. "recommendation" — based on the comparison of scores and general cognitive traits like attention, memory, reaction time, coordination, and stress response
+2. "trait_scores" — a set of numeric values (scale 1 - 100) for:
+- attention
+- focus
+- short_term_memory
+- reaction_time
+- working_memory
+- hand_eye_coordination
+- stress_response
 
-    The report should include these sections as a JSON object:
+Ensure the values and message align with the player's performance (i.e., improvement, stagnation, or decline).
+`;
 
-    1. "recommendation" — based on the comparison of scores and general cognitive traits like attention, memory, reaction time, coordination, and stress response
-    2. "trait_scores" — a set of numeric values (scale 1–100) for:
-
-    * attention
-    * focus
-    * short_term_memory
-    * reaction_time
-    * working_memory
-    * hand_eye_coordination
-    * stress_response
-    */
-
-    // Static example values for now; replace with AI response later
-    const recommendation = "Your performance is improving. To reach top-level scores, focus on sharpening your reaction time and hand-eye coordination. Take short, focused sessions and manage stress through breaks or calming techniques to maintain mental sharpness.";
-
-    const traitScores = {
-      attention: 78,
-      focus: 75,
-      short_term_memory: 72,
-      reaction_time: 68,
-      working_memory: 74,
-      hand_eye_coordination: 70,
-      stress_response: 65
-    };
+    const cognitiveReport = await getAIReport(aiPrompt);
 
     res.json({
       gameScore: existing,
-      cognitive_report: {
-        recommendation,
-        trait_scores: traitScores
-      },
+      cognitive_report: cognitiveReport,
       meta: {
         current_average_score: lastAvg,
         previous_average_score: previousAvgScore,
         top_game_average_score: topScore,
         user_highest_average_score: existing.highestAvgScore,
-        rank: rank || "Last"
-      }
+        rank: rank || "Last",
+      },
     });
   } catch (error) {
     console.error("Error in updateAndGetGameScores:", error);
