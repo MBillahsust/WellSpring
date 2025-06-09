@@ -93,6 +93,38 @@ const GameAssessment = mongoose.model("GameAssessment", GameAssessmentSchema);
 
 
 
+
+
+// Doctor info
+const doctorSchema = new mongoose.Schema({
+  name: {
+    type: String,
+    required: true
+  },
+  title: {
+    type: String
+  },
+  position: {
+    type: String
+  },
+  teaches: {
+    type: String
+  },
+  city: {
+    type: String
+  },
+  chamber: {
+    type: String
+  },
+  phone: {
+    type: String
+  }
+});
+
+const doctorSchemaExp = mongoose.model('Doctor', doctorSchema);
+
+
+
 // Export all models
 module.exports = {
   User,
@@ -101,5 +133,6 @@ module.exports = {
   ActivityEntry,
   ResearchQuestionnaire,
   GameScore,
-  GameAssessment
+  GameAssessment,
+  doctorSchemaExp
 };

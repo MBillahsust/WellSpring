@@ -292,7 +292,43 @@ Autheraztion : Token
 
 ---
 ---
+---
+---
 
+
+
+# Save Doctor : POST 
+
+**http://localhost:5004/doctor/addDoctor/**
+
+**Header**
+Autherization : Token
+
+
+```
+{
+"name": "Prof. Dr. Md. Rezaul Karim",
+"title": "MBBS, FCPS (Psychiatry), MS (USA)",
+"position": "Psychiatry (Brain, Mental Diseases, Drug Addiction) Specialist",
+"teaches": "Former Professor & Head, Psychiatry, Sylhet MAG Osmani Medical College & Hospital",
+"city": "Sylhet",
+"chamber": "Zindabazar Point, Sylhet",
+"phone": "+8801712345678"
+}
+```
+
+
+
+---
+
+
+# GET all doctor : GET 
+
+**http://localhost:5004/doctor/getallDoctor**
+
+
+
+---
 
 
 

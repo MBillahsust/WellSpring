@@ -20,6 +20,7 @@ connectDB()
     app.use("/mood", Router);
     app.use("/activity", Router);
     app.use("/game", Router);
+    app.use("/doctor", Router);
 
     const PORT = process.env.PORT || 5004;
     app.listen(PORT, () => {
