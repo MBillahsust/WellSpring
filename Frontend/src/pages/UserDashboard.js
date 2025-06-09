@@ -749,10 +749,11 @@ const UserDashboard = () => {
                     return {
                       date: dateLabel,
                       time: timeLabel,
-                      score: Number(moodScoreMap[entry.mood?.toLowerCase()] ?? 0)
+                      score: Number(moodScoreMap[entry.mood?.toLowerCase()] ?? 0),
+                      mood: entry.mood || ''
                     };
                   });
-                return <MoodChart moodData={chartData} width={700} height={350} showTimeBelowDate={true} />;
+                return <MoodChart moodData={chartData} width={1100} height={420} showTimeBelowDate={true} />;
               })()}
             </div>
           
