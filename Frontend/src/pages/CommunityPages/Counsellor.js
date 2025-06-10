@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 import axios from 'axios';
 import { useNavigate, useLocation } from 'react-router-dom';
+import { toast } from 'react-toastify';
 
 function PhoneIcon(props) {
   return (
@@ -32,6 +33,7 @@ export default function Counsellor() {
   const [recommendedDoctors, setRecommendedDoctors] = useState(null);
   const [recommendError, setRecommendError] = useState(null);
   const [filtersRestored, setFiltersRestored] = useState(false);
+  const [combinedSummary, setCombinedSummary] = useState("");
 
   // 7 divisions for location
   const divisions = [
@@ -121,6 +123,7 @@ export default function Counsellor() {
     setRecommendLoading(true);
     setRecommendError(null);
     setRecommendedDoctors(null);
+    setCombinedSummary("");
     const url = `${process.env.REACT_APP_BACKEND_URL}/doctor/recommandDoctor`;
     const payload = {
       assessmentData: assessmentChecked,
@@ -137,6 +140,9 @@ export default function Counsellor() {
       const res = await axios.post(url, payload, { headers });
       console.log('Recommend Doctor RESPONSE:', res);
       let data = res.data;
+      if (data && data.combinedSummary) {
+        setCombinedSummary(data.combinedSummary);
+      }
       if (data && Array.isArray(data.recommendedDoctors)) {
         setRecommendedDoctors(data.recommendedDoctors);
       } else if (data && Array.isArray(data.doctors)) {
@@ -155,6 +161,13 @@ export default function Counsellor() {
       }
     } catch (err) {
       console.log('Recommend Doctor ERROR:', err);
+      let errorMsg = 'Failed to recommend doctor.';
+      if (err.response && err.response.data && err.response.data.message) {
+        errorMsg = err.response.data.message;
+      } else if (err.message) {
+        errorMsg = err.message;
+      }
+      toast.error(errorMsg, { autoClose: 8000 });
       if (err.response && err.response.status === 401) {
         setRecommendError('Unauthorized. Please log in again.');
         localStorage.removeItem('token');
@@ -248,7 +261,19 @@ export default function Counsellor() {
 
       </div>
 
-
+      {/* Combined Summary or Error Segment */}
+      <div className="w-full flex justify-center items-center min-h-[40px] mb-4">
+        {recommendLoading ? (
+          <div className="flex items-center gap-2 text-blue-600 font-medium">
+            <svg className="animate-spin h-5 w-5 text-blue-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"></path></svg>
+            Processing recommendation...
+          </div>
+        ) : recommendError ? (
+          <div className="text-red-600 text-center font-medium w-full max-w-2xl bg-red-50 border border-red-200 rounded p-2">{recommendError}</div>
+        ) : combinedSummary ? (
+          <div className="text-blue-900 text-center font-medium w-full max-w-2xl bg-blue-50 border border-blue-200 rounded p-2 whitespace-pre-line">{combinedSummary}</div>
+        ) : null}
+      </div>
 
       {recommendError && <div className="text-red-600 text-center mb-4">{recommendError}</div>}
       {/* Show recommended doctors if present, else show filteredDoctors */}
