@@ -108,27 +108,32 @@ All sensitive operations are protected with JWT-based authentication.
 
 ## **Technologies Used**
 
-### Frontend
+## Technologies Used  
 
-![HTML](https://img.icons8.com/color/48/000000/html-5.png) **HTML**: To structure the web content.
-![CSS](https://img.icons8.com/color/48/000000/css3.png) **CSS**: For styling the web project.
-![React.js](https://img.icons8.com/color/48/000000/react-native.png) **React.js**: For building the user interface of the platform.
-![React Router](https://i.ibb.co/19d5sDG/react-router-svg.png) **React Router**: For declarative routing in React applications.
-![Tailwind CSS](https://img.icons8.com/color/48/000000/tailwindcss.png) **Tailwind CSS**: A utility-first CSS framework for designing responsive and modern UI components.
-![DaisyUI](https://img.icons8.com/?size=100\&id=RPyoS0c4Zki1\&format=png\&color=000000) **DaisyUI**: A Tailwind CSS-based UI framework to enhance styling with prebuilt components.
-![Framer Motion](https://img.icons8.com/ios-filled/50/000000/framer-logo.png) **Framer Motion**: For smooth and interactive animations.
+### Frontend  
+- ![HTML](https://img.icons8.com/color/48/000000/html-5.png) **HTML**: To structure the web content.
+- ![CSS](https://img.icons8.com/color/48/000000/css3.png) **CSS**: For styling the web project.
+- ![React.js](https://img.icons8.com/color/48/000000/react-native.png) **React.js**: For building the user interface of the platform.
+- ![React Router](https://i.ibb.co/19d5sDG/react-router-svg.png) **React Router**: For declarative routing in React applications.
+- ![Tailwind CSS](https://img.icons8.com/color/48/000000/tailwindcss.png) **Tailwind CSS**: A utility-first CSS framework for designing responsive and modern UI components.  
+- ![DaisyUI](https://img.icons8.com/?size=100&id=RPyoS0c4Zki1&format=png&color=000000) **DaisyUI**: A Tailwind CSS-based UI framework to enhance styling with prebuilt components.  
+- ![Framer Motion](https://img.icons8.com/ios-filled/50/000000/framer-logo.png) **Framer Motion**: For smooth and interactive animations.
 
-### Backend
+### Backend  
 
-![Node.js](https://img.icons8.com/color/48/000000/nodejs.png) **Node.js**: To handle server-side logic and API integration.
-![Express.js](https://cdn.icon-icons.com/icons2/2699/PNG/48/expressjs_logo_icon_169185.png) **Express.js**: For creating and managing backend services and APIs.
-![JWT](https://img.icons8.com/?size=48\&id=rHpveptSuwDz\&format=png) **JSON Web Token (JWT)**: To secure user authentication and authorization.
-![Axios](https://img.icons8.com/ios-filled/50/000000/axios.png) **Axios**: For making HTTP requests from the frontend to the backend.
-![Lama AI](https://img.icons8.com/?size=48\&id=100225\&format=png) **Lama AI**: Powers intelligent doctor recommendations and cognitive insights.
+- ![Node.js](https://img.icons8.com/color/48/000000/nodejs.png) **Node.js**: To handle server-side logic and API integration.  
+- ![Express.js](https://cdn.icon-icons.com/icons2/2699/PNG/48/expressjs_logo_icon_169185.png) **Express.js**: For creating and managing backend services and APIs.  
+- ![JWT](https://img.icons8.com/?size=48&id=rHpveptSuwDz&format=png) **JSON Web Token (JWT)**: To secure user authentication and authorization.  
+- ![Axios](https://img.icons8.com/ios-filled/50/000000/axios.png) **Axios**: For making HTTP requests from the frontend to the backend.
 
-### Database
+- ![Lama AI](https://img.icons8.com/?size=48\&id=100225\&format=png) **Lama AI**: Powers intelligent doctor recommendations and cognitive insights.
 
-![MongoDB](https://img.icons8.com/color/48/000000/mongodb.png) **MongoDB**: A NoSQL database for managing user, assessment, and doctor data.
+
+### Database  
+
+- ![MongoDB](https://img.icons8.com/color/48/000000/mongodb.png) **MongoDB**: A NoSQL database for managing user, assessment, and doctor data.  
+
+<br>
 
 
 
