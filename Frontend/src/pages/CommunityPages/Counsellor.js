@@ -194,43 +194,23 @@ export default function Counsellor() {
       >
         Our Psychiatrists
       </motion.h2>
-      {/* Filter Row */}
       <div className="flex flex-wrap justify-center items-center gap-4 mb-8 p-2">
-        {/* Mood */}
-        <div className="flex items-center gap-2">
-          <input
-            type="checkbox"
-            id="mood"
-            checked={moodChecked}
-            onChange={e => setMoodChecked(e.target.checked)}
-            className="form-checkbox h-4 w-4 text-blue-600 rounded border-gray-300"
-          />
-          <label htmlFor="mood" className="text-sm font-medium text-blue-900">Mood</label>
-        </div>
-
-        {/* Activity */}
-        <div className="flex items-center gap-2">
-          <input
-            type="checkbox"
-            id="activity"
-            checked={activityChecked}
-            onChange={e => setActivityChecked(e.target.checked)}
-            className="form-checkbox h-4 w-4 text-blue-600 rounded border-gray-300"
-          />
-          <label htmlFor="activity" className="text-sm font-medium text-blue-900">Activity</label>
-        </div>
-
-        {/* Assessments */}
-        <div className="flex items-center gap-2">
-          <input
-            type="checkbox"
-            id="assessment"
-            checked={assessmentChecked}
-            onChange={e => setAssessmentChecked(e.target.checked)}
-            className="form-checkbox h-4 w-4 text-blue-600 rounded border-gray-300"
-          />
-          <label htmlFor="assessment" className="text-sm font-medium text-blue-900">Assessments</label>
-        </div>
+        {/* Custom Square Buttons with Rounded Corners */}
+        {[
+          { id: 'mood', label: 'Mood', checked: moodChecked, setChecked: setMoodChecked },
+          { id: 'activity', label: 'Activity', checked: activityChecked, setChecked: setActivityChecked },
+          { id: 'assessment', label: 'Assessments', checked: assessmentChecked, setChecked: setAssessmentChecked },
+        ].map(({ id, label, checked, setChecked }) => (
+          <button
+            key={id}
+            onClick={() => setChecked(!checked)}
+            className={`w-20 h-8 flex items-center justify-center rounded-lg text-xs font-semibold transition-all duration-200 select-none
+        ${checked ? 'bg-blue-600 text-white' : 'bg-white text-blue-600 border border-blue-400'}
+        shadow-sm hover:shadow-md`}
+          >
+            {label}
+          </button>
+        ))}
 
         {/* Division Dropdown */}
         <div>
@@ -258,8 +238,9 @@ export default function Counsellor() {
         >
           {recommendLoading ? 'Recommending...' : 'Recommend Doctor'}
         </button>
-
       </div>
+
+
 
       {/* Combined Summary or Error Segment */}
       <div className="w-full flex justify-center items-center min-h-[40px] mb-4">
