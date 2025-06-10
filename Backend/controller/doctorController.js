@@ -145,6 +145,7 @@ const recommendDoctorsController = async (req, res) => {
 
     if (!combinedSummary.trim()) return res.status(400).json({ error: "No data to summarize" });
 
+    
 
     const doctorIds = doctorsInCity.map(d => d._id.toString());
 
@@ -170,7 +171,7 @@ const recommendDoctorsController = async (req, res) => {
     if (validIds.length < 2) return res.status(500).json({ error: "AI returned fewer than 2 valid doctor IDs" });
 
     const recommendedDoctors = await Doctor.find({ _id: { $in: validIds } });
-    res.json({ recommendedDoctors });
+    res.json({ recommendedDoctors,  combinedSummary});
   } catch (error) {
     console.error("Error in recommendDoctorsController:", error);
     res.status(500).json({ error: "Internal Server Error" });
