@@ -3,6 +3,135 @@
 
 
 
+## **Introduction**
+
+**Wellspring** is a comprehensive mental health and wellness platform designed to empower users on their journey to better mental health. The platform offers interactive games, self-assessments, mood and activity tracking, expert counselling recommendations, and a user-friendly dashboard. With a modern, responsive UI and robust authentication, Wellspring provides a safe and engaging environment for users to understand, track, and improve their mental well-being.
+
+---
+
+## **Features**
+
+**User Authentication**
+Secure login, signup, and session management with JWT.
+
+**Interactive Games**
+Cognitive games like Flappy Bird to assess and improve mental skills.
+
+**Self-Assessments**
+Scientifically-backed assessments for anxiety, depression, OCD, PTSD, and more.
+
+**Mood & Activity Tracking**
+Log daily moods and activities, visualize trends, and gain insights.
+
+**Personalized Dashboard**
+View recent scores, assessment results, and progress.
+
+**Doctor Recommendation**
+Get AI-powered recommendations for mental health professionals based on your needs.
+**(Powered by Lama AI)**
+
+**Counsellor Directory**
+Browse and filter a list of expert psychiatrists and counsellors.
+
+**Feedback & Reports**
+Receive detailed cognitive reports and submit feedback after games and assessments.
+
+**Modern UI**
+Responsive, accessible, and visually appealing interface with card layouts, gradients, and icons.
+
+**Secure API Integration**
+All sensitive operations are protected with JWT-based authentication.
+
+---
+
+## **Pages**
+
+### Home Page
+
+<img src="Home.png">
+
+### Login Page
+
+<img src="Login.png">
+
+### Signup Page
+
+<img src="Signup.png">
+
+### User Dashboard
+
+<img src="Dashboard.png">
+
+### Flappy Bird Game
+
+<img src="FlappyBird.png">
+
+### Game Result Modal
+
+<img src="GameResultModal.png">
+
+### Mood Tracking
+
+<img src="MoodTracking.png">
+
+### Activity Logging
+
+<img src="ActivityLogging.png">
+
+### Assessments (Anxiety, Depression, OCD, PTSD, etc.)
+
+<img src="Assessment.png">
+
+### Counsellors Page
+
+<img src="Counsellors.png">
+
+### Doctor Recommendation Modal
+
+<img src="RecommendDoctor.png">
+
+### Community/Forum Page
+
+<img src="Community.png">
+
+### Profile Page
+
+<img src="Profile.png">
+
+### Feedback Modal
+
+<img src="Feedback.png">
+
+*(Add or remove pages as per your actual project structure and available screenshots)*
+
+---
+
+## **Technologies Used**
+
+### Frontend
+
+![HTML](https://img.icons8.com/color/48/000000/html-5.png) **HTML**: To structure the web content.
+![CSS](https://img.icons8.com/color/48/000000/css3.png) **CSS**: For styling the web project.
+![React.js](https://img.icons8.com/color/48/000000/react-native.png) **React.js**: For building the user interface of the platform.
+![React Router](https://i.ibb.co/19d5sDG/react-router-svg.png) **React Router**: For declarative routing in React applications.
+![Tailwind CSS](https://img.icons8.com/color/48/000000/tailwindcss.png) **Tailwind CSS**: A utility-first CSS framework for designing responsive and modern UI components.
+![DaisyUI](https://img.icons8.com/?size=100\&id=RPyoS0c4Zki1\&format=png\&color=000000) **DaisyUI**: A Tailwind CSS-based UI framework to enhance styling with prebuilt components.
+![Framer Motion](https://img.icons8.com/ios-filled/50/000000/framer-logo.png) **Framer Motion**: For smooth and interactive animations.
+
+### Backend
+
+![Node.js](https://img.icons8.com/color/48/000000/nodejs.png) **Node.js**: To handle server-side logic and API integration.
+![Express.js](https://cdn.icon-icons.com/icons2/2699/PNG/48/expressjs_logo_icon_169185.png) **Express.js**: For creating and managing backend services and APIs.
+![JWT](https://img.icons8.com/?size=48\&id=rHpveptSuwDz\&format=png) **JSON Web Token (JWT)**: To secure user authentication and authorization.
+![Axios](https://img.icons8.com/ios-filled/50/000000/axios.png) **Axios**: For making HTTP requests from the frontend to the backend.
+![Lama AI](https://img.icons8.com/?size=48\&id=100225\&format=png) **Lama AI**: Powers intelligent doctor recommendations and cognitive insights.
+
+### Database
+
+![MongoDB](https://img.icons8.com/color/48/000000/mongodb.png) **MongoDB**: A NoSQL database for managing user, assessment, and doctor data.
+
+
+
 # Functional Requirement:
 
 1. Mental health assesments (various)
