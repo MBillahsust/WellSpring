@@ -48,59 +48,64 @@ All sensitive operations are protected with JWT-based authentication.
 
 ### Home Page
 
-<img src="Home.png">
+<img src="images/Home.png">
+<img src="images/Home1.png">
+<img src="images/Home2.png">
 
 ### Login Page
 
-<img src="Login.png">
+<img src="images/Login.png">
 
 ### Signup Page
 
-<img src="Signup.png">
+<img src="images/Signup.png">
 
 ### User Dashboard
 
-<img src="Dashboard.png">
+<img src="images/Dashboard.png">
+<img src="images/Dashboard1.png">
+<img src="images/Dashboard2.png">
 
 ### Flappy Bird Game
 
-<img src="FlappyBird.png">
+<img src="images/FlappyBird.png">
 
 ### Game Result Modal
 
-<img src="GameResultModal.png">
+<img src="images/GameResultModal.png">
 
 ### Mood Tracking
 
-<img src="MoodTracking.png">
+<img src="images/MoodTracking.png">
 
 ### Activity Logging
 
-<img src="ActivityLogging.png">
+<img src="images/ActivityLogging.png">
 
 ### Assessments (Anxiety, Depression, OCD, PTSD, etc.)
 
-<img src="Assessment.png">
+<img src="images/Assessment.png">
 
 ### Counsellors Page
 
-<img src="Counsellors.png">
+<img src="images/Counsellors.png">
 
 ### Doctor Recommendation Modal
 
-<img src="RecommendDoctor.png">
+<img src="images/RecommendDoctor1.png">
+<img src="images/RecommendDoctor2.png">
 
 ### Community/Forum Page
 
-<img src="Community.png">
+<img src="images/Community.png">
 
 ### Profile Page
 
-<img src="Profile.png">
+<img src="images/Profile.png">
 
 ### Feedback Modal
 
-<img src="Feedback.png">
+<img src="images/Feedback.png">
 
 *(Add or remove pages as per your actual project structure and available screenshots)*
 
