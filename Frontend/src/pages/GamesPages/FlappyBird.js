@@ -341,7 +341,7 @@ const FlappyBird = () => {
           Authorization: userInfo?.token ? `Bearer ${userInfo.token}` : '',
         },
       });
-      setSubmitStatus('Assessment submitted successfully!');
+      //setSubmitStatus('Assessment submitted successfully!');
       setModalOpen(false);
       setFeedbackOpen(false);
       toast.success('Assessment submitted successfully!');
@@ -469,29 +469,25 @@ const FlappyBird = () => {
       <Dialog open={feedbackOpen} onClose={() => setFeedbackOpen(false)} className="fixed z-50 inset-0">
         <div className="flex items-center justify-center min-h-screen px-4">
           <div className="fixed inset-0 bg-black opacity-30" />
-          <div className="relative bg-white rounded-xl shadow-xl max-w-md w-full mx-auto p-6 z-50 overflow-visible">
-            <DialogTitle className="text-lg font-bold mb-4 text-blue-800">Your Feedback</DialogTitle>
+          <div className="relative bg-white rounded-xl shadow-xl max-w-lg w-full mx-auto p-6 z-50 overflow-visible">
+            <DialogTitle className="text-2xl font-bold text-blue-800 text-center mb-4">Feedback</DialogTitle>
             <textarea
-              className="w-full border border-blue-200 rounded-lg p-2 mb-4 focus:ring-2 focus:ring-blue-400 resize-none whitespace-pre-line"
-              rows={4}
+              className="w-full min-h-[120px] p-3 border border-blue-300 rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-blue-400 text-base mb-4"
+              placeholder="Share your thoughts, suggestions, or how you felt about the game..."
               value={feedbackText}
               onChange={e => setFeedbackText(e.target.value)}
-              placeholder="Write your feedback here..."
-              style={{ whiteSpace: 'pre-line' }}
+              maxLength={500}
             />
-            <div className="flex gap-4">
+            <div className="flex justify-end gap-4 mt-2">
               <button
+                className="bg-gray-200 text-blue-800 px-4 py-2 rounded-lg font-semibold hover:bg-gray-300 transition text-sm"
                 onClick={() => setFeedbackOpen(false)}
-                className="w-1/2 bg-gray-200 text-blue-800 py-2 rounded-lg font-semibold hover:bg-gray-300 transition"
-              >
-                Cancel
-              </button>
+              >Cancel</button>
               <button
-                onClick={() => setFeedbackOpen(false)}
-                className="w-1/2 bg-blue-600 text-white py-2 rounded-lg font-semibold hover:bg-blue-700 transition"
-              >
-                Save
-              </button>
+                className="bg-blue-600 text-white px-4 py-2 rounded-lg font-semibold hover:bg-blue-700 transition text-sm"
+                onClick={() => { setFeedbackOpen(false); }}
+                disabled={feedbackText.trim().length === 0}
+              >Save</button>
             </div>
           </div>
         </div>

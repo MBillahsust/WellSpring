@@ -299,7 +299,7 @@ const MemoryMatch = () => {
                     Authorization: userInfo?.token ? `Bearer ${userInfo.token}` : '',
                 },
             });
-            setSubmitStatus('Assessment submitted successfully!');
+            //setSubmitStatus('Assessment submitted successfully!');
             setModalOpen(false);
             setFeedbackOpen(false);
             toast.success('Assessment submitted successfully!');
@@ -349,7 +349,7 @@ const MemoryMatch = () => {
     };
 
     return (
-        <div className="min-h-screen bg-green-100 flex flex-col items-center justify-center py-8">
+        <div className="min-h-screen bg-green-100 py-4 pt-0">
             <ToastContainer position="top-right" autoClose={3000} hideProgressBar={false} newestOnTop closeOnClick pauseOnFocusLoss draggable pauseOnHover />
             <Dialog open={modalOpen} onClose={() => setModalOpen(false)} className="fixed z-50 inset-0">
                 <div className="flex items-center justify-center min-h-screen px-4">
@@ -435,71 +435,139 @@ const MemoryMatch = () => {
                     </div>
                 </div>
             </Dialog>
-            <h1 className="text-3xl font-bold mb-2 text-green-800">Memory Match</h1>
-            <p className="mb-2 text-green-700">Flip cards to find all matching pairs! You have 10 seconds.</p>
-            <div className="flex items-center gap-8 mb-4">
-                <div className="text-lg text-green-800 font-semibold">Timer: {timer.toFixed(2)}s</div>
-                <div className="text-lg text-green-800 font-semibold">Pairs: {score}</div>
-                <div className="text-lg text-green-800 font-semibold">Moves: {moves}</div>
-                <button
-                    className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg shadow"
-                    onClick={handleRestart}
-                >Restart</button>
-            </div>
-            <div
-                className="grid grid-cols-4 gap-4 bg-white p-6 rounded-lg shadow-lg"
-                style={{ width: gridSize * (cardSize + 16) }}
-            >
-                {cards.map((card, idx) => (
-                    <div
-                        key={card.id}
-                        className={`relative cursor-pointer select-none border-2 rounded-lg flex items-center justify-center bg-green-50 ${flipped.includes(idx) || matched.includes(idx)
-                            ? 'border-green-500'
-                            : 'border-green-200'
-                            }`}
-                        onClick={() => handleCardClick(idx)}
-                        style={{ width: cardSize, height: cardSize }}
-                    >
-                        {(flipped.includes(idx) || matched.includes(idx)) ? (
-                            <canvas
-                                width={cardSize}
-                                height={cardSize}
-                                ref={el => {
-                                    if (el) drawShape(el.getContext('2d'), card, 0, 0, cardSize);
-                                }}
-                            />
-                        ) : (
-                            <div className="w-full h-full flex items-center justify-center text-2xl text-green-400">?</div>
-                        )}
+            <Dialog open={feedbackOpen} onClose={() => setFeedbackOpen(false)} className="fixed z-50 inset-0">
+                <div className="flex items-center justify-center min-h-screen px-4">
+                    <div className="fixed inset-0 bg-black opacity-30" />
+                    <div className="relative bg-white rounded-xl shadow-xl max-w-lg w-full mx-auto p-6 z-50 overflow-visible">
+                        <DialogTitle className="text-2xl font-bold text-green-800 text-center mb-4">Feedback</DialogTitle>
+                        <textarea
+                            className="w-full min-h-[120px] p-3 border border-green-300 rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-green-400 text-base mb-4"
+                            placeholder="Share your thoughts, suggestions, or how you felt about the game..."
+                            value={feedbackText}
+                            onChange={e => setFeedbackText(e.target.value)}
+                            maxLength={500}
+                        />
+                        <div className="flex justify-end gap-4 mt-2">
+                            <button
+                                className="bg-gray-200 text-green-800 px-4 py-2 rounded-lg font-semibold hover:bg-gray-300 transition text-sm"
+                                onClick={() => setFeedbackOpen(false)}
+                            >Cancel</button>
+                            <button
+                                className="bg-green-600 text-white px-4 py-2 rounded-lg font-semibold hover:bg-green-700 transition text-sm"
+                                onClick={() => { setFeedbackOpen(false); }}
+                                disabled={feedbackText.trim().length === 0}
+                            >Save</button>
+                        </div>
                     </div>
-                ))}
-            </div>
-            {gameOver && (
-                <div className="mt-6 text-2xl text-green-700 font-bold">
-                    Time's up!<br />
-                    Final Score: {finalScore}<br />
-                    Pairs matched: {Math.floor(matched.length / 2)}<br />
-                    Moves: {moves}
                 </div>
-            )}
-            {matched.length === cards.length && !gameOver && (
-                <div className="mt-6 text-2xl text-green-700 font-bold">Congratulations! You matched all pairs!</div>
-            )}
-            {/* Ranking Card */}
-            <div className="bg-white rounded-xl shadow-md p-5 w-full flex flex-col items-center border border-indigo-100 mt-8">
-                <div className="flex items-center gap-2 mb-2">
-                    <span className="inline-block bg-yellow-100 p-2 rounded-full">
-                        <svg xmlns='http://www.w3.org/2000/svg' className='h-6 w-6 text-yellow-500' fill='none' viewBox='0 0 24 24' stroke='currentColor'><path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M12 8v4l3 3m6 0a9 9 0 11-18 0 9 9 0 0118 0z' /></svg>
-                    </span>
-                    <h3 className="text-lg font-bold text-indigo-900">Your Ranking</h3>
+            </Dialog>
+            <div className="max-w-6xl mx-auto px-4">
+                <div className="bg-white rounded-lg shadow-md overflow-hidden">
+                    <div className="bg-[#4caf50] p-3">
+                        <h1 className="text-xl font-bold text-white text-center">Memory Match</h1>
+                        <p className="text-white/80 text-center text-sm">Flip cards to find all matching pairs! You have 10 seconds.</p>
+                    </div>
+                    <div className="flex flex-col md:flex-row">
+                        {/* Left side - Scores and Last Result */}
+                        <div className="w-full md:w-1/4 p-4 bg-gradient-to-b from-green-50 to-green-100 flex flex-col gap-6">
+                            {/* Game Scores Card */}
+                            <div className="bg-white rounded-xl shadow-md p-5 flex flex-col items-center border border-green-100">
+                                <div className="flex items-center gap-2 mb-2">
+                                    <span className="inline-block bg-green-100 p-2 rounded-full"><svg xmlns='http://www.w3.org/2000/svg' className='h-5 w-5 text-green-500' fill='none' viewBox='0 0 24 24' stroke='currentColor'><path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M13 16h-1v-4h-1m1-4h.01M12 20a8 8 0 100-16 8 8 0 000 16z' /></svg></span>
+                                    <h3 className="text-lg font-bold text-green-900">Game Scores</h3>
+                                </div>
+                                <ul className="text-base text-green-800 space-y-1 w-full">
+                                    <li>1st game score: {scores[0] !== null ? scores[0] : <span className="italic text-gray-500">not played</span>}</li>
+                                    <li>2nd game score: {scores[1] !== null ? scores[1] : <span className="italic text-gray-500">not played</span>}</li>
+                                    <li>3rd game score: {scores[2] !== null ? scores[2] : <span className="italic text-gray-500">not played</span>}</li>
+                                </ul>
+                            </div>
+                            {/* Last Game Result */}
+                            {gameOver && (
+                                <div className="bg-white rounded-xl shadow-md p-5 flex flex-col items-center border border-green-100 mt-4">
+                                    <div className="text-lg font-bold text-green-800 mb-2">Last Game Result</div>
+                                    <div className="text-green-700 text-base">Time's up!</div>
+                                    <div className="text-green-700 text-base">Final Score: {finalScore}</div>
+                                    <div className="text-green-700 text-base">Pairs matched: {Math.floor(matched.length / 2)}</div>
+                                    <div className="text-green-700 text-base">Moves: {moves}</div>
+                                </div>
+                            )}
+                        </div>
+                        {/* Center - Game */}
+                        <div className="w-full md:w-2/4 flex flex-col items-center justify-center p-4">
+                            {/* Timer and Restart */}
+                            <div className="flex items-center gap-8 mb-4">
+                                <div className="text-lg text-green-800 font-semibold">Timer: {timer.toFixed(2)}s</div>
+                                <button
+                                    className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg shadow"
+                                    onClick={handleRestart}
+                                >Restart</button>
+                            </div>
+                            <div
+                                className="grid grid-cols-4 gap-4 bg-white p-6 rounded-lg shadow-lg"
+                                style={{ width: gridSize * (cardSize + 16) }}
+                            >
+                                {cards.map((card, idx) => (
+                                    <div
+                                        key={card.id}
+                                        className={`relative cursor-pointer select-none border-2 rounded-lg flex items-center justify-center bg-green-50 ${flipped.includes(idx) || matched.includes(idx)
+                                            ? 'border-green-500'
+                                            : 'border-green-200'
+                                            }`}
+                                        onClick={() => handleCardClick(idx)}
+                                        style={{ width: cardSize, height: cardSize }}
+                                    >
+                                        {(flipped.includes(idx) || matched.includes(idx)) ? (
+                                            <canvas
+                                                width={cardSize}
+                                                height={cardSize}
+                                                ref={el => {
+                                                    if (el) drawShape(el.getContext('2d'), card, 0, 0, cardSize);
+                                                }}
+                                            />
+                                        ) : (
+                                            <div className="w-full h-full flex items-center justify-center text-2xl text-green-400">?</div>
+                                        )}
+                                    </div>
+                                ))}
+                            </div>
+                            {matched.length === cards.length && !gameOver && (
+                                <div className="mt-6 text-2xl text-green-700 font-bold">Congratulations! You matched all pairs!</div>
+                            )}
+                        </div>
+                        {/* Right side - Ranking and How to Play */}
+                        <div className="w-full md:w-1/4 p-4 bg-gradient-to-b from-green-50 to-green-100 flex flex-col gap-6 items-center">
+                            {/* Ranking Card */}
+                            <div className="bg-white rounded-xl shadow-md p-5 w-full flex flex-col items-center border border-indigo-100">
+                                <div className="flex items-center gap-2 mb-2">
+                                    <span className="inline-block bg-yellow-100 p-2 rounded-full">
+                                        <svg xmlns='http://www.w3.org/2000/svg' className='h-6 w-6 text-yellow-500' fill='none' viewBox='0 0 24 24' stroke='currentColor'><path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M12 8v4l3 3m6 0a9 9 0 11-18 0 9 9 0 0118 0z' /></svg>
+                                    </span>
+                                    <h3 className="text-lg font-bold text-indigo-900">Your Ranking</h3>
+                                </div>
+                                <div className="flex items-center justify-center mt-2 mb-1">
+                                    <span className={`text-4xl font-extrabold ${ranking !== null && ranking <= 10 ? 'text-yellow-500 animate-pulse drop-shadow-lg' : 'text-indigo-600'}`}>{ranking !== null ? `#${ranking}` : '-'}</span>
+                                    {ranking !== null && ranking <= 10 && (
+                                        <span className="ml-2 text-yellow-400 animate-bounce"><svg xmlns='http://www.w3.org/2000/svg' className='h-6 w-6' fill='currentColor' viewBox='0 0 20 20'><path d='M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.967a1 1 0 00.95.69h4.175c.969 0 1.371 1.24.588 1.81l-3.38 2.455a1 1 0 00-.364 1.118l1.287 3.966c.3.922-.755 1.688-1.54 1.118l-3.38-2.454a1 1 0 00-1.175 0l-3.38 2.454c-.784.57-1.838-.196-1.54-1.118l1.287-3.966a1 1 0 00-.364-1.118L2.049 9.394c-.783-.57-.38-1.81.588-1.81h4.175a1 1 0 00.95-.69l1.286-3.967z'/></svg></span>
+                                    )}
+                                </div>
+                                <div className="text-xs text-gray-500">(Top 10 get a special badge!)</div>
+                            </div>
+                            {/* How to play Timeline */}
+                            <div className="bg-white rounded-xl shadow-md p-5 w-full border border-green-100 mt-6">
+                                <div className="flex items-center gap-2 mb-2">
+                                    <span className="inline-block bg-green-100 p-2 rounded-full"><svg xmlns='http://www.w3.org/2000/svg' className='h-5 w-5 text-green-500' fill='none' viewBox='0 0 24 24' stroke='currentColor'><path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M9 12h6m-3-3v6m9 2a9 9 0 11-18 0 9 9 0 0118 0z' /></svg></span>
+                                    <h4 className="text-md font-bold text-green-800">How to play</h4>
+                                </div>
+                                <ol className="relative border-l border-green-200 ml-3 mt-2 space-y-4">
+                                    <li className="ml-4"><span className="absolute -left-2 top-1 w-3 h-3 bg-green-400 rounded-full"></span>Click any card to flip it over.</li>
+                                    <li className="ml-4"><span className="absolute -left-2 top-1 w-3 h-3 bg-green-400 rounded-full"></span>Find and match all pairs before time runs out.</li>
+                                    <li className="ml-4"><span className="absolute -left-2 top-1 w-3 h-3 bg-green-400 rounded-full"></span>Try to beat your high score and improve your memory!</li>
+                                </ol>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <div className="flex items-center justify-center mt-2 mb-1">
-                    <span className={`text-4xl font-extrabold ${ranking !== null && ranking <= 10 ? 'text-yellow-500 animate-pulse drop-shadow-lg' : 'text-indigo-600'}`}>{ranking !== null ? `#${ranking}` : '-'}</span>
-                    {ranking !== null && ranking <= 10 && (
-                        <span className="ml-2 text-yellow-400 animate-bounce"><svg xmlns='http://www.w3.org/2000/svg' className='h-6 w-6' fill='currentColor' viewBox='0 0 20 20'><path d='M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.967a1 1 0 00.95.69h4.175c.969 0 1.371 1.24.588 1.81l-3.38 2.455a1 1 0 00-.364 1.118l1.287 3.966c.3.922-.755 1.688-1.54 1.118l-3.38-2.454a1 1 0 00-1.175 0l-3.38 2.454c-.784.57-1.838-.196-1.54-1.118l1.287-3.966a1 1 0 00-.364-1.118L2.049 9.394c-.783-.57-.38-1.81.588-1.81h4.175a1 1 0 00.95-.69l1.286-3.967z'/></svg></span>
-                    )}
-                </div>
-                <div className="text-xs text-gray-500">(Top 10 get a special badge!)</div>
             </div>
         </div>
     );
