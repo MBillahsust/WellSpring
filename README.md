@@ -106,7 +106,6 @@ All sensitive operations are protected with JWT-based authentication.
 
 ---
 
-## **Technologies Used**
 
 ## Technologies Used  
 
