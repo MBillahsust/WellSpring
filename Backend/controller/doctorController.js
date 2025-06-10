@@ -48,8 +48,6 @@ const getAllDoctors = async (req, res) => {
 };
 
 
-
-
 async function summarizeAssessmentText(userId) {
   const assessments = await Assessment.find({ userId })
     .sort({ takenAt: -1 })
@@ -62,12 +60,12 @@ async function summarizeAssessmentText(userId) {
     `Assessment Name: ${a.assessmentName || "N/A"}\nResult: ${a.assessmentResult || "N/A"}\nScore: ${a.assessmentScore || "N/A"}\nRecommendation: ${a.recommendation || "N/A"}`
   ).join("\n\n");
 
-  const prompt = `You are a mental health expert. Based on the following recent assessment details, provide a detailed summary of the user's mental health state and suitable recommendations for treatment or doctor referral.\n\n${formatted}`;
+  const prompt = `You are a mental health expert. Based on the following recent assessment details, provide a summary of the user's mental health state. Clearly state what type of doctor or mental health specialist they should consult. Your response must be between 40 to 60 words.\n\n${formatted}`;
 
   const aiRes = await groq.chat.completions.create({
     model: "llama-3.3-70b-versatile",
     messages: [
-      { role: "system", content: "You are a mental health expert summarizing user assessment data." },
+      { role: "system", content: "You are a mental health expert summarizing user assessment data to guide treatment or specialist referral." },
       { role: "user", content: prompt },
     ],
     response_format: { type: "text" },
@@ -88,12 +86,12 @@ async function summarizeMoodText(userId) {
     `Mood: ${m.mood || "N/A"}\nNotes: ${m.notes || "N/A"}\nTime: ${m.time || "N/A"}`
   ).join("\n\n");
 
-  const prompt = `You are a mental health expert. Based on the following recent mood entries, provide a detailed summary of the user's emotional state, mood patterns, and any relevant recommendations for wellbeing or potential follow-up.\n\n${formatted}`;
+  const prompt = `You are a mental health expert. Based on the following recent mood entries, summarize the user's emotional state and mood trends. Recommend the type of doctor or mental health professional they should consult. Your response must be between 40 to 60 words.\n\n${formatted}`;
 
   const aiRes = await groq.chat.completions.create({
     model: "llama-3.3-70b-versatile",
     messages: [
-      { role: "system", content: "You are a mental health expert summarizing user mood data." },
+      { role: "system", content: "You are a mental health expert summarizing user mood data to recommend an appropriate specialist." },
       { role: "user", content: prompt },
     ],
     response_format: { type: "text" },
@@ -114,12 +112,12 @@ async function summarizeActivityText(userId) {
     `Activity: ${a.activity || "N/A"}\nNotes: ${a.notes || "N/A"}\nTime: ${a.time || "N/A"}`
   ).join("\n\n");
 
-  const prompt = `You are an expert analyst. Based on the following recent activity entries, provide a detailed summary of the user's recent activities, how they might relate to their mental and physical wellbeing, and any relevant recommendations.\n\n${formatted}`;
+  const prompt = `You are a mental health expert. Based on the following activity data, summarize how these habits may affect the user's wellbeing. Suggest whether they need to consult a therapist, psychologist, or other specialist. Your response must be between 40 to 60 words.\n\n${formatted}`;
 
   const aiRes = await groq.chat.completions.create({
     model: "llama-3.3-70b-versatile",
     messages: [
-      { role: "system", content: "You are an expert analyst summarizing user activity data." },
+      { role: "system", content: "You are a mental health expert summarizing user activity data and suggesting appropriate professional help." },
       { role: "user", content: prompt },
     ],
     response_format: { type: "text" },
@@ -127,6 +125,7 @@ async function summarizeActivityText(userId) {
 
   return aiRes.choices[0].message.content.trim();
 }
+
 
 
 const recommendDoctorsController = async (req, res) => {
