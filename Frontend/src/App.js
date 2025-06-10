@@ -8,6 +8,7 @@ import AICounselor from './pages/AICounselorPages/AICounselor';
 import Routine from './pages/AICounselorPages/Routine';
 import Games from './pages/GamesPages/Games';
 import FlappyBird from './pages/GamesPages/FlappyBird';
+import MemoryMatch from './pages/GamesPages/MemoryMatch';
 
 import MentalHealthAssessments from './Components/Assesment';
 import ResearchDevelopment from './pages/HeaderPages/ResearchDevelopment';
@@ -78,6 +79,7 @@ function App() {
             <Route path="/" element={<Layout />} />
             <Route path="/games" element={<Games />} />
             <Route path="/games/flappy-bird" element={<FlappyBird />} />
+            <Route path="/games/memory-match" element={<MemoryMatch />} />
 
             <Route path='/counsellors' element={<Counsellor />} />
             <Route path="/counsellor-bot" element={<CounsellorBotChat />} />

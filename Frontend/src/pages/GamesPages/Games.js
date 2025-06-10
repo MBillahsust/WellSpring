@@ -16,13 +16,13 @@ const Games = () => {
       color: 'bg-blue-500'
     },
     {
-      id: 'coming-soon-1',
+      id: 'memory-match',
       title: 'Memory Match',
-      description: 'Coming soon! Test your memory with this card matching game.',
+      description: 'Test your memory with this card matching game.',
       icon: <FaPuzzlePiece className="text-4xl" />,
-      path: '#',
+      path: '/games/memory-match',
       color: 'bg-purple-500',
-      disabled: true
+      disabled: false
     },
     {
       id: 'coming-soon-2',
@@ -85,6 +85,14 @@ const Games = () => {
                         navigate('/games/flappy-bird');
                       }
                     }}
+                  >
+                    <FaGamepad />
+                    <span>Play Now</span>
+                  </button>
+                ) : game.id === 'memory-match' ? (
+                  <button
+                    className="w-full bg-[#a259e6] text-white px-6 py-3 rounded-lg flex items-center justify-center space-x-2 hover:bg-[#8d3fcf] transition-colors"
+                    onClick={() => navigate('/games/memory-match')}
                   >
                     <FaGamepad />
                     <span>Play Now</span>
