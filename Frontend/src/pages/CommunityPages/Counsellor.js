@@ -1,5 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
+import axios from 'axios';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 function PhoneIcon(props) {
   return (
@@ -11,379 +13,337 @@ function PhoneIcon(props) {
 
 export default function Counsellor() {
   const [selectedCity, setSelectedCity] = useState('All');
+  const [doctors, setDoctors] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [apiError, setApiError] = useState(null);
+  // Filter states
+  const [moodChecked, setMoodChecked] = useState(false);
+  const [activityChecked, setActivityChecked] = useState(false);
+  const [assessmentChecked, setAssessmentChecked] = useState(false);
+  const [locationChecked, setLocationChecked] = useState(false);
+  const [mood, setMood] = useState('');
+  const [activity, setActivity] = useState('');
+  const [assessment, setAssessment] = useState('');
+  const [division, setDivision] = useState('Dhaka');
+  const navigate = useNavigate();
+  const location = useLocation();
+  const recommendTriggered = useRef(false);
+  const [recommendLoading, setRecommendLoading] = useState(false);
+  const [recommendedDoctors, setRecommendedDoctors] = useState(null);
+  const [recommendError, setRecommendError] = useState(null);
+  const [filtersRestored, setFiltersRestored] = useState(false);
 
-  const majorCities = [
-    'All', 'Dhaka', 'Chittagong', 'Khulna', 'Sylhet', 'Rajshahi', 'Rangpur', 'Barisal', 'Mymensingh', 'Comilla', 'Narayanganj', 'Gazipur',
-    
-    'Bogra', 'Dinajpur', 'Joypurhat', 'Naogaon', 'Natore', 'Nawabganj', 'Pabna', 'Sirajganj', 
-    'Thakurgaon', 'Bandarban', 'Brahmanbaria', 'Chandpur', 'Chattogram', 'Cox\'s Bazar', 'Cumilla', 'Feni', 
-    'Khagrachhari', 'Lakshmipur', 'Noakhali', 'Rangamati', 'Faridpur', 'Gopalganj', 'Kishoreganj', 'Madaripur', 
-    'Manikganj', 'Munshiganj', 'Narail', 'Rajbari', 'Shariatpur', 'Tangail', 'Bagerhat', 'Chuadanga', 'Jashore', 
-    'Jhenaidah', 'Khulna', 'Kushtia', 'Magura', 'Meherpur', 'Narail', 'Satkhira', 'Jamalpur', 'Mymensingh', 
-    'Netrokona',   
-    'Sherpur', 'Barguna', 'Barisal', 'Bhola', 'Jhalakathi', 'Patuakhali', 'Pirojpur', 'Habiganj', 
-    'Moulvibazar', 'Sunamganj', 'Sylhet'
+  // 7 divisions for location
+  const divisions = [
+    'Dhaka', 'Chittagong', 'Khulna', 'Sylhet', 'Rajshahi', 'Rangpur', 'Barisal'
   ];
+  // Example options for selects
+  const moodOptions = ['Anxiety', 'Depression', 'Stress', 'Sleep', 'Anger'];
+  const activityOptions = ['Therapy', 'Counseling', 'Medication', 'Group Session'];
+  const assessmentOptions = ['Initial', 'Follow-up', 'Psychometric', 'Diagnosis'];
 
-  const filteredProfiles = selectedCity === 'All' 
-    ? profiles 
-    : profiles.filter(profile => profile.city === selectedCity);
+  useEffect(() => {
+    setLoading(true);
+    const url = `${process.env.REACT_APP_BACKEND_URL}/doctor/getallDoctor`;
+    axios.get(url)
+      .then(res => {
+        console.log('Doctor API response:', res.data);
+        let data = res.data;
+        if (data && Array.isArray(data.doctors)) {
+          setDoctors(data.doctors);
+        } else if (Array.isArray(data)) {
+          setDoctors(data);
+        } else {
+          setDoctors([]);
+          setApiError('Unexpected API response.');
+        }
+        setLoading(false);
+      })
+      .catch((err) => {
+        setApiError('Failed to load doctors.');
+        setLoading(false);
+      });
+  }, []);
+
+  // On mount, restore filter state from query params if present
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    if (params.get('moodChecked')) setMoodChecked(params.get('moodChecked') === 'true');
+    if (params.get('activityChecked')) setActivityChecked(params.get('activityChecked') === 'true');
+    if (params.get('assessmentChecked')) setAssessmentChecked(params.get('assessmentChecked') === 'true');
+    if (params.get('division')) setDivision(params.get('division'));
+    setFiltersRestored(true);
+  }, [location.search]);
+
+  // Only auto-trigger recommend doctor POST ONCE after login if recommend=1 and token exists and filters are restored
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const token = localStorage.getItem('token');
+    if (filtersRestored && params.get('recommend') === '1' && token && !recommendTriggered.current) {
+      console.log('Auto-triggering recommend POST after login with filters:', {
+        moodChecked, activityChecked, assessmentChecked, division, token
+      });
+      recommendTriggered.current = true;
+      handleRecommend(true);
+    }
+  }, [filtersRestored, location.search, moodChecked, activityChecked, assessmentChecked, division]);
+
+  // Filtering logic
+  let filteredDoctors = Array.isArray(doctors) ? doctors : [];
+  if (moodChecked && mood) {
+    filteredDoctors = filteredDoctors.filter(doc => doc.mood && doc.mood.includes(mood));
+  }
+  if (activityChecked && activity) {
+    filteredDoctors = filteredDoctors.filter(doc => doc.activity && doc.activity.includes(activity));
+  }
+  if (assessmentChecked && assessment) {
+    filteredDoctors = filteredDoctors.filter(doc => doc.assessment && doc.assessment.includes(assessment));
+  }
+  if (locationChecked && division) {
+    filteredDoctors = filteredDoctors.filter(doc => doc.division === division);
+  }
+
+  // Recommend Doctor handler
+  const handleRecommend = async (auto = false) => {
+    const token = localStorage.getItem('token');
+    // If not logged in, redirect to login with filter state in query params
+    if (!token) {
+      recommendTriggered.current = false;
+      const params = new URLSearchParams();
+      params.set('moodChecked', moodChecked);
+      params.set('activityChecked', activityChecked);
+      params.set('assessmentChecked', assessmentChecked);
+      params.set('division', division);
+      params.set('recommend', '1');
+      navigate(`/login?from=/counsellors&${params.toString()}`);
+      return;
+    }
+    setRecommendLoading(true);
+    setRecommendError(null);
+    setRecommendedDoctors(null);
+    const url = `${process.env.REACT_APP_BACKEND_URL}/doctor/recommandDoctor`;
+    const payload = {
+      assessmentData: assessmentChecked,
+      moodData: moodChecked,
+      activityData: activityChecked,
+      city: division || 'Dhaka',
+    };
+    const headers = {
+      Authorization: `Bearer ${token}`,
+    };
+    // Log outgoing request for debugging
+    console.log('Recommend Doctor POST', { url, payload, headers });
+    try {
+      const res = await axios.post(url, payload, { headers });
+      console.log('Recommend Doctor RESPONSE:', res);
+      let data = res.data;
+      if (data && Array.isArray(data.recommendedDoctors)) {
+        setRecommendedDoctors(data.recommendedDoctors);
+      } else if (data && Array.isArray(data.doctors)) {
+        setRecommendedDoctors(data.doctors);
+      } else if (Array.isArray(data)) {
+        setRecommendedDoctors(data);
+      } else {
+        setRecommendedDoctors([]);
+        setRecommendError('Unexpected API response.');
+      }
+      // After successful recommend, remove recommend=1 from URL
+      if (auto) {
+        const params = new URLSearchParams(location.search);
+        params.delete('recommend');
+        navigate(`/counsellors?${params.toString()}`, { replace: true });
+      }
+    } catch (err) {
+      console.log('Recommend Doctor ERROR:', err);
+      if (err.response && err.response.status === 401) {
+        setRecommendError('Unauthorized. Please log in again.');
+        localStorage.removeItem('token');
+        recommendTriggered.current = false;
+        // Remove recommend=1 to prevent infinite loop
+        const params = new URLSearchParams(location.search);
+        params.delete('recommend');
+        navigate(`/login?from=/counsellors&${params.toString()}`);
+      } else {
+        setRecommendError('Failed to recommend doctor.');
+      }
+    } finally {
+      setRecommendLoading(false);
+    }
+  };
 
   return (
     <section className="py-10 px-4 md:px-10 bg-gradient-to-br from-blue-50 to-white min-h-screen font-sans">
-      <motion.h2 
-        initial={{ opacity: 0, y: -30 }} 
-        animate={{ opacity: 1, y: 0 }} 
+      <motion.h2
+        initial={{ opacity: 0, y: -30 }}
+        animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.7 }}
-        className="text-3xl md:text-4xl font-bold text-center mb-10 text-blue-900 drop-shadow-lg"
+        className="text-3xl md:text-4xl font-bold text-center mb-6 text-blue-900 drop-shadow-lg"
       >
         Our Psychiatrists
       </motion.h2>
+      {/* Filter Row */}
+      <div className="flex flex-wrap justify-center items-center gap-4 mb-8 p-2">
+        {/* Mood */}
+        <div className="flex items-center gap-2">
+          <input
+            type="checkbox"
+            id="mood"
+            checked={moodChecked}
+            onChange={e => setMoodChecked(e.target.checked)}
+            className="form-checkbox h-4 w-4 text-blue-600 rounded border-gray-300"
+          />
+          <label htmlFor="mood" className="text-sm font-medium text-blue-900">Mood</label>
+        </div>
 
-      <div className="flex justify-center mb-8">
-        <select 
-          value={selectedCity} 
-          onChange={e => setSelectedCity(e.target.value)}
-          className="px-4 py-2 rounded-lg border border-blue-200 shadow-sm focus:ring-2 focus:ring-blue-300 focus:outline-none text-blue-900 bg-white"
-        >
-          {majorCities.map(city => (
-            <option key={city} value={city}>{city}</option>
-          ))}
-        </select>
-      </div>
+        {/* Activity */}
+        <div className="flex items-center gap-2">
+          <input
+            type="checkbox"
+            id="activity"
+            checked={activityChecked}
+            onChange={e => setActivityChecked(e.target.checked)}
+            className="form-checkbox h-4 w-4 text-blue-600 rounded border-gray-300"
+          />
+          <label htmlFor="activity" className="text-sm font-medium text-blue-900">Activity</label>
+        </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
-        {filteredProfiles.map((profile, index) => (
-          <motion.div
-            key={index}
-            initial={{ opacity: 0, y: 40 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.1 * index }}
-            whileHover={{ scale: 1.03, boxShadow: '0 8px 32px rgba(0,0,0,0.12)' }}
-            className="rounded-2xl bg-white shadow-lg p-6 border border-blue-100 transition-all duration-300 hover:shadow-2xl"
+        {/* Assessments */}
+        <div className="flex items-center gap-2">
+          <input
+            type="checkbox"
+            id="assessment"
+            checked={assessmentChecked}
+            onChange={e => setAssessmentChecked(e.target.checked)}
+            className="form-checkbox h-4 w-4 text-blue-600 rounded border-gray-300"
+          />
+          <label htmlFor="assessment" className="text-sm font-medium text-blue-900">Assessments</label>
+        </div>
+
+        {/* Division Dropdown */}
+        <div>
+          <select
+            value={division}
+            onChange={e => setDivision(e.target.value)}
+            className="text-sm px-2 py-1 rounded-md border border-blue-300 shadow-sm focus:ring-2 focus:ring-blue-300 focus:outline-none text-blue-900 bg-white"
           >
-            <div>
-              <h3 className="text-xl font-bold text-blue-800 mb-1">{profile.name}</h3>
-              <p className="text-blue-600 font-medium mb-1">{profile.title}</p>
-              <p className="text-gray-600 text-sm mb-1">{profile.position}</p>
-              <p className="text-gray-500 text-xs mb-1">{profile.teaches}</p>
-              <p className="text-blue-500 text-sm flex items-center mb-1">
-                <MapPinIcon className="inline-block mr-1 text-blue-400" />
-                {profile.city}
-              </p>
-              {profile.phone && (
-                <p className="text-blue-500 text-sm flex items-center mb-1">
-                  <PhoneIcon className="inline-block mr-1 text-blue-400" />
-                  {profile.phone}
-                </p>
-              )}
-            </div>
-            <Collapsible>
-              <CollapsibleTrigger>
-                <Button variant="outline" className="mt-4 px-4 py-2 border border-blue-400 text-blue-700 rounded-lg hover:bg-blue-50 transition-all">
-                  <ChevronDownIcon className="inline-block mr-1" />
-                  View Chambers
-                </Button>
-              </CollapsibleTrigger>
-              <CollapsibleContent>
-                <div className="mt-3">
-                  {profile.chambers.map((chamber, idx) => (
-                    <div key={idx} className="flex items-center text-gray-700 text-sm mb-2">
-                      <MapPinIcon className="inline-block mr-1 text-blue-400" />
-                      <span>{chamber}</span>
-                    </div>
-                  ))}
-                </div>
-              </CollapsibleContent>
-            </Collapsible>
-          </motion.div>
-        ))}
+            <option value="">Select Division</option>
+            {divisions.map(opt => (
+              <option key={opt} value={opt}>
+                {opt}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        {/* Recommend Doctor Button */}
+        <button
+          type="button"
+          onClick={() => handleRecommend(false)}
+          disabled={recommendLoading}
+          className="px-2 py-1 rounded font-semibold border border-green-500 bg-green-500 text-white hover:bg-green-600 transition-colors duration-200 focus:outline-none text-xs w-auto mt-1"
+          style={{ minWidth: 'unset', maxWidth: '160px' }}
+        >
+          {recommendLoading ? 'Recommending...' : 'Recommend Doctor'}
+        </button>
+
       </div>
+
+
+
+      {recommendError && <div className="text-red-600 text-center mb-4">{recommendError}</div>}
+      {/* Show recommended doctors if present, else show filteredDoctors */}
+      {recommendLoading ? (
+        <div className="text-center text-blue-600 font-semibold">Recommending doctor...</div>
+      ) : recommendedDoctors ? (
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
+          {recommendedDoctors.length === 0 ? (
+            <div className="col-span-full text-center text-gray-500">No recommended doctors found.</div>
+          ) : recommendedDoctors.map((profile, index) => (
+            <motion.div
+              key={profile._id || index}
+              initial={{ opacity: 0, y: 40 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.1 * index }}
+              whileHover={{ scale: 1.03, boxShadow: '0 8px 32px rgba(0,0,0,0.12)' }}
+              className="rounded-2xl bg-white shadow-lg p-6 border border-blue-100 transition-all duration-300 hover:shadow-2xl"
+            >
+              <div>
+                <h3 className="text-xl font-bold text-blue-800 mb-1">{profile.name}</h3>
+                <p className="text-blue-600 font-medium mb-1">{profile.title}</p>
+                <p className="text-gray-600 text-sm mb-1">{profile.position}</p>
+                <p className="text-blue-500 text-sm flex items-center mb-1">
+                  <MapPinIcon className="inline-block mr-1 text-blue-400" />
+                  {profile.division || profile.city}
+                </p>
+                {profile.phone && (
+                  <p className="text-blue-500 text-sm flex items-center mb-1">
+                    <PhoneIcon className="inline-block mr-1 text-blue-400" />
+                    {profile.phone}
+                  </p>
+                )}
+                {/* Chambers field */}
+                {profile.chambers && Array.isArray(profile.chambers) && profile.chambers.length > 0 && (
+                  <div className="mt-3">
+                    <div className="font-semibold text-blue-700 mb-1">Chambers:</div>
+                    <ul className="list-disc list-inside text-sm text-gray-700">
+                      {profile.chambers.map((ch, i) => (
+                        <li key={i}>{ch}</li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+              </div>
+            </motion.div>
+          ))}
+        </div>
+      ) : loading ? (
+        <div className="text-center text-blue-600 font-semibold">Loading doctors...</div>
+      ) : (
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
+          {filteredDoctors.length === 0 ? (
+            <div className="col-span-full text-center text-gray-500">No doctors found.</div>
+          ) : filteredDoctors.map((profile, index) => (
+            <motion.div
+              key={profile._id || index}
+              initial={{ opacity: 0, y: 40 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.1 * index }}
+              whileHover={{ scale: 1.03, boxShadow: '0 8px 32px rgba(0,0,0,0.12)' }}
+              className="rounded-2xl bg-white shadow-lg p-6 border border-blue-100 transition-all duration-300 hover:shadow-2xl"
+            >
+              <div>
+                <h3 className="text-xl font-bold text-blue-800 mb-1">{profile.name}</h3>
+                <p className="text-blue-600 font-medium mb-1">{profile.title}</p>
+                <p className="text-gray-600 text-sm mb-1">{profile.position}</p>
+                <p className="text-blue-500 text-sm flex items-center mb-1">
+                  <MapPinIcon className="inline-block mr-1 text-blue-400" />
+                  {profile.division || profile.city}
+                </p>
+                {profile.phone && (
+                  <p className="text-blue-500 text-sm flex items-center mb-1">
+                    <PhoneIcon className="inline-block mr-1 text-blue-400" />
+                    {profile.phone}
+                  </p>
+                )}
+                {/* Chambers field */}
+                {profile.chambers && Array.isArray(profile.chambers) && profile.chambers.length > 0 && (
+                  <div className="mt-3">
+                    <div className="font-semibold text-blue-700 mb-1">Chambers:</div>
+                    <ul className="list-disc list-inside text-sm text-gray-700">
+                      {profile.chambers.map((ch, i) => (
+                        <li key={i}>{ch}</li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+              </div>
+            </motion.div>
+          ))}
+        </div>
+      )}
     </section>
   );
 }
-
-const profiles = [
-  {
-    name: "Prof. Dr. Md. Rezaul Karim",
-    title: "MBBS, FCPS (Psychiatry), MS (USA)",
-    position: "Psychiatry (Brain, Mental Diseases, Drug Addiction) Specialist",
-    teaches: "Former Professor & Head, Psychiatry, Sylhet MAG Osmani Medical College & Hospital",
-    city: "Sylhet",
-    chambers: ["Zindabazar Point, Sylhet", "Osmani Medical College Campus, Sylhet"],
-    phone: "+8801712345678"
-  },
-  {
-    name: "Prof. Dr. Gopi Kanta Roy",
-    title: "MBBS, FCPS (Psychiatry), WHO Fellow (India)",
-    position: "Psychiatry (Mental Diseases, Depression, Drug Addiction) Specialist",
-    teaches: "Professor (Ex), Psychiatry, Jalalabad Ragib-Rabeya Medical College & Hospital",
-    city: "Sylhet",
-    chambers: ["Amborkhana Point, Sylhet"],
-    phone: "+8801912345678"
-  },
-  {
-    name: "Dr. Siddhartha Paul",
-    title: "MBBS, M.Phil (Psychiatry)",
-    position: "Psychiatry (Brain, Mental Diseases, Drug Addiction) Specialist",
-    teaches: "Associate Professor, Psychiatry, North East Medical College & Hospital",
-    city: "Sylhet",
-    chambers: ["Chowhatta, Sylhet", "North East Medical College Campus, Sylhet"],
-    phone: "+8801320932211"
-  },
-  {
-    name: "Dr. RKS Royel",
-    title: "MBBS, BCS (Health), M.Phil (Psychiatry)",
-    position: "Psychiatry (Brain, Mind, Depression, Drug Addiction) Specialist",
-    teaches: "Assistant Professor & Head, Psychiatry, Sylhet MAG Osmani Medical College & Hospital",
-    city: "Sylhet",
-    chambers: ["Bondor Bazar, Sylhet", "Osmani Medical College Campus, Sylhet"],
-    phone: "+8801843829102"
-  },
-  {
-    name: "Dr. Susmita Roy",
-    title: "MBBS, M.Phil (Psychiatry)",
-    position: "Brain, Mental & Drug Addiction Specialist",
-    teaches: "Associate Professor, Psychiatry, Jalalabad Ragib-Rabeya Medical College & Hospital",
-    city: "Sylhet",
-    chambers: ["Uposhohor, Sylhet"],
-    phone: "+8801320932211"
-  },
-  {
-    name: "Dr. Ahmad Riad Chowdhury",
-    title: "MBBS, M.Phil (Psychiatry)",
-    position: "Psychiatry (Mental Diseases, Headache, Drug Addiction) Specialist",
-    teaches: "Assistant Professor, Psychiatry, Sylhet MAG Osmani Medical College & Hospital",
-    city: "Sylhet",
-    chambers: ["Mirzajangal, Sylhet", "Osmani Medical College Campus, Sylhet"],
-    phone: "+8801843829102"
-  },
-  {
-    name: "Dr. Mohammad Humayun Kabir",
-    title: "MBBS (SSMC), MD (Psychiatry, BSMMU), Trained in Sexual Medicine (South Asian Society of Sexual Medicine)",
-    position: "Psychiatry (Brain, Mind, Medicine & Sex and Drug Addiction Specialist)",
-    teaches: "Former Resident Doctor, Psychiatry, Consultant: Shahjalal Mental Health & Research Center, Akhalia, Sylhet, Former Psychiatrist (MD Resident), Dept. of Psychiatry, Sylhet MAG Osmani College Hospital",
-    city: "Sylhet",
-    chambers: ["Akhalia, Sylhet", "Shahjalal Mental Health & Research Center, Sylhet"],
-    phone: "+8801672930123"
-  },
-  {
-    name: "Prof. Dr. Md. Shafiqur Rahman",
-    title: "MBBS, M.Phil (Psychiatry)",
-    position: "Psychiatry (Brain, Mental Diseases, Drug Addiction) Specialist",
-    teaches: "Professor & Head, Psychiatry, Sylhet Womens Medical College & Hospital",
-    city: "Sylhet",
-    chambers: ["Shibgong, Sylhet", "Sylhet Womens Medical College Campus, Sylhet"],
-    phone: "+8801521389023" 
-  },
-  {
-    name: "Dr. Shamsul Haque Chowdhury",
-    title: "MBBS, M.Phil (Psychiatry)",
-    position: "Psychiatry (Brain, Mental Diseases, Drug Addiction) Specialist",
-    teaches: "Assistant Professor (Ex), Psychiatry, Sylhet MAG Osmani Medical College & Hospital",
-    city: "Sylhet",
-    chambers: ["Subhanighat, Sylhet", "Osmani Medical College Campus, Sylhet"],
-    phone: "+8801311923012"
-  },
-  {
-    name: "Dr. Rezwana Habiba",
-    title: "MBBS, BCS (Health), MD (Psychiatry)",
-    position: "Mental Diseases, Sexual Health, Parenting Specialist & Psychotherapist",
-    teaches: "Consultant, Psychiatry, Sylhet MAG Osmani Medical College & Hospital",
-    city: "Sylhet",
-    chambers: ["Kumarpara, Sylhet", "Osmani Medical College Campus, Sylhet"],
-    phone: "+8801982310987"
-  },
-  {
-    name: "Prof. Dr. Dipendra Narayan Das",
-    title: "MBBS (CU), M.Phil (Psychiatry)",
-    position: "Psychiatry (Brain, Mind, Depression, Drug Addiction) Specialist",
-    teaches: "Professor & Head, Psychiatry, Parkview Medical College & Hospital, Sylhet",
-    city: "Sylhet",
-    chambers: ["Menonbagh, Sylhet", "Parkview Medical College Campus, Sylhet"],
-    phone: "+8801784396499"
-  },
-  {
-    name: "Dr. Md. Abdullah Sayed",
-    title: "MBBS, MD (Psychiatry)",
-    position: "Psychiatry (Brain, Mind, Mental Diseases, Depression) Specialist",
-    teaches: "Assistant Professor, Psychiatry, North East Medical College & Hospital",
-    city: "Sylhet",
-    chambers: ["Uttara Model Town, Sylhet", "North East Medical College Campus, Sylhet"],
-    phone: "+8801450612851"
-  },
-  {
-    name: "Dr. Md. Enayet Karim",
-    title: "MBBS, M.Phil (Psychiatry)",
-    position: "Psychiatry (Brain, Mind, Depression, Drug Addiction) Specialist",
-    teaches: "Assistant Professor, Psychiatry, Jalalabad Ragib-Rabeya Medical College & Hospital",
-    city: "Sylhet", 
-    chambers: ["Modina Market, Sylhet"],
-    phone: "+8801825461388"
-  },
-  {
-    name: "Dr. Md. Shafiul Islam",
-    title: "MBBS, PGT (Medicine), M.Phil (Psychiatry)",
-    position: "Psychiatry (Brain, Mental Diseases, Drug Addiction) Specialist",
-    teaches: "Associate Professor & Head, Psychiatry, Jalalabad Ragib-Rabeya Medical College & Hospital",
-    city: "Sylhet",
-    chambers: ["Keranigonj, Sylhet"],
-    phone: "+8801515768392"
-  },
-  {
-    name: "Dr. Ayesha Rahman",
-    title: "MBBS, FCPS (Psychiatry)",
-    position: "Child & Adolescent Psychiatrist",
-    teaches: "Teaches at Dhaka Medical College",
-    city: "Dhaka",
-    chambers: ["Dhanmondi, Dhaka", "Gulshan, Dhaka"],
-    phone: "+8801977433953"
-  },
-  {
-    name: "Dr. Farhan Ahmed",
-    title: "MBBS, MD (Psychiatry)",
-    position: "Addiction Psychiatrist",
-    teaches: "Teaches at Chittagong Medical College",
-    city: "Chittagong",
-    chambers: ["Agrabad, Chittagong", "GEC Circle, Chittagong"],
-    phone: "+8801855678577"
-  },
-  {
-    name: "Prof. Brig. Gen. Dr. Kumrul Hasan",
-    title: "MBBS, MCPS, MPHIL (Psychiatry), MMEd, Fellow Child Psychiatry (Pakistan), MACP (USA), FRCP (UK)",
-    position: "Psychiatry, Brain, Drug Addiction, Sex Specialist & Neuro Psychiatrist, Adviser Specialist",
-    teaches: "Psychiatry",
-    city: "Dhaka",
-    chambers: ["Combined Military Hospital, Dhaka"],
-    phone: "+8801722568931"
-  },
-  {
-    name: "Dr. Redwana Hossain",
-    title: "MBBS, BCS (Health), MD (Psychiatry)",
-    position: "Psychiatry, Drug Addiction, Dementia & Female Psychosexual Disorder Specialist",
-    teaches: "Assistant Professor, Psychiatry, Shaheed Suhrawardy Medical College & Hospital",
-    city: "Dhaka",
-    chambers: ["Shaheed Suhrawardy Medical College & Hospital"],
-    phone: "+8801933746102"
-  },
-  {
-    name: "Prof. Dr. Nahid Mahjabin Morshed",
-    title: "MBBS, MSc (DU), M.Phil (Psychiatry), Fellow (WPA, Australia)",
-    position: "Mental Diseases, Brain & Drug Addiction Specialist, Professor, Child & Adolescent Psychiatry, Chairman",
-    teaches: "Department of Psychiatry, Bangabandhu Sheikh Mujib Medical University Hospital",
-    city: "Dhaka",
-    chambers: ["Bangabandhu Sheikh Mujib Medical University Hospital"],
-    phone: "+8801755239841"
-  },
-  {
-    name: "Dr. Mekhala Sarkar",
-    title: "MBBS, FCPS (Psychiatry), Fellow WPA (Turkey), International Fellow, American Psychiatric Association (USA)",
-    position: "Mental Health Specialist & Psychiatrist, Associate Professor",
-    teaches: "Psychiatry, National Institute of Mental Health & Hospital",
-    city: "Dhaka", 
-    chambers: ["National Institute of Mental Health & Hospital"],
-    phone: "+8801922653014"
-  },
-  {
-    name: "Prof. Dr. M. A. Mohit Kamal",
-    title: "MBBS, MPhil (Psychiatry), PhD (Psychiatry), FWPA (USA), CME-WCP",
-    position: "Psychiatry (Mental Diseases) Specialist & Psychotherapist, Director & Professor",
-    teaches: "Psychiatry, National Institute of Mental Health & Hospital",
-    city: "Dhaka", 
-    chambers: ["National Institute of Mental Health & Hospital"],
-    phone: "+8801633890721"
-  },
-  {
-    name: "Prof. Dr. Jhunu Shamsun Nahar",
-    title: "MBBS, FCPS (Psychiatry), International Fellow of American Psychiatric Association (USA)",
-    position: "Psychiatrist & Psychotherapist, Ex. Professor & Chairman",
-    teaches: "Psychiatry, Bangabandhu Sheikh Mujib Medical University Hospital",
-    city: "Dhaka",
-    chambers: ["Bangabandhu Sheikh Mujib Medical University Hospital"],
-    phone: "+8801744932106"
-  },
-  {
-    name: "Prof. Dr. Md. Shah Alam",
-    title: "MBBS, FCPS (Psychiatry)",
-    position: "Mental Diseases, Drug Addiction, Sexual Health Specialist & Psychotherapist, Former Professor & Head",
-    teaches: "Psychotherapy, National Institute of Mental Health & Hospital",
-    city: "Dhaka", 
-    chambers: ["National Institute of Mental Health & Hospital"],
-    phone: "+8801302856193"
-  },
-  {
-    name: "Brig. Gen. Prof. Dr. Md. Azizul Islam",
-    title: "MBBS, FCPS (PSY), FRCP (UK), FACP (USA)",
-    position: "Mental Diseases, Drug Addiction & Psychiatry Specialist, Professor & Head",
-    teaches: "Psychiatry, Armed Forces Medical College, Dhaka",
-    city: "Dhaka",
-    chambers: ["Armed Forces Medical College, Dhaka"],
-    phone: "+8801966201354"
-  },
-  {
-    name: "Prof. Dr. Md. Mohsin Ali Shah",
-    title: "MBBS, M.Phil (Psychiatry), MD (Psychiatry)",
-    position: "Mental Diseases, Drug Addiction, Sex Medicine & Psychiatry Specialist, Professor",
-    teaches: "Psychiatry, Bangabandhu Sheikh Mujib Medical University Hospital",
-    city: "Dhaka",
-    chambers: ["Bangabandhu Sheikh Mujib Medical University Hospital"],
-    phone: "+8801733049281"
-  },
-  {
-    name: "Prof. Md. Waziul Alam Chowdhury",
-    title: "MBBS, FCPS (Psychiatry), MACP (USA), WHO Fellowship (India)",
-    position: "Psychiatry & Mental Health Specialist, Professor & Director",
-    teaches: "Psychiatry, National Institute of Mental Health & Hospital",
-    city: "Dhaka", 
-    chambers: ["National Institute of Mental Health & Hospital"],
-    phone: "+8801811537902" 
-  },
-  {
-    name: "Prof. Dr. Md. Golam Rabbani",
-    title: "MBBS, FCPS (Psychiatry)",
-    position: "Mental Diseases, Brain & Drug Addiction Specialist, Former Professor & Head",
-    teaches: "Psychiatry, National Institute of Mental Health & Hospital",
-    city: "Dhaka", 
-    chambers: ["National Institute of Mental Health & Hospital"],
-    phone: "+8801766352189"
-  },
-  {
-    name: "Dr. Raisul Islam Parag",
-    title: "MBBS (DMC), MD (Psychiatry)",
-    position: "Psychiatry (Mental Diseases, Depression, Sexual Problem) Specialist, Registrar",
-    teaches: "Psychiatry, Dhaka Medical College & Hospital",
-    city: "Dhaka",
-    chambers: ["Dhaka Medical College & Hospital"],
-    phone: "+8801944820173"
-  },
-  {
-    name: "Dr. Nasim Jahan",
-    title: "MBBS, MCPS, FCPS (Psychiatry)",
-    position: "Mental Diseases, Brain Disorder & Drug Addiction Specialist, Assistant Professor",
-    teaches: "Psychiatry, Birdem General Hospital & Ibrahim Medical College",
-    city: "Dhaka", 
-    chambers: ["Birdem General Hospital & Ibrahim Medical College"],
-    phone: "+8801533927401" 
-  },
-  {
-    name: "Prof. Dr. Nilufer Akhter Jahan",
-    title: "MBBS, M.Phil (Psychiatry), MD (Psychiatry)",
-    position: "Psychiatry (Mental Diseases, Drug Addiction, Brain Disorder) Specialist, Professor",
-    teaches: "Geriatric & Organic Psychiatry, National Institute of Mental Health & Hospital",
-    city: "Dhaka", 
-    chambers: ["National Institute of Mental Health & Hospital"],
-    phone: "+8801318439206"
-  },
-  {
-    name: "Prof. Dr. Md. Abdus Salam",
-    title: "MBBS, DPM (DU), MCPS (Psychiatry)",
-    position: "Psychiatry (Brain, Mind, Depression, Drug Addiction) Specialist & Psychotherapist, Former Professor",
-    teaches: "Psychiatry, Bangabandhu Sheikh Mujib Medical University Hospital",
-    city: "Dhaka",
-    chambers: ["Bangabandhu Sheikh Mujib Medical University Hospital"],
-    phone: "+8801833652140" 
-  }
-];
 
 function ChevronDownIcon(props) {
   return (

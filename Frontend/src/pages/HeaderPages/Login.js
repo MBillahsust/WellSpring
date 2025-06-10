@@ -34,6 +34,7 @@ export default function Login() {
       const decoded = jwtDecode(res.data.token);
       console.log('Decoded userId:', decoded.userId);
       setUserInfo({ token: res.data.token, email, userId: decoded.userId });
+      localStorage.setItem('token', res.data.token);
       const redirectTo = location.state?.from || '/';
       setTimeout(() => navigate(redirectTo), 1000);
     } catch (err) {
