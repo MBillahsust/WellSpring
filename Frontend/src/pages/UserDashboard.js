@@ -152,6 +152,9 @@ const UserDashboard = () => {
     jealous: -16
   };
 
+  const [gameActivityPage, setGameActivityPage] = useState(0);
+  const gameActivityPageSize = 8;
+
   useEffect(() => {
     if (!userInfo || !userInfo.token) {
       navigate('/login', { state: { from: '/dashboard' } });
@@ -492,7 +495,7 @@ const UserDashboard = () => {
                 </div>
               </div>
 
-              
+
 
             </div>
           </div>
@@ -746,35 +749,35 @@ const UserDashboard = () => {
           </div>
           {/* Mood Tracking Graph Segment - separate card */}
           <div className="bg-white rounded-xl shadow p-6 mt-8 mb-8">
-            
-              <h3 className="text-2xl font-bold mb-4 text-indigo-700">Mood Tracking Graph</h3>
-              {(() => {
-                // Sort by time descending (most recent first)
-                const sorted = [...moodEntries].sort((a, b) => {
-                  const da = new Date(a.date + ' ' + (a.time || ''));
-                  const db = new Date(b.date + ' ' + (b.time || ''));
-                  return db - da;
+
+            <h3 className="text-2xl font-bold mb-4 text-indigo-700">Mood Tracking Graph</h3>
+            {(() => {
+              // Sort by time descending (most recent first)
+              const sorted = [...moodEntries].sort((a, b) => {
+                const da = new Date(a.date + ' ' + (a.time || ''));
+                const db = new Date(b.date + ' ' + (b.time || ''));
+                return db - da;
+              });
+              const chartData = sorted
+                .slice(0, 10)
+                .reverse()
+                .map(entry => {
+                  const d = new Date(entry.date + ' ' + (entry.time || ''));
+                  // Format as 'MMM DD' (e.g., Jun 07)
+                  const dateLabel = !isNaN(d) ? d.toLocaleDateString(undefined, { month: 'short', day: '2-digit' }) : String(entry.date);
+                  // Format as 'HH:mm'
+                  const timeLabel = !isNaN(d) ? d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : (entry.time || '');
+                  return {
+                    date: dateLabel,
+                    time: timeLabel,
+                    score: Number(moodScoreMap[entry.mood?.toLowerCase()] ?? 0),
+                    mood: entry.mood || ''
+                  };
                 });
-                const chartData = sorted
-                  .slice(0, 10)
-                  .reverse()
-                  .map(entry => {
-                    const d = new Date(entry.date + ' ' + (entry.time || ''));
-                    // Format as 'MMM DD' (e.g., Jun 07)
-                    const dateLabel = !isNaN(d) ? d.toLocaleDateString(undefined, { month: 'short', day: '2-digit' }) : String(entry.date);
-                    // Format as 'HH:mm'
-                    const timeLabel = !isNaN(d) ? d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : (entry.time || '');
-                    return {
-                      date: dateLabel,
-                      time: timeLabel,
-                      score: Number(moodScoreMap[entry.mood?.toLowerCase()] ?? 0),
-                      mood: entry.mood || ''
-                    };
-                  });
-                return <MoodChart moodData={chartData} width={1100} height={420} showTimeBelowDate={true} />;
-              })()}
-            </div>
-          
+              return <MoodChart moodData={chartData} width={1100} height={420} showTimeBelowDate={true} />;
+            })()}
+          </div>
+
         </div>
 
 
@@ -792,38 +795,77 @@ const UserDashboard = () => {
           ) : gameAssessments.length === 0 ? (
             <div className="text-gray-400">No game activity found.</div>
           ) : (
-            <div className="overflow-x-auto">
-              <table className="min-w-full">
-                <thead>
-                  <tr className="bg-indigo-50">
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Date</th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Game Name</th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Recommendation</th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Feedback</th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Attention</th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Focus</th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Reaction Time</th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Stress Response</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-gray-200">
-                  {gameAssessments.map((g, idx) => (
-                    <tr key={g._id || idx} className="hover:bg-indigo-50">
-                      <td className="px-4 py-3 text-sm text-gray-900">{g.createdAt ? new Date(g.createdAt).toLocaleDateString() : '-'}</td>
-                      <td className="px-4 py-3 text-sm text-gray-900 capitalize">{g.game_name || '-'}</td>
-                      <td className="px-4 py-3 text-sm text-gray-900" style={{maxWidth:'220px',whiteSpace:'normal',wordBreak:'break-word'}}>{g.recommendation || '-'}</td>
-                      <td className="px-4 py-3 text-sm text-gray-900" style={{maxWidth:'180px',whiteSpace:'normal',wordBreak:'break-word'}}>{g.feedback || '-'}</td>
-                      <td className="px-4 py-3 text-sm text-gray-900">{g.attention ?? '-'}</td>
-                      <td className="px-4 py-3 text-sm text-gray-900">{g.focus ?? '-'}</td>
-                      <td className="px-4 py-3 text-sm text-gray-900">{g.reaction_time ?? '-'}</td>
-                      <td className="px-4 py-3 text-sm text-gray-900">{g.stress_response ?? '-'}</td>
+            <>
+              <div className="overflow-x-auto">
+                <table className="min-w-full">
+                  <thead>
+                    <tr className="bg-indigo-50">
+                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Date</th>
+                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Game Name</th>
+                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Recommendation</th>
+                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Feedback</th>
+                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Attention</th>
+                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Focus</th>
+                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Reaction Time</th>
+                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Stress Response</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+                  </thead>
+                  <tbody className="divide-y divide-gray-200">
+                    {[...gameAssessments]
+                      .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+                      .slice(gameActivityPage * gameActivityPageSize, (gameActivityPage + 1) * gameActivityPageSize)
+                      .map((g, idx) => (
+
+                        <tr key={g._id || idx} className="hover:bg-indigo-50">
+                          <td className="px-4 py-3 text-sm text-gray-900">
+                            {g.createdAt ? new Date(g.createdAt).toLocaleDateString() : '-'}
+                          </td>
+                          <td className="px-4 py-3 text-sm text-gray-900 capitalize">
+                            {g.game_name || '-'}
+                          </td>
+                          <td className="px-4 py-3 text-sm text-gray-900" style={{ maxWidth: '220px' }}>
+                            <div
+                              className="max-h-16 overflow-y-auto px-4 py-2 scrollbar-thin"
+                              style={{ wordBreak: 'break-word' }}
+                              title={g.recommendation || '-'}
+                            >
+                              {g.recommendation || '-'}
+                            </div>
+                          </td>
+                          <td className="px-4 py-3 text-sm text-gray-900" style={{ maxWidth: '180px', whiteSpace: 'normal', wordBreak: 'break-word' }}>
+                            {g.feedback || '-'}
+                          </td>
+                          <td className="px-4 py-3 text-sm text-gray-900">{g.attention ?? '-'}</td>
+                          <td className="px-4 py-3 text-sm text-gray-900">{g.focus ?? '-'}</td>
+                          <td className="px-4 py-3 text-sm text-gray-900">{g.reaction_time ?? '-'}</td>
+                          <td className="px-4 py-3 text-sm text-gray-900">{g.stress_response ?? '-'}</td>
+                        </tr>
+                      ))}
+                  </tbody>
+                </table>
+              </div>
+              {gameAssessments.length > gameActivityPageSize && (
+                <div className="flex justify-between mt-4">
+                  <button
+                    onClick={() => setGameActivityPage(gameActivityPage - 1)}
+                    className="px-6 py-2 bg-indigo-100 hover:bg-indigo-200 text-indigo-700 font-semibold rounded-lg shadow-sm transition disabled:opacity-50"
+                    disabled={gameActivityPage === 0}
+                  >
+                    Previous
+                  </button>
+                  <button
+                    onClick={() => setGameActivityPage(gameActivityPage + 1)}
+                    className="px-6 py-2 bg-indigo-100 hover:bg-indigo-200 text-indigo-700 font-semibold rounded-lg shadow-sm transition disabled:opacity-50"
+                    disabled={(gameActivityPage + 1) * gameActivityPageSize >= gameAssessments.length}
+                  >
+                    Next
+                  </button>
+                </div>
+              )}
+            </>
           )}
         </div>
+
 
         {/* Daily Routine Section */}
         <div className="mt-8">
@@ -894,8 +936,8 @@ const UserDashboard = () => {
           </div>
         </div>
 
-        
-        
+
+
       </div>
     </div>
   );

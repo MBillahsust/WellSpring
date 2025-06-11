@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import axios from 'axios';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { toast } from 'react-toastify';
+import { CheckCircle, Loader2 } from 'lucide-react';
 
 function PhoneIcon(props) {
   return (
@@ -35,6 +36,10 @@ export default function Counsellor() {
   const [filtersRestored, setFiltersRestored] = useState(false);
   const [combinedSummary, setCombinedSummary] = useState("");
 
+  const [recommendClicked, setRecommendClicked] = useState(false);
+  const [recommendSuccess, setRecommendSuccess] = useState(false);
+
+
   // 7 divisions for location
   const divisions = [
     'Dhaka', 'Chittagong', 'Khulna', 'Sylhet', 'Rajshahi', 'Rangpur', 'Barisal'
@@ -43,6 +48,11 @@ export default function Counsellor() {
   const moodOptions = ['Anxiety', 'Depression', 'Stress', 'Sleep', 'Anger'];
   const activityOptions = ['Therapy', 'Counseling', 'Medication', 'Group Session'];
   const assessmentOptions = ['Initial', 'Follow-up', 'Psychometric', 'Diagnosis'];
+
+
+
+
+
 
   useEffect(() => {
     setLoading(true);
@@ -108,7 +118,7 @@ export default function Counsellor() {
   // Recommend Doctor handler
   const handleRecommend = async (auto = false) => {
     const token = localStorage.getItem('token');
-    // If not logged in, redirect to login with filter state in query params
+
     if (!token) {
       recommendTriggered.current = false;
       const params = new URLSearchParams();
@@ -120,10 +130,15 @@ export default function Counsellor() {
       navigate(`/login?from=/counsellors&${params.toString()}`);
       return;
     }
+
+    // UI feedback states
+    setRecommendClicked?.(true);
+    setRecommendSuccess?.(false);
     setRecommendLoading(true);
     setRecommendError(null);
     setRecommendedDoctors(null);
     setCombinedSummary("");
+
     const url = `${process.env.REACT_APP_BACKEND_URL}/doctor/recommandDoctor`;
     const payload = {
       assessmentData: assessmentChecked,
@@ -134,18 +149,21 @@ export default function Counsellor() {
     const headers = {
       Authorization: `Bearer ${token}`,
     };
-    // Log outgoing request for debugging
+
     console.log('Recommend Doctor POST', { url, payload, headers });
+
     try {
       const res = await axios.post(url, payload, { headers });
       console.log('Recommend Doctor RESPONSE:', res);
       let data = res.data;
-      if (data && data.combinedSummary) {
+
+      if (data?.combinedSummary) {
         setCombinedSummary(data.combinedSummary);
       }
-      if (data && Array.isArray(data.recommendedDoctors)) {
+
+      if (Array.isArray(data?.recommendedDoctors)) {
         setRecommendedDoctors(data.recommendedDoctors);
-      } else if (data && Array.isArray(data.doctors)) {
+      } else if (Array.isArray(data?.doctors)) {
         setRecommendedDoctors(data.doctors);
       } else if (Array.isArray(data)) {
         setRecommendedDoctors(data);
@@ -153,26 +171,32 @@ export default function Counsellor() {
         setRecommendedDoctors([]);
         setRecommendError('Unexpected API response.');
       }
-      // After successful recommend, remove recommend=1 from URL
+
+      // Success feedback
+      setRecommendSuccess?.(true);
+      setTimeout(() => setRecommendSuccess?.(false), 2500);
+
       if (auto) {
         const params = new URLSearchParams(location.search);
         params.delete('recommend');
         navigate(`/counsellors?${params.toString()}`, { replace: true });
       }
+
     } catch (err) {
       console.log('Recommend Doctor ERROR:', err);
       let errorMsg = 'Failed to recommend doctor.';
-      if (err.response && err.response.data && err.response.data.message) {
+      if (err.response?.data?.message) {
         errorMsg = err.response.data.message;
       } else if (err.message) {
         errorMsg = err.message;
       }
+
       toast.error(errorMsg, { autoClose: 8000 });
-      if (err.response && err.response.status === 401) {
+
+      if (err.response?.status === 401) {
         setRecommendError('Unauthorized. Please log in again.');
         localStorage.removeItem('token');
         recommendTriggered.current = false;
-        // Remove recommend=1 to prevent infinite loop
         const params = new URLSearchParams(location.search);
         params.delete('recommend');
         navigate(`/login?from=/counsellors&${params.toString()}`);
@@ -180,9 +204,12 @@ export default function Counsellor() {
         setRecommendError('Failed to recommend doctor.');
       }
     } finally {
+      setRecommendClicked?.(false);
       setRecommendLoading(false);
     }
   };
+
+
 
   return (
     <section className="py-10 px-4 md:px-10 bg-gradient-to-br from-blue-50 to-white min-h-screen font-sans">
@@ -204,13 +231,34 @@ export default function Counsellor() {
           <button
             key={id}
             onClick={() => setChecked(!checked)}
-            className={`w-20 h-8 flex items-center justify-center rounded-lg text-xs font-semibold transition-all duration-200 select-none
-        ${checked ? 'bg-blue-600 text-white' : 'bg-white text-blue-600 border border-blue-400'}
-        shadow-sm hover:shadow-md`}
+            className={`
+      relative
+      w-20 h-8 flex items-center justify-center rounded-lg text-xs font-semibold select-none
+      transition-transform duration-300 ease-in-out
+      ${checked
+                ? 'bg-gradient-to-r from-blue-400 via-blue-500 to-blue-600 text-white shadow-lg'
+                : 'bg-white text-blue-600 border border-blue-400 shadow-sm hover:shadow-md'}
+      hover:scale-105 active:scale-95
+      focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-1
+    `}
           >
+            {/* Checkmark icon on selected */}
+            {checked && (
+              <svg
+                className="absolute left-2 top-1/2 -translate-y-1/2 h-4 w-4 text-white"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                strokeWidth={3}
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+              </svg>
+            )}
             {label}
           </button>
         ))}
+
 
         {/* Division Dropdown */}
         <div>
@@ -232,12 +280,39 @@ export default function Counsellor() {
         <button
           type="button"
           onClick={() => handleRecommend(false)}
-          disabled={recommendLoading}
-          className="px-2 py-1 rounded font-semibold border border-green-500 bg-green-500 text-white hover:bg-green-600 transition-colors duration-200 focus:outline-none text-xs w-auto mt-1"
-          style={{ minWidth: 'unset', maxWidth: '160px' }}
+          disabled={recommendLoading || recommendSuccess}
+          className={`px-2 py-1 rounded font-semibold border transition-colors duration-200 text-xs w-auto mt-1
+    ${recommendLoading
+              ? 'bg-green-400 border-green-400 text-white cursor-wait'
+              : recommendSuccess
+                ? 'bg-emerald-600 border-emerald-700 text-white'
+                : 'bg-green-500 border-green-500 text-white hover:bg-green-600'
+            }`}
+          style={{ minWidth: 'unset', maxWidth: '160px', height: '32px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}
         >
-          {recommendLoading ? 'Recommending...' : 'Recommend Doctor'}
+          {recommendLoading ? (
+            <>
+              <svg className="animate-spin h-4 w-4 text-white" viewBox="0 0 24 24" fill="none">
+                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z" />
+              </svg>
+              Recommending...
+            </>
+          ) : recommendSuccess ? (
+            <>
+              <svg className="h-4 w-4 text-white" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                <path d="M5 13l4 4L19 7" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+              Done!
+            </>
+          ) : (
+            <>
+              Recommend Doctor
+            </>
+          )}
         </button>
+
+
       </div>
 
 
