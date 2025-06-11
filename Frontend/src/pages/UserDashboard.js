@@ -37,6 +37,8 @@ const UserDashboard = () => {
   const [userData, setUserData] = useState(null);
   const [loadingUser, setLoadingUser] = useState(true);
   const [assessments, setAssessments] = useState([]);
+  const [gameAssessments, setGameAssessments] = useState([]);
+  const [loadingGameAssessments, setLoadingGameAssessments] = useState(true);
 
   // Sample mood data - replace with actual data from your backend
   const [moodData] = useState([
@@ -274,10 +276,26 @@ const UserDashboard = () => {
         setAssessments([]);
       }
     };
+    const fetchGameAssessments = async () => {
+      setLoadingGameAssessments(true);
+      try {
+        const res = await axios.get(
+          `${BACKEND_URL}/game/gameassessmentData`,
+          { headers: { Authorization: `Bearer ${userInfo.token}` } }
+        );
+        let arr = Array.isArray(res.data.assessments) ? res.data.assessments : (res.data || []);
+        setGameAssessments(arr);
+      } catch (err) {
+        setGameAssessments([]);
+      } finally {
+        setLoadingGameAssessments(false);
+      }
+    };
     fetchUserProfile();
     fetchMoodHistory();
     fetchActivityHistory();
     fetchAssessments();
+    fetchGameAssessments();
   }, [userInfo, navigate]);
 
   // Reset assessmentPage if assessments change and current page is out of range
@@ -764,6 +782,47 @@ const UserDashboard = () => {
         <div className="bg-white rounded-xl shadow p-6 mt-10 mb-8">
           <h2 className="text-2xl font-bold mb-4 text-indigo-700">Activity Pie Chart</h2>
           <ActivityPieChart data={activityPieData} />
+        </div>
+
+        {/* Game Activity Section */}
+        <div className="bg-white rounded-xl shadow p-6 mt-10 mb-8">
+          <h2 className="text-2xl font-bold mb-4 text-indigo-700">Game Activity</h2>
+          {loadingGameAssessments ? (
+            <div className="text-gray-400">Loading game activity...</div>
+          ) : gameAssessments.length === 0 ? (
+            <div className="text-gray-400">No game activity found.</div>
+          ) : (
+            <div className="overflow-x-auto">
+              <table className="min-w-full">
+                <thead>
+                  <tr className="bg-indigo-50">
+                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Date</th>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Game Name</th>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Recommendation</th>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Feedback</th>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Attention</th>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Focus</th>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Reaction Time</th>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Stress Response</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-gray-200">
+                  {gameAssessments.map((g, idx) => (
+                    <tr key={g._id || idx} className="hover:bg-indigo-50">
+                      <td className="px-4 py-3 text-sm text-gray-900">{g.createdAt ? new Date(g.createdAt).toLocaleDateString() : '-'}</td>
+                      <td className="px-4 py-3 text-sm text-gray-900 capitalize">{g.game_name || '-'}</td>
+                      <td className="px-4 py-3 text-sm text-gray-900" style={{maxWidth:'220px',whiteSpace:'normal',wordBreak:'break-word'}}>{g.recommendation || '-'}</td>
+                      <td className="px-4 py-3 text-sm text-gray-900" style={{maxWidth:'180px',whiteSpace:'normal',wordBreak:'break-word'}}>{g.feedback || '-'}</td>
+                      <td className="px-4 py-3 text-sm text-gray-900">{g.attention ?? '-'}</td>
+                      <td className="px-4 py-3 text-sm text-gray-900">{g.focus ?? '-'}</td>
+                      <td className="px-4 py-3 text-sm text-gray-900">{g.reaction_time ?? '-'}</td>
+                      <td className="px-4 py-3 text-sm text-gray-900">{g.stress_response ?? '-'}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
         </div>
 
         {/* Daily Routine Section */}
