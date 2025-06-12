@@ -354,6 +354,34 @@ Autherization : Token
 
 
 
+# Counselor Context API : POST
+
+**http://localhost:5004/counselor/context**
+
+**Header**
+Authrization : Token
+
+
+```
+{
+  "selectedAssessmentsId": [
+    "6849d1c07e13a8dc0e2ea81a",
+    "6849d17d7e13a8dc0e2ea816",
+    "68472c9d275a2b1cfa48b66c",
+    "68472c4f275a2b1cfa48b662",
+    "68472c30275a2b1cfa48b660",
+    "68472c02275a2b1cfa48b65e"
+  ],
+  "moodHistory": 5,
+  "activityHistory": 5,
+  "gameHistory": 7
+}
+```
+
+---
+
+
+
 
 # research
 

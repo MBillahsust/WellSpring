@@ -5,6 +5,7 @@ const assesmentController = require("../controller/assesmentController");
 const moodAndActivityController = require("../controller/moodAndActivityController");
 const gameController = require("../controller/gameController");
 const doctorController = require("../controller/doctorController");
+const AiCounselorController = require("../controller/AiCounselorController");
 
 const isLogin = require("../middlewares/middlewares");
 
@@ -63,6 +64,10 @@ Router.get("/gameassessmentData", isLogin, gameController.getAllGameAssessments)
 Router.post("/addDoctor", isLogin, doctorController.createDoctor);
 Router.get("/getallDoctor", doctorController.getAllDoctors);
 Router.post("/recommandDoctor", isLogin, doctorController.recommendDoctorsController);
+
+
+// AI Counselor
+Router.post("/context", isLogin, AiCounselorController.getUserContextController);
 
 
 
