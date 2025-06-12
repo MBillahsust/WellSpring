@@ -80,7 +80,7 @@ export default function Header() {
                     key={item.name}
                     to={item.href}
                     className={classNames(
-                      'text-sm font-medium rounded-md px-2 py-2 hover:bg-[#6d8ded] transition-colors',
+                      'text-xs font-medium rounded-md px-2 py-2 hover:bg-[#6d8ded] transition-colors',
                     )}
                   >
                     {item.name}
