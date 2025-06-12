@@ -38,6 +38,9 @@ const AICounselor = () => {
   const [newMessage, setNewMessage] = useState('');
   const [expandedMood, setExpandedMood] = useState(false);
   const chatEndRef = useRef(null);
+  const [loading, setLoading] = useState(false);
+  const [processingSummary, setProcessingSummary] = useState('');
+
   const [showChatHistory, setShowChatHistory] = useState(false);
   const [chatHistories, setChatHistories] = useState([
     {
@@ -274,34 +277,8 @@ const AICounselor = () => {
     },
   };
 
-  const handleSubmit = async () => {
-    setUiStage('private'); // Immediately go to private mode
-    setSummary(""); // Optionally clear summary
-  
-    const selectedAssessmentsId = assessments.filter(a => a.selected).map(a => a.id);
-    const payload = {
-      selectedAssessmentsId,
-      moodHistory: moodDays,
-      activityHistory: activityDays,
-      gameHistory: gameCount
-    };
-  
-    try {
-      const res = await axios.post(
-        `${process.env.REACT_APP_BACKEND_URL}/counselor/context`,
-        payload,
-        { headers: { Authorization: `Bearer ${userInfo.token}` } }
-      );
-  
-      // ✅ Navigate after successful submission
-      navigate('/counsellor-bot'); // or whatever your route is
-  
-    } catch (err) {
-      console.error("Submission failed", err);
-      // Optionally show user feedback here
-    }
-  };
-  
+
+
   const handleTypewriterDone = () => {
     setTimeout(() => setUiStage('private'), 7000); // Wait 7 seconds after summary is typed
   };
@@ -311,8 +288,90 @@ const AICounselor = () => {
     setSummary("");
   };
 
+  const handleSubmit = async () => {
+    setUiStage('private'); // Switch UI state if needed
+    setSummary("");
+    setProcessingSummary('');
+    setLoading(true);
+
+    const selectedAssessmentsId = assessments.filter(a => a.selected).map(a => a.id);
+    const payload = {
+      selectedAssessmentsId,
+      moodHistory: moodDays,
+      activityHistory: activityDays,
+      gameHistory: gameCount
+    };
+
+    try {
+      const res = await axios.post(
+        `${process.env.REACT_APP_BACKEND_URL}/counselor/context`,
+        payload,
+        { headers: { Authorization: `Bearer ${userInfo.token}` } }
+      );
+
+      if (res.data && res.data.summary) {
+        setProcessingSummary(res.data.summary);
+      }
+
+      // Show the summary for 10 seconds, then navigate
+      setTimeout(() => {
+        setLoading(false);
+        navigate('/counsellor-bot');
+      }, 7000);
+
+    } catch (err) {
+      console.error("Submission failed", err);
+      setProcessingSummary("Sorry, there was an error processing your request.");
+      setLoading(false); // Stop loading right away if error
+    }
+  };
+
+  function AnimatedProcessingText() {
+    const [dots, setDots] = React.useState("");
+    React.useEffect(() => {
+      const interval = setInterval(() => {
+        setDots(d => (d.length < 3 ? d + "." : ""));
+      }, 500);
+      return () => clearInterval(interval);
+    }, []);
+
+    return (
+      <span className="text-blue-600 font-semibold text-lg tracking-wide">
+        Processing your request{dots}
+      </span>
+    );
+  }
+
+
+
   return (
     <div className="min-h-screen bg-gray-50 py-4">
+
+      {loading && (
+        <div className="fixed inset-0 bg-white bg-opacity-60 flex flex-col items-center justify-center z-50">
+          {/* Enhanced spinner with dual border colors */}
+          <div className="animate-spin rounded-full h-14 w-14 border-t-4 border-blue-600 border-b-4 border-blue-400"></div>
+
+          <div className="mt-6 max-w-lg w-full bg-white p-6 rounded-lg shadow-lg text-center">
+            {processingSummary ? (
+              <Typewriter
+                words={[processingSummary]}
+                loop={1}
+                cursor
+                cursorStyle="_"
+                typeSpeed={20}
+                deleteSpeed={0}
+                delaySpeed={500}
+              />
+            ) : (
+              <AnimatedProcessingText />
+            )}
+          </div>
+        </div>
+      )}
+
+
+
       <div className="max-w-7xl mx-auto px-4">
         <div className="bg-white rounded-xl shadow-md overflow-hidden">
           {uiStage === 'processing' ? (
