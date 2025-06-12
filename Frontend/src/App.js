@@ -3,7 +3,7 @@ import Header from './pages/HeaderPages/Header';
 import Footer from "./pages/FooterPages/Footer";
 import Layout from './IndexPage';
 import Counsellor from './pages/CommunityPages/Counsellor';
-import CounsellorBotChat from './pages/CommunityPages/CounsellorBotChat';
+import CounsellorBotChat from './pages/AICounselorPages/CounsellorBotChat';
 import AICounselor from './pages/AICounselorPages/AICounselor';
 import Routine from './pages/AICounselorPages/Routine';
 import Games from './pages/GamesPages/Games';

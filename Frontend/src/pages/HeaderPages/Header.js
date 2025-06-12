@@ -15,11 +15,11 @@ import { FaSignInAlt, FaUserPlus } from 'react-icons/fa'; // Import login and si
 const navigation = [
   { name: 'AI Counsellor', href: '/ai-counselor' },
   { name: 'Assessments', href: '/assessment' },
+  { name: 'Connect with Experts', href: '/counsellors' },
+  { name: 'Games', href: '/games' },
+  { name: 'Research & Development', href: '/research-development' },
   { name: 'Learn Conditions', href: '/conditions' },
   { name: 'Resources', href: '/resources' },
-  { name: 'Research & Development', href: '/research-development' },
-  { name: 'Games', href: '/games' },
-  { name: 'Experts', href: '/counsellors' },
   // { name: 'About', href: '/about' },
 ];
 
@@ -80,7 +80,7 @@ export default function Header() {
                     key={item.name}
                     to={item.href}
                     className={classNames(
-                      'text-sm font-medium rounded-md px-3 py-2 hover:bg-[#6d8ded] transition-colors',
+                      'text-sm font-medium rounded-md px-2 py-2 hover:bg-[#6d8ded] transition-colors',
                     )}
                   >
                     {item.name}
