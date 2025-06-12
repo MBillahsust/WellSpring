@@ -316,7 +316,12 @@ const AICounselor = () => {
       // Show the summary for 10 seconds, then navigate
       setTimeout(() => {
         setLoading(false);
-        navigate('/counsellor-bot');
+        navigate('/counsellor-bot', { 
+          state: { 
+            summary: res.data.summary,
+            context: res.data.context 
+          }
+        });
       }, 7000);
 
     } catch (err) {
@@ -529,7 +534,7 @@ const AICounselor = () => {
                         <span>
                           <Typewriter
                             words={[
-                              'Select the mood, activity, assessment, game history and click submit to get better experience'
+                              'Select your recent mood, activity, assessments, and game performance to help the AI counselor deliver personalized and research-backed support. Then click "Start Chat" to begin your session'
                             ]}
                             loop={false}
                             cursor
@@ -655,7 +660,7 @@ const AICounselor = () => {
                       className="w-full flex items-center justify-center bg-green-600 text-white py-3 px-4 rounded-lg hover:bg-green-700 transition-colors"
                       onClick={handleSubmit}
                     >
-                      Submit
+                      Start Chat
                     </button>
                     <p className="text-xs text-gray-600 text-center mt-2">
                       Get personalized routine based on your assessments and mood
