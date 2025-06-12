@@ -416,9 +416,9 @@ const AICounselor = () => {
               <div className="flex flex-col md:flex-row">
                 {/* Left side - Assessments and Game History */}
                 <div className="w-full md:w-1/3 min-w-[340px] max-w-[420px] p-4 bg-blue-50">
-                  <div className="mb-6">
+                  <div className="mb-8">
                     <h3 className="text-lg font-semibold text-blue-900 mb-2 flex items-center justify-between">
-                      <span>Your Assessments</span>
+                      <span>Assessments History</span>
                     </h3>
                     <div className="w-full bg-white rounded-lg overflow-hidden shadow-sm">
                       <div className="w-full">
@@ -430,7 +430,7 @@ const AICounselor = () => {
                         </div>
 
                         {/* Table Body with vertical scroll */}
-                        <div className="overflow-y-auto" style={{ maxHeight: '176px' /* 44px x 4 rows */ }}>
+                        <div className="overflow-y-auto" style={{ maxHeight: '266px' /* 44px x 4 rows */ }}>
                           {loadingAssessments ? (
                             <div className="text-center text-gray-400 py-8">Loading...</div>
                           ) : assessments.length === 0 ? (
@@ -459,7 +459,7 @@ const AICounselor = () => {
                   </div>
 
                   {/* Game History moved here */}
-                  <div className="mb-6">
+                  <div className="mb-0">
                     <div className="flex items-center justify-between mb-2">
                       <h3 className="text-lg font-semibold text-blue-900">Game History</h3>
                       <select
