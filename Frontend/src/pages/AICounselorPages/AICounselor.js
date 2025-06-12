@@ -548,7 +548,7 @@ const AICounselor = () => {
                     </div>
 
                     <div className="bg-white p-3 border-t border-gray-200">
-                      <form onSubmit={sendMessage} className="flex items-center">
+                      {/* <form onSubmit={sendMessage} className="flex items-center">
                         <input
                           type="text"
                           value={newMessage}
@@ -563,7 +563,7 @@ const AICounselor = () => {
                         >
                           <FaPaperPlane size={16} />
                         </button>
-                      </form>
+                      </form> */}
                     </div>
                   </div>
                 </div>
