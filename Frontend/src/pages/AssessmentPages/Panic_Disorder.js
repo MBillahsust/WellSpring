@@ -38,9 +38,9 @@ export default function Panic_Disorder() {
   const location = useLocation();
 
   const handleAnswer = (value) => {
-    const newAnswers = [...answers];
-    newAnswers[currentQuestion] = value;
-    setAnswers(newAnswers);
+    const updated = [...answers];
+    updated[currentQuestion] = value;
+    setAnswers(updated);
   };
 
   const handleNext = () => {
@@ -48,6 +48,12 @@ export default function Panic_Disorder() {
       setCurrentQuestion(currentQuestion + 1);
     } else {
       calculateResult();
+    }
+  };
+
+  const handleBack = () => {
+    if (currentQuestion > 0) {
+      setCurrentQuestion(currentQuestion - 1);
     }
   };
 
@@ -120,12 +126,8 @@ export default function Panic_Disorder() {
           {result ? (
             <div className="result-container">
               <h3 className="result-title">Assessment Complete</h3>
-              <div className="result-score">
-                {result.severity}
-              </div>
-              <p className="result-details">
-                Score: {result.score} out of {result.maxScore}
-              </p>
+              <div className="result-score">{result.severity}</div>
+              <p className="result-details">Score: {result.score} out of {result.maxScore}</p>
               <div className="result-recommendation">
                 <h4 className="recommendation-title">Recommendation</h4>
                 <p className="recommendation-text">{result.recommendation}</p>
@@ -135,12 +137,12 @@ export default function Panic_Disorder() {
                 Please consult with a mental health professional for a proper evaluation.
                 If you're experiencing a panic attack, try deep breathing exercises and seek immediate help if needed.
               </p>
-              <button className="next-button" onClick={handleSaveScore} style={{marginTop: '1rem'}}>
+              <button className="next-button" onClick={handleSaveScore} style={{ marginTop: '1rem' }}>
                 Save Score
               </button>
-              {saveStatus === 'saving' && <p style={{color: '#6366f1'}}>Saving...</p>}
-              {saveStatus === 'success' && <p style={{color: 'green'}}>Score saved successfully!</p>}
-              {saveStatus === 'error' && <p style={{color: 'red'}}>Failed to save score. Please try again.</p>}
+              {saveStatus === 'saving' && <p style={{ color: '#6366f1' }}>Saving...</p>}
+              {saveStatus === 'success' && <p style={{ color: 'green' }}>Score saved successfully!</p>}
+              {saveStatus === 'error' && <p style={{ color: 'red' }}>Failed to save score. Please try again.</p>}
             </div>
           ) : (
             <>
@@ -148,13 +150,11 @@ export default function Panic_Disorder() {
                 <div className="progress-bar" style={{ width: `${progress}%` }}></div>
               </div>
               <p className="question-counter">Question {currentQuestion + 1} of {questions.length}</p>
-              <div className="question">
-                {questions[currentQuestion]}
-              </div>
+              <div className="question">{questions[currentQuestion]}</div>
               <div className="options-grid">
                 {answerOptions.map((option) => (
-                  <div 
-                    key={option.value} 
+                  <div
+                    key={option.value}
                     className={`option-item ${answers[currentQuestion] === option.value ? 'selected' : ''}`}
                   >
                     <input
@@ -175,15 +175,26 @@ export default function Panic_Disorder() {
             </>
           )}
         </div>
-        <div className="assessment-footer">
+        <div className="assessment-footer flex justify-between items-center gap-4 mt-4">
           {!result && (
-            <button
-              onClick={handleNext}
-              className="next-button"
-              disabled={answers[currentQuestion] === undefined}
-            >
-              {currentQuestion < questions.length - 1 ? "Next Question" : "Submit"}
-            </button>
+            <>
+              <button
+                onClick={handleBack}
+                className={`next-button bg-gray-300 text-gray-700 hover:bg-gray-400 transition duration-200 ${
+                  currentQuestion === 0 ? 'opacity-50 cursor-not-allowed' : ''
+                }`}
+                disabled={currentQuestion === 0}
+              >
+                Back
+              </button>
+              <button
+                onClick={handleNext}
+                className="next-button hover:bg-green-600 transition duration-200"
+                disabled={answers[currentQuestion] === undefined}
+              >
+                {currentQuestion < questions.length - 1 ? "Next Question" : "Submit"}
+              </button>
+            </>
           )}
         </div>
       </div>

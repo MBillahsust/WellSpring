@@ -179,15 +179,26 @@ export default function OCD_Assesment() {
             </>
           )}
         </div>
-        <div className="assessment-footer">
+        <div className="assessment-footer flex justify-between items-center gap-4 mt-4">
           {!result && (
-            <button
-              onClick={handleNext}
-              className="next-button"
-              disabled={answers[currentQuestion] === undefined}
-            >
-              {currentQuestion < questions.length - 1 ? "Next Question" : "Submit"}
-            </button>
+            <>
+              <button
+                onClick={() => setCurrentQuestion((prev) => Math.max(prev - 1, 0))}
+                className={`next-button bg-gray-300 text-gray-700 hover:bg-gray-400 transition duration-200 ${
+                  currentQuestion === 0 ? 'opacity-50 cursor-not-allowed' : ''
+                }`}
+                disabled={currentQuestion === 0}
+              >
+                Back
+              </button>
+              <button
+                onClick={handleNext}
+                className="next-button hover:bg-green-600 transition duration-200"
+                disabled={answers[currentQuestion] === undefined}
+              >
+                {currentQuestion < questions.length - 1 ? "Next Question" : "Submit"}
+              </button>
+            </>
           )}
         </div>
       </div>

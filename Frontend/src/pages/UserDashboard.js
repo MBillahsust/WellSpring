@@ -28,7 +28,8 @@ import {
 } from 'react-icons/fa';
 import { UserContext } from '../UserContext';
 import axios from 'axios';
-import MoodChart from '../Components/MoodChart';
+// import MoodChart from '../Components/MoodChart';
+import MoodChart from '../components/MoodChart';
 import ActivityPieChart from '../Components/ActivityPieChart';
 
 const UserDashboard = () => {

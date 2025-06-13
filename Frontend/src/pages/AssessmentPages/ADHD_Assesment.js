@@ -1,4 +1,6 @@
-import React, { useState, useContext } from 'react';
+
+
+import React, { useState, useContext, useEffect, useRef } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import axios from 'axios';
 import { UserContext } from '../../UserContext';
@@ -41,6 +43,13 @@ export default function ADHD_Assesment() {
   const { userInfo } = useContext(UserContext);
   const navigate = useNavigate();
   const location = useLocation();
+  const topRef = useRef(null);
+
+  useEffect(() => {
+    if (topRef.current) {
+      topRef.current.scrollIntoView({ behavior: 'smooth' });
+    }
+  }, [currentQuestion]);
 
   const handleAnswer = (value) => {
     setAnswers([...answers.slice(0, currentQuestion), value]);
@@ -62,17 +71,17 @@ export default function ADHD_Assesment() {
     let severity, recommendation;
 
     if (totalScore <= 18) {
-        severity = "Minimal likelihood of ADHD";
-        recommendation = "Your symptoms suggest minimal indication of ADHD. Continue monitoring any concerns you may have.";
+      severity = "Minimal likelihood of ADHD";
+      recommendation = "Your symptoms suggest minimal indication of ADHD. Continue monitoring any concerns you may have.";
     } else if (totalScore <= 36) {
-        severity = "Mild likelihood of ADHD";
-        recommendation = "Your symptoms suggest mild ADHD traits. Consider discussing these symptoms with a healthcare provider.";
+      severity = "Mild likelihood of ADHD";
+      recommendation = "Your symptoms suggest mild ADHD traits. Consider discussing these symptoms with a healthcare provider.";
     } else if (totalScore <= 54) {
-        severity = "Moderate likelihood of ADHD";
-        recommendation = "Your symptoms suggest moderate ADHD traits. It's recommended to consult with a mental health professional for further evaluation.";
+      severity = "Moderate likelihood of ADHD";
+      recommendation = "Your symptoms suggest moderate ADHD traits. It's recommended to consult with a mental health professional for further evaluation.";
     } else if (totalScore <= 72) {
-        severity = "High likelihood of ADHD";
-        recommendation = "Your symptoms suggest strong ADHD traits. We strongly recommend seeking professional evaluation and support.";
+      severity = "High likelihood of ADHD";
+      recommendation = "Your symptoms suggest strong ADHD traits. We strongly recommend seeking professional evaluation and support.";
     }
 
     setResult({
@@ -117,22 +126,18 @@ export default function ADHD_Assesment() {
   };
 
   return (
-    <div className="assessment-container">
+    <div ref={topRef} className="assessment-container p-4 md:p-6">
       <div className="assessment-card">
         <div className="assessment-header adhd">
-          <h2 className="assessment-title">Adult ADHD Self-Report Scale (ASRS-v1.1)</h2>
+          <h2 className="assessment-title text-xl md:text-2xl">Adult ADHD Self-Report Scale (ASRS-v1.1)</h2>
           <p className="assessment-subtitle">Answer the following questions to assess your ADHD symptoms.</p>
         </div>
-        <div className="assessment-content">
+        <div className="assessment-content fade-in">
           {result ? (
             <div className="result-container">
               <h3 className="result-title">Assessment Complete</h3>
-              <div className="result-score">
-                {result.severity}
-              </div>
-              <p className="result-details">
-                Total Score: {result.totalScore} / {result.maxScore}
-              </p>
+              <div className="result-score">{result.severity}</div>
+              <p className="result-details">Total Score: {result.totalScore} / {result.maxScore}</p>
               <div className="result-details">
                 <p>Inattention Score: {result.inattentionScore} / 24</p>
                 <p>Hyperactivity/Impulsivity Score: {result.hyperImpulsivityScore} / 48</p>
@@ -142,30 +147,30 @@ export default function ADHD_Assesment() {
                 <p className="recommendation-text">{result.recommendation}</p>
               </div>
               <p className="disclaimer">
-                Note: This is a screening tool and not a diagnostic instrument. 
+                Note: This is a screening tool and not a diagnostic instrument.
                 Please consult with a mental health professional for a proper evaluation.
               </p>
-              <button className="next-button" onClick={handleSaveScore} style={{marginTop: '1rem'}}>
+              <button className="next-button hover:bg-green-600 transition" onClick={handleSaveScore} style={{ marginTop: '1rem' }}>
                 Save Score
               </button>
-              {saveStatus === 'saving' && <p style={{color: '#6366f1'}}>Saving...</p>}
-              {saveStatus === 'success' && <p style={{color: 'green'}}>Score saved successfully!</p>}
-              {saveStatus === 'error' && <p style={{color: 'red'}}>Failed to save score. Please try again.</p>}
+              {saveStatus === 'saving' && <p style={{ color: '#6366f1' }}>Saving...</p>}
+              {saveStatus === 'success' && <p style={{ color: 'green' }}>Score saved successfully!</p>}
+              {saveStatus === 'error' && <p style={{ color: 'red' }}>Failed to save score. Please try again.</p>}
             </div>
           ) : (
             <>
               <div className="progress-container">
                 <div className="progress-bar" style={{ width: `${progress}%` }}></div>
               </div>
-              <p className="question-counter">Question {currentQuestion + 1} of {asrsQuestions.length}</p>
-              <div className="question">
-                {asrsQuestions[currentQuestion]}
-              </div>
+              <p className="question-counter">
+                Question {currentQuestion + 1} of {asrsQuestions.length} ({Math.round(progress)}%)
+              </p>
+              <div className="question">{asrsQuestions[currentQuestion]}</div>
               <div className="options-grid">
                 {answerOptions.map((option) => (
-                  <div 
-                    key={option.value} 
-                    className={`option-item ${answers[currentQuestion] === option.value ? 'selected' : ''}`}
+                  <div
+                    key={option.value}
+                    className={`option-item flex flex-col sm:flex-row sm:items-center gap-2 ${answers[currentQuestion] === option.value ? 'selected' : ''}`}
                   >
                     <input
                       type="radio"
@@ -185,15 +190,26 @@ export default function ADHD_Assesment() {
             </>
           )}
         </div>
-        <div className="assessment-footer">
+        <div className="assessment-footer flex justify-between items-center gap-4 mt-4">
           {!result && (
-            <button
-              onClick={handleNext}
-              className="next-button"
-              disabled={answers[currentQuestion] === undefined}
-            >
-              {currentQuestion < asrsQuestions.length - 1 ? "Next Question" : "Submit"}
-            </button>
+            <>
+              <button
+                onClick={() => setCurrentQuestion((prev) => Math.max(prev - 1, 0))}
+                className={`next-button bg-gray-300 text-gray-700 hover:bg-gray-400 transition duration-200 ${
+                  currentQuestion === 0 ? 'opacity-50 cursor-not-allowed' : ''
+                }`}
+                disabled={currentQuestion === 0}
+              >
+                Back
+              </button>
+              <button
+                onClick={handleNext}
+                className="next-button hover:bg-green-600 transition duration-200"
+                disabled={answers[currentQuestion] === undefined}
+              >
+                {currentQuestion < asrsQuestions.length - 1 ? "Next Question" : "Submit"}
+              </button>
+            </>
           )}
         </div>
       </div>

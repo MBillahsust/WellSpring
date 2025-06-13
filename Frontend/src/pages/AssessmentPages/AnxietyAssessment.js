@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect, useRef } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import axios from 'axios';
 import { UserContext } from '../../UserContext';
@@ -33,6 +33,13 @@ export default function AnxietyAssessment() {
   const { userInfo } = useContext(UserContext);
   const navigate = useNavigate();
   const location = useLocation();
+  const questionRef = useRef(null);
+
+  useEffect(() => {
+    if (questionRef.current) {
+      questionRef.current.scrollIntoView({ behavior: 'smooth' });
+    }
+  }, [currentQuestion]);
 
   const handleAnswer = (value) => {
     const newAnswers = [...answers];
@@ -45,6 +52,12 @@ export default function AnxietyAssessment() {
       setCurrentQuestion(currentQuestion + 1);
     } else {
       calculateResult();
+    }
+  };
+
+  const handleBack = () => {
+    if (currentQuestion > 0) {
+      setCurrentQuestion(currentQuestion - 1);
     }
   };
 
@@ -71,7 +84,7 @@ export default function AnxietyAssessment() {
       severity: anxietyLevel,
       score: total,
       maxScore: questions.length * 4,
-      recommendation: recommendation
+      recommendation
     });
   };
 
@@ -90,8 +103,6 @@ export default function AnxietyAssessment() {
       recommendation: result.recommendation,
       takenAt: new Date().toISOString(),
     };
-    console.log('Assessment payload:', JSON.stringify(payload, null, 2));
-    console.log('Token used for Authorization:', userInfo.token);
     try {
       await axios.post(
         `${process.env.REACT_APP_BACKEND_URL}/addassesment/assessments`,
@@ -119,12 +130,8 @@ export default function AnxietyAssessment() {
           {result ? (
             <div className="result-container">
               <h3 className="result-title">Assessment Complete</h3>
-              <div className="result-score">
-                {result.severity}
-              </div>
-              <p className="result-details">
-                Score: {result.score} out of {result.maxScore}
-              </p>
+              <div className="result-score">{result.severity}</div>
+              <p className="result-details">Score: {result.score} out of {result.maxScore}</p>
               <div className="result-recommendation">
                 <h4 className="recommendation-title">Recommendation</h4>
                 <p className="recommendation-text">{result.recommendation}</p>
@@ -144,9 +151,10 @@ export default function AnxietyAssessment() {
             <>
               <div className="progress-container">
                 <div className="progress-bar" style={{ width: `${progress}%` }}></div>
+                <p className="progress-text">{Math.round(progress)}% complete</p>
               </div>
               <p className="question-counter">Question {currentQuestion + 1} of {questions.length}</p>
-              <div className="question">
+              <div className="question fade-in" ref={questionRef}>
                 {questions[currentQuestion]}
               </div>
               <div className="options-grid">
@@ -173,15 +181,26 @@ export default function AnxietyAssessment() {
             </>
           )}
         </div>
-        <div className="assessment-footer">
+        <div className="assessment-footer flex justify-between items-center gap-4 mt-4">
           {!result && (
-            <button
-              onClick={handleNext}
-              className="next-button"
-              disabled={answers[currentQuestion] === undefined}
-            >
-              {currentQuestion < questions.length - 1 ? "Next Question" : "Submit"}
-            </button>
+            <>
+              <button
+                onClick={handleBack}
+                className={`next-button bg-gray-300 text-gray-700 hover:bg-gray-400 ${
+                  currentQuestion === 0 ? 'opacity-50 cursor-not-allowed' : ''
+                }`}
+                disabled={currentQuestion === 0}
+              >
+                Back
+              </button>
+              <button
+                onClick={handleNext}
+                className="next-button hover:bg-green-600"
+                disabled={answers[currentQuestion] === undefined}
+              >
+                {currentQuestion < questions.length - 1 ? "Next Question" : "Submit"}
+              </button>
+            </>
           )}
         </div>
       </div>

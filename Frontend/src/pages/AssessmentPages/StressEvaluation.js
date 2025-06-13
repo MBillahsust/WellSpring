@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useRef, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import axios from 'axios';
 import { UserContext } from '../../UserContext';
@@ -33,6 +33,13 @@ export default function StressEvaluation() {
   const { userInfo } = useContext(UserContext);
   const navigate = useNavigate();
   const location = useLocation();
+  const questionRef = useRef(null);
+
+  useEffect(() => {
+    if (questionRef.current) {
+      questionRef.current.scrollIntoView({ behavior: 'smooth' });
+    }
+  }, [currentQuestion]);
 
   const handleAnswer = (value) => {
     const newAnswers = [...answers];
@@ -45,6 +52,12 @@ export default function StressEvaluation() {
       setCurrentQuestion(currentQuestion + 1);
     } else {
       calculateResult();
+    }
+  };
+
+  const handleBack = () => {
+    if (currentQuestion > 0) {
+      setCurrentQuestion(currentQuestion - 1);
     }
   };
 
@@ -142,9 +155,10 @@ export default function StressEvaluation() {
             <>
               <div className="progress-container">
                 <div className="progress-bar" style={{ width: `${progress}%` }}></div>
+                <p className="progress-text">{Math.round(progress)}% complete</p>
               </div>
               <p className="question-counter">Question {currentQuestion + 1} of {questions.length}</p>
-              <div className="question">
+              <div className="question fade-in" ref={questionRef}>
                 {questions[currentQuestion]}
               </div>
               <div className="options-grid">
@@ -171,15 +185,24 @@ export default function StressEvaluation() {
             </>
           )}
         </div>
-        <div className="assessment-footer">
+        <div className="assessment-footer flex justify-between items-center gap-4 mt-4">
           {!result && (
-            <button
-              onClick={handleNext}
-              className="next-button"
-              disabled={answers[currentQuestion] === undefined}
-            >
-              {currentQuestion < questions.length - 1 ? "Next Question" : "Submit"}
-            </button>
+            <>
+              <button
+                onClick={handleBack}
+                className={`next-button bg-gray-300 text-gray-700 hover:bg-gray-400 ${currentQuestion === 0 ? 'opacity-50 cursor-not-allowed' : ''}`}
+                disabled={currentQuestion === 0}
+              >
+                Back
+              </button>
+              <button
+                onClick={handleNext}
+                className="next-button hover:bg-blue-600"
+                disabled={answers[currentQuestion] === undefined}
+              >
+                {currentQuestion < questions.length - 1 ? "Next Question" : "Submit"}
+              </button>
+            </>
           )}
         </div>
       </div>
