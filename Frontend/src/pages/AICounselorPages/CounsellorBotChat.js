@@ -49,12 +49,12 @@ const CopilotLikeChat = () => {
         try {
           const jsonStr = JSON.stringify(context);
 
-          console.log(context.length);
+          
 
 
-          contextString = jsonStr.length > 3000 ? jsonStr.slice(0, 3000) + '...[truncated]' : jsonStr;   // This is just for the temp usage. For getting full context use the full context
+          contextString = context; // jsonStr.length > 3000 ? jsonStr.slice(0, 3000) + '...[truncated]' : jsonStr;   // This is just for the temp usage. For getting full context use the full context
            
-          console.log(contextString.length);
+          
         
         } catch {
           contextString = 'Context data unavailable due to serialization error.';
@@ -221,7 +221,7 @@ const CopilotLikeChat = () => {
               color: '#222',
             }}>
               <div style={{ fontSize: '1.5em', fontWeight: 500, marginBottom: 24 }}>
-                   Hi, I am your AI counsellor...!!
+                   Hi, I am your personalized AI counsellor...!!
               </div>
               <div style={{ display: 'flex', justifyContent: 'center', gap: 18, alignItems: 'center', color: '#b0b0b0', fontSize: 20 }}>
                 <FaThumbsUp style={{ cursor: 'pointer' }} />

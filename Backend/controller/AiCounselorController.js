@@ -117,6 +117,8 @@ const getUserContextController = async (req, res) => {
     // Generate the detailed context string
     const context = await generateUserContext(userId, selectedAssessmentsId, moodHistory, activityHistory, gameHistory);
 
+    
+
     // Prepare system instruction for AI summary
     const systemInstruction = `You are an empathetic and professional AI mental health counselor. Your role is to understand the user's mental health condition, mood patterns, daily activities, and cognitive performance based on the detailed data provided. Use this comprehensive overview of the user's recent assessments, mood history, activity logs, and game performance metrics to offer a concise, supportive, and clear summary of their current mental health status. The summary should be easy to understand and helpful as a quick overview. Keep it under 80 words.`;
 
