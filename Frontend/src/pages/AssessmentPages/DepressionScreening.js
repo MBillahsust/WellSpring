@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect, useRef } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import axios from 'axios';
 import { UserContext } from '../../UserContext';
@@ -32,11 +32,18 @@ export default function DepressionScreening() {
   const { userInfo } = useContext(UserContext);
   const navigate = useNavigate();
   const location = useLocation();
+  const questionRef = useRef(null);
+
+  useEffect(() => {
+    if (questionRef.current) {
+      questionRef.current.scrollIntoView({ behavior: 'smooth' });
+    }
+  }, [currentQuestion]);
 
   const handleAnswer = (value) => {
-    const newAnswers = [...answers];
-    newAnswers[currentQuestion] = value;
-    setAnswers(newAnswers);
+    const updated = [...answers];
+    updated[currentQuestion] = value;
+    setAnswers(updated);
   };
 
   const handleNext = () => {
@@ -47,30 +54,36 @@ export default function DepressionScreening() {
     }
   };
 
-  const calculateResult = () => {
-    const total = answers.reduce((sum, answer) => sum + parseInt(answer, 10), 0);
-    const score = total / questions.length;
+  const handleBack = () => {
+    if (currentQuestion > 0) {
+      setCurrentQuestion(currentQuestion - 1);
+    }
+  };
 
-    let depressionLevel, recommendation;
-    if (score < 1) {
-      depressionLevel = "Minimal depression";
+  const calculateResult = () => {
+    const total = answers.reduce((sum, ans) => sum + parseInt(ans, 10), 0);
+    const avg = total / questions.length;
+
+    let severity, recommendation;
+    if (avg < 1) {
+      severity = "Minimal depression";
       recommendation = "Your symptoms suggest minimal indication of depression. Continue monitoring your mental health.";
-    } else if (score < 2) {
-      depressionLevel = "Mild depression";
+    } else if (avg < 2) {
+      severity = "Mild depression";
       recommendation = "You're showing mild symptoms of depression. Consider talking to a mental health professional.";
-    } else if (score < 3) {
-      depressionLevel = "Moderate depression";
+    } else if (avg < 3) {
+      severity = "Moderate depression";
       recommendation = "Your symptoms suggest moderate depression. It's recommended to consult with a mental health professional.";
     } else {
-      depressionLevel = "Severe depression";
+      severity = "Severe depression";
       recommendation = "Your symptoms indicate severe depression. Please seek professional help immediately.";
     }
 
     setResult({
-      severity: depressionLevel,
+      severity,
       score: total,
       maxScore: questions.length * 3,
-      recommendation: recommendation
+      recommendation
     });
   };
 
@@ -116,9 +129,7 @@ export default function DepressionScreening() {
           {result ? (
             <div className="result-container">
               <h3 className="result-title">Assessment Complete</h3>
-              <div className="result-score">
-                {result.severity}
-              </div>
+              <div className="result-score">{result.severity}</div>
               <p className="result-details">
                 Score: {result.score} out of {result.maxScore}
               </p>
@@ -127,31 +138,32 @@ export default function DepressionScreening() {
                 <p className="recommendation-text">{result.recommendation}</p>
               </div>
               <p className="disclaimer">
-                Note: This is a screening tool and not a diagnostic instrument. 
-                If you're having thoughts of self-harm or suicide, please seek immediate help:
-                National Suicide Prevention Lifeline (US): 1-800-273-8255
+                Note: This is a screening tool and not a diagnostic instrument. <br />
+                If you're having thoughts of self-harm or suicide, please seek immediate help: <br />
+                <strong>National Suicide Prevention Lifeline (US): 1-800-273-8255</strong><br />
                 Available 24/7
               </p>
-              <button className="next-button" onClick={handleSaveScore} style={{marginTop: '1rem'}}>
+              <button className="next-button" onClick={handleSaveScore} style={{ marginTop: '1rem' }}>
                 Save Score
               </button>
-              {saveStatus === 'saving' && <p style={{color: '#6366f1'}}>Saving...</p>}
-              {saveStatus === 'success' && <p style={{color: 'green'}}>Score saved successfully!</p>}
-              {saveStatus === 'error' && <p style={{color: 'red'}}>Failed to save score. Please try again.</p>}
+              {saveStatus === 'saving' && <p style={{ color: '#6366f1' }}>Saving...</p>}
+              {saveStatus === 'success' && <p style={{ color: 'green' }}>Score saved successfully!</p>}
+              {saveStatus === 'error' && <p style={{ color: 'red' }}>Failed to save score. Please try again.</p>}
             </div>
           ) : (
             <>
               <div className="progress-container">
                 <div className="progress-bar" style={{ width: `${progress}%` }}></div>
+                <p className="progress-text">{Math.round(progress)}% complete</p>
               </div>
               <p className="question-counter">Question {currentQuestion + 1} of {questions.length}</p>
-              <div className="question">
+              <div className="question fade-in" ref={questionRef}>
                 {questions[currentQuestion]}
               </div>
               <div className="options-grid">
                 {answerOptions.map((option) => (
-                  <div 
-                    key={option.value} 
+                  <div
+                    key={option.value}
                     className={`option-item ${answers[currentQuestion] === option.value ? 'selected' : ''}`}
                   >
                     <input
@@ -172,15 +184,24 @@ export default function DepressionScreening() {
             </>
           )}
         </div>
-        <div className="assessment-footer">
+        <div className="assessment-footer flex justify-between items-center gap-4 mt-4">
           {!result && (
-            <button
-              onClick={handleNext}
-              className="next-button"
-              disabled={answers[currentQuestion] === undefined}
-            >
-              {currentQuestion < questions.length - 1 ? "Next Question" : "Submit"}
-            </button>
+            <>
+              <button
+                onClick={handleBack}
+                className={`next-button bg-gray-300 text-gray-700 hover:bg-gray-400 ${currentQuestion === 0 ? 'opacity-50 cursor-not-allowed' : ''}`}
+                disabled={currentQuestion === 0}
+              >
+                Back
+              </button>
+              <button
+                onClick={handleNext}
+                className="next-button hover:bg-blue-600"
+                disabled={answers[currentQuestion] === undefined}
+              >
+                {currentQuestion < questions.length - 1 ? "Next Question" : "Submit"}
+              </button>
+            </>
           )}
         </div>
       </div>
