@@ -2,7 +2,6 @@
 
 
 
-
 ## **Introduction**
 
 **Wellspring** is a comprehensive mental health and wellness platform designed to empower users on their journey to better mental health. The platform offers interactive games, self-assessments, mood and activity tracking, expert counselling recommendations, and a user-friendly dashboard. With a modern, responsive UI and robust authentication, Wellspring provides a safe and engaging environment for users to understand, track, and improve their mental well-being.
@@ -14,17 +13,20 @@
 **User Authentication**
 Secure login, signup, and session management with JWT.
 
-**Interactive Games**
-Cognitive games like Flappy Bird to assess and improve mental skills.
-
 **Self-Assessments**
 Scientifically-backed assessments for anxiety, depression, OCD, PTSD, and more.
 
 **Mood & Activity Tracking**
 Log daily moods and activities, visualize trends, and gain insights.
 
+**Interactive Games**
+Cognitive games like Flappy Bird to assess and improve mental skills.
+
 **Personalized Dashboard**
 View recent scores, assessment results, and progress.
+
+**Personalized AI Counselor**
+AI-driven counselling offering personalized mental health insights, coping strategies, and guidance.
 
 **Doctor Recommendation**
 Get AI-powered recommendations for mental health professionals based on your needs.
@@ -44,76 +46,95 @@ All sensitive operations are protected with JWT-based authentication.
 
 ---
 
-## **Pages**
+# **Pages**
 
-### Home Page
+<br>
+
+## Home Page
 
 <img src="images/Home.png">
 <img src="images/Home1.png">
 <img src="images/Home2.png">
 
-### Login Page
+<br>
+
+## Login Page
 
 <img src="images/Login.png">
 
-### Signup Page
+<br>
+
+## Signup Page
 
 <img src="images/Signup.png">
 
-### User Dashboard
+<br>
+
+## User Dashboard
 
 <img src="images/Dashboard.png">
 <img src="images/Dashboard1.png">
 <img src="images/Dashboard2.png">
 
-### Flappy Bird Game
+<br>
+
+## Flappy Bird Game
 
 <img src="images/FlappyBird.png">
 
-### Game Result Modal
+<br>
+
+## Game Result Modal
 
 <img src="images/GameResultModal.png">
 
-### Mood Tracking
+<br>
+
+## Mood Tracking
 
 <img src="images/MoodTracking.png">
 
-### Activity Logging
+<br>
+
+## Activity Logging
 
 <img src="images/ActivityLogging.png">
 
-### Assessments (Anxiety, Depression, OCD, PTSD, etc.)
+<br>
+
+## Assessments (Anxiety, Depression, OCD, PTSD, etc.)
 
 <img src="images/Assessment.png">
 
-### AI Counsellor Page
+<br>
+
+## AI Counsellor Page
 
 <img src = "images/AI Counsellor1.png">
 <img src = "images/AI Counsellor2.png">
 <img src = "images/AI Counsellor3.png">
 
-### Connect With Expert Page
+<br>
+
+## Connect With Expert Page
 
 <img src="images/Counsellors.png">
 
-### Doctor Recommendation Modal
+
+<br>
+
+## Doctor Recommendation Modal
 
 <img src="images/RecommendDoctor1.png">
 <img src="images/RecommendDoctor2.png">
 
-### Community/Forum Page
+<br>
+
+## Community/Forum Page
 
 <img src="images/Community.png">
 
-### Profile Page
-
-<img src="images/Profile.png">
-
-### Feedback Modal
-
-<img src="images/Feedback.png">
-
-*(Add or remove pages as per your actual project structure and available screenshots)*
+<br>
 
 ---
 
@@ -126,7 +147,7 @@ All sensitive operations are protected with JWT-based authentication.
 - ![React.js](https://img.icons8.com/color/48/000000/react-native.png) **React.js**: For building the user interface of the platform.
 - ![React Router](https://i.ibb.co/19d5sDG/react-router-svg.png) **React Router**: For declarative routing in React applications.
 - ![Tailwind CSS](https://img.icons8.com/color/48/000000/tailwindcss.png) **Tailwind CSS**: A utility-first CSS framework for designing responsive and modern UI components.  
-- ![DaisyUI](https://img.icons8.com/?size=100&id=RPyoS0c4Zki1&format=png&color=000000) **DaisyUI**: A Tailwind CSS-based UI framework to enhance styling with prebuilt components.  
+
 - ![Framer Motion](https://img.icons8.com/ios-filled/50/000000/framer-logo.png) **Framer Motion**: For smooth and interactive animations.
 
 ### Backend  
@@ -144,10 +165,118 @@ All sensitive operations are protected with JWT-based authentication.
 - ![MongoDB](https://img.icons8.com/color/48/000000/mongodb.png) **MongoDB**: A NoSQL database for managing user, assessment, and doctor data.  
 
 <br>
+<br>
 
 
+# 🚀 Installation
 
-# Functional Requirement:
+Clone the repository:
+
+```bash
+git clone <repo link>
+cd WellSpring
+```
+
+## 🖥️ Frontend Setup
+
+```bash
+cd Frontend
+npm install
+npm start
+```
+
+## 🔧 Backend Setup
+
+```bash
+cd Backend
+npm install
+npm start
+```
+
+
+<br>
+<br>
+
+
+---
+
+# Project Structure
+
+## Root
+```
+WellSpring/
+├── Backend/
+├── Frontend/
+```
+
+---
+
+## Backend Structure
+
+```
+Backend/
+├── controller/                # Business logic for each resource
+│   ├── AiCounselorController.js
+│   ├── CommunityController.js
+│   ├── doctorController.js
+│   ├── moodAndActivityController.js
+│   ├── gameController.js
+│   ├── userController.js
+│   ├── researchController.js
+│   └── assesmentController.js
+├── model/                     # Mongoose schemas/models
+│   └── models.js
+├── routes/                    # API route definitions
+│   └── router.js
+├── middlewares/               # Express middlewares (auth, error, etc.)
+├── prisma/                    # Prisma ORM (Postgres) schema and migrations
+│   ├── schema.prisma
+│   └── migrations/
+├── src/                       # (May contain additional Express app logic)
+│   └── app.js
+│   └── routes/
+├── db.js                      # Database connection setup
+├── index.js                   # Main server entry point
+├── package.json
+└── package-lock.json
+```
+
+## Frontend Structure
+
+```
+Frontend/
+├── src/
+│   ├── Components/            # Reusable UI components (Navbar, Charts, etc.)
+│   ├── pages/
+│   │   ├── AssessmentPages/   # All assessment flows (Anxiety, Depression, etc.)
+│   │   ├── CommunityPages/    # Community, GiveFeedback, Counsellor, etc.
+│   │   ├── FooterPages/       # Footer, Terms, Privacy
+│   │   ├── HeaderPages/       # Header, Login, Signup, Resources, About, etc.
+│   │   ├── GamesPages/        # Game UIs (FlappyBird, MemoryMatch, etc.)
+│   │   ├── KeyFeaturePages/   # MoodTracking, ActivityLogging, etc.
+│   │   ├── ConditionPages/    # Info pages for conditions (Anxiety, Depression, etc.)
+│   │   └── UserDashboard.js   # Main dashboard
+│   ├── Allcss/                # CSS files for various pages
+│   ├── App.js                 # Main React app entry
+│   ├── App.css
+│   ├── index.js
+│   ├── index.css
+│   ├── UserContext.js         # React context for user/session
+│   ├── IndexPage.js           # Main landing page
+│   └── toastify-custom.css
+├── public/                    # Static assets
+├── package.json
+├── package-lock.json
+├── tailwind.config.js
+├── postcss.config.js
+└── README.md
+```
+
+
+# Database schema
+
+
+# Functional Requirements:
 
 1. Mental health assesments (various)
 2. On time Mood tracking. 
@@ -176,7 +305,7 @@ All sensitive operations are protected with JWT-based authentication.
 
 
 
-# Non functional requrement:
+# Non functional requrements:
 
 1. Prompt engineering (using preamble instruction) to adjust AI counselor , so that it gives response according to (localized data perspective) while also not vioulating any medical guidlines.
 2. For each user account keep all of its data stored in dataset, such as assememnts results, mood tracking results, reasearch and developing reserch, routine etc. 
