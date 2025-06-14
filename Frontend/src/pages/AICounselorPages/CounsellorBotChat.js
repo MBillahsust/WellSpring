@@ -50,7 +50,7 @@ const CopilotLikeChat = () => {
     setMessages(prev => [...prev, { sender: 'user', text }]);
     setIsLoading(true);
     try {
-      const systemPrompt = `You are an empathetic and professional AI mental health counselor. Your role is to understand the user's mental health condition, mood patterns, daily activities, and cognitive performance based on the detailed data provided. Use this comprehensive overview of the user's recent assessments, mood history, activity logs, and game performance metrics to offer personalized, supportive, and practical advice that promotes the user's emotional well-being, cognitive health, and overall balance in daily life. Always communicate with compassion, avoid judgment, and tailor your responses to reflect the unique experiences and needs revealed by the data.`;
+      const systemPrompt = `You are an empathetic and professional AI mental health counselor. Your role is to understand the user's mental health condition, mood patterns, daily activities, and cognitive performance based on the detailed data provided. Use this comprehensive overview of the user's recent assessments, mood history, activity logs, and game performance metrics to offer personalized, supportive, and practical advice that promotes the user's emotional well-being, cognitive health, and overall balance in daily life. Always communicate with compassion, avoid judgment, and tailor your responses to reflect the unique experiences and needs revealed by the data. Also Make sure that your responses are always formatted nicely.`;
       let contextString = '';
       if (context) {
         try {

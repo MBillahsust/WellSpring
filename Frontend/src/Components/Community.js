@@ -19,7 +19,7 @@ export default function CommunityFeatures() {
     {
       title: "Counsellor Bot",
       description: "Chat with our counsellor bot to get immediate assistance and guidance whenever you need support.",
-      path: "/counsellor-bot",
+      path: "/ai-counselor",
       icon: FaRobot,
       buttonText: "Chat Now"
     }

@@ -32,8 +32,9 @@ export default function BigCard({ onGetStartedClick }) {
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.3 }}
           >
-            MindCare is an AI-powered platform that provides tailored guidance and resources 
-            to help you achieve your mental wellness goals with confidence.
+            Wellspring is an AI-powered platform that supports your mental wellness by helping you track your routine, mood, and activities, and by offering insights through psychological assessments based on standardized medical tools. While it provides initial guidance for self-aware individuals, it is not a doctor and does not replace professional advice—it’s always better to consult a qualified psychologist or doctor without any hesitation.
+
+
           </motion.p>
           <motion.div
             className="flex flex-col sm:flex-row justify-center items-center gap-4 sm:gap-5"
@@ -47,7 +48,7 @@ export default function BigCard({ onGetStartedClick }) {
               className="w-full sm:w-auto"
             >
               <Link 
-                to="/get-started" 
+                to="/signup" 
                 className="group w-full sm:w-auto inline-flex items-center justify-center px-8 py-3.5 bg-gradient-to-r from-[#00a0ff] to-[#0066ff] text-white text-[1rem] font-semibold tracking-wide rounded-full shadow-[0_2px_12px_rgba(0,157,255,0.25)] hover:shadow-[0_4px_16px_rgba(0,157,255,0.35)] transition-all duration-300"
                 onClick={onGetStartedClick}
               >

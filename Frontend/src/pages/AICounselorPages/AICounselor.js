@@ -243,17 +243,14 @@ const AICounselor = () => {
     }, 1000);
   };
 
-  // Load chat history
-  const loadChatHistory = (id) => {
-    // Implementation of loadChatHistory function
-  };
+
 
   const [gameCount, setGameCount] = useState(5);
 
   const lines = [
     "AI Counselor",
     "Your personal mental health assistant",
-    "Always here to listen and guide."
+    "The AI counselor provides initial guidance to help you understand your mental well-being—always consult a professional before drawing any conclusions."
   ];
 
   const container = {
