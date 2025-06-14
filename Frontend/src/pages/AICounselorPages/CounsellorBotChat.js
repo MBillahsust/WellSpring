@@ -2,7 +2,15 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
-import { FaMicrophone, FaMicrophoneSlash, FaPaperPlane, FaThumbsUp, FaThumbsDown, FaRegCopy, FaRegEdit } from 'react-icons/fa';
+import {
+  FaMicrophone,
+  FaMicrophoneSlash,
+  FaPaperPlane,
+  FaThumbsUp,
+  FaThumbsDown,
+  FaRegCopy,
+  FaRegEdit
+} from 'react-icons/fa';
 
 const CopilotLikeChat = () => {
   const location = useLocation();
@@ -16,79 +24,73 @@ const CopilotLikeChat = () => {
   const [hasPrompted, setHasPrompted] = useState(false);
   const recognitionRef = useRef(null);
 
+  // set up speech recognition
   useEffect(() => {
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
     if (!SpeechRecognition) return;
-    const recognition = new SpeechRecognition();
-    recognition.lang = 'en-US';
-    recognition.interimResults = false;
-    recognition.continuous = false;
-    recognition.onresult = (event) => {
-      const transcript = event.results[0][0].transcript;
-      setInput((prev) => (prev ? prev + ' ' + transcript : transcript));
+    const recog = new SpeechRecognition();
+    recog.lang = 'en-US';
+    recog.interimResults = false;
+    recog.continuous = false;
+    recog.onresult = e => {
+      const transcript = e.results[0][0].transcript;
+      setInput(prev => prev ? prev + ' ' + transcript : transcript);
     };
-    recognition.onerror = () => setIsListening(false);
-    recognition.onend = () => setIsListening(false);
-    recognitionRef.current = recognition;
-    return () => {
-      if (recognitionRef.current) recognitionRef.current.abort();
-    };
+    recog.onerror = () => setIsListening(false);
+    recog.onend = () => setIsListening(false);
+    recognitionRef.current = recog;
+    return () => recognitionRef.current?.abort();
   }, []);
 
-  const sendMessage = async (text) => {
+  // send user message to AI
+  const sendMessage = async text => {
     if (!text.trim() || isLoading) return;
     if (!hasPrompted) setHasPrompted(true);
-    const userMessage = { sender: 'user', text };
-    const updatedMessages = [...messages, userMessage];
-    setMessages(updatedMessages);
+
+    setMessages(prev => [...prev, { sender: 'user', text }]);
     setIsLoading(true);
     try {
       const systemPrompt = `You are an empathetic and professional AI mental health counselor. Your role is to understand the user's mental health condition, mood patterns, daily activities, and cognitive performance based on the detailed data provided. Use this comprehensive overview of the user's recent assessments, mood history, activity logs, and game performance metrics to offer personalized, supportive, and practical advice that promotes the user's emotional well-being, cognitive health, and overall balance in daily life. Always communicate with compassion, avoid judgment, and tailor your responses to reflect the unique experiences and needs revealed by the data.`;
       let contextString = '';
       if (context) {
         try {
-          const jsonStr = JSON.stringify(context);
-
-          
-
-
-          contextString = context; // jsonStr.length > 3000 ? jsonStr.slice(0, 3000) + '...[truncated]' : jsonStr;   // This is just for the temp usage. For getting full context use the full context
-           
-          
-        
+          const full = JSON.stringify(context);
+          contextString = full.slice(0, 3000) + (full.length > 3000 ? '...[truncated]' : '');
         } catch {
-          contextString = 'Context data unavailable due to serialization error.';
+          contextString = 'Context data unavailable.';
         }
       }
-      const messagesPayload = [{ role: 'system', content: systemPrompt }];
+
+      const payload = [{ role: 'system', content: systemPrompt }];
       if (contextString) {
-        messagesPayload.push({ role: 'system', content: `User context data: ${contextString}` });
+        payload.push({ role: 'system', content: `User context: ${contextString}` });
       }
-      const lastTurns = updatedMessages.slice(-10);
-      for (const msg of lastTurns) {
-        messagesPayload.push({
+      const recent = [...messages, { sender: 'user', text }].slice(-10);
+      recent.forEach(msg =>
+        payload.push({
           role: msg.sender === 'user' ? 'user' : 'assistant',
-          content: msg.text,
-        });
-      }
-      const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+          content: msg.text
+        })
+      );
+
+      const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${process.env.REACT_APP_GROQ_API_KEY}`,
+          Authorization: `Bearer ${process.env.REACT_APP_GROQ_API_KEY}`
         },
         body: JSON.stringify({
           model: 'llama-3.3-70b-versatile',
-          messages: messagesPayload,
-        }),
+          messages: payload
+        })
       });
-      const data = await response.json();
-      const botReply = data.choices?.[0]?.message?.content || "Something went wrong...";
-      setMessages((prev) => [...prev, { sender: 'bot', text: botReply }]);
+      const data = await res.json();
+      const reply = data.choices?.[0]?.message?.content || 'Something went wrong...';
+      setMessages(prev => [...prev, { sender: 'bot', text: reply }]);
     } catch {
-      setMessages((prev) => [
+      setMessages(prev => [
         ...prev,
-        { sender: 'bot', text: 'Sorry, something went wrong. Please try again shortly.' },
+        { sender: 'bot', text: 'Sorry, something went wrong. Please try again shortly.' }
       ]);
     } finally {
       setIsLoading(false);
@@ -96,89 +98,159 @@ const CopilotLikeChat = () => {
     }
   };
 
-  const handleSubmit = async (event) => {
-    event.preventDefault();
-    if (isListening) stopListening();
+  // handle form submit
+  const handleSubmit = async e => {
+    e.preventDefault();
+    if (isListening) {
+      recognitionRef.current.stop();
+      setIsListening(false);
+    }
     await sendMessage(input);
   };
 
+  // toggle listening
   const toggleListening = () => {
-    const recognition = recognitionRef.current;
-    if (!recognition || isLoading) return;
+    if (!recognitionRef.current || isLoading) return;
     if (isListening) {
-      recognition.stop();
+      recognitionRef.current.stop();
       setIsListening(false);
     } else {
       setIsListening(true);
-      recognition.start();
-    }
-  };
-
-  const stopListening = () => {
-    const recognition = recognitionRef.current;
-    if (recognition) {
-      recognition.stop();
-      setIsListening(false);
+      recognitionRef.current.start();
     }
   };
 
   return (
     <>
       <style>{`
+        /* INITIAL PROMPT */
+        .initial-message {
+          background: #fff;
+          padding: 24px 32px;
+          border-radius: 16px;
+          box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+          width: 65vw;
+          margin: 80px auto 24px;
+          text-align: center;
+          color: #333;
+          line-height: 1.6;
+        }
         @media (max-width: 600px) {
-          .copilot-exit-btn {
-            top: 10px !important;
-            right: 10px !important;
-            width: 36px !important;
-            height: 36px !important;
-            font-size: 18px !important;
-          }
-          .copilot-input-bar {
-            max-width: 100vw !important;
-            border-radius: 18px !important;
-            padding: 10px 8px !important;
-            min-height: 54px !important;
-          }
-          .copilot-mic-btn, .copilot-send-btn {
-            width: 36px !important;
-            height: 36px !important;
-            border-radius: 18px !important;
-            font-size: 18px !important;
-          }
-          .copilot-send-btn {
-            border-radius: 18px !important;
-            font-size: 18px !important;
-            padding: 0 !important;
-          }
-          .copilot-input {
-            font-size: 15px !important;
-            padding: 8px 8px !important;
-            border-radius: 12px !important;
-          }
-          .copilot-chat-bubble {
-            font-size: 15px !important;
-            padding: 10px 12px !important;
-            border-radius: 12px !important;
-            max-width: 95vw !important;
-          }
-          .copilot-prompt {
-            font-size: 1.1em !important;
-            margin-top: 40px !important;
-            padding: 0 4vw !important;
+          .initial-message { width: 90vw; }
+        }
+
+        /* CHAT WINDOW */
+        .chat-window {
+          margin: 40px auto;
+          min-height: 200px;
+          display: flex;
+          flex-direction: column;
+          gap: 18px;
+          width: 65vw;
+        }
+        @media (max-width: 600px) {
+          .chat-window { width: 100vw; padding: 0 16px; }
+        }
+
+        /* BOT MESSAGE */
+        .bot-message {
+          align-self: flex-start;
+          color: #222;
+          font-size: 17px;
+          line-height: 1.6;
+          word-break: break-word;
+          width: 100%;
+        }
+
+        /* USER BUBBLE */
+        .user-bubble {
+          align-self: flex-end;
+          background: #e6f0ff;
+          color: #222;
+          border-radius: 18px;
+          padding: 14px 22px;
+          max-width: 80%;
+          font-size: 17px;
+          line-height: 1.6;
+          box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+          word-break: break-word;
+        }
+
+        /* INPUT BAR */
+        .input-bar {
+          position: fixed;
+          bottom: 20px;
+          left: 50%;
+          transform: translateX(-50%);
+          width: 65vw;
+          padding: 12px 24px;
+          background: #fff;
+          border-radius: 24px;
+          box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+          display: flex;
+          align-items: center;
+          gap: 12px;
+          z-index: 2000;
+        }
+        @media (max-width: 600px) {
+          .input-bar {
+            bottom: 0;
+            width: 100vw !important;
+            padding: 10px 16px !important;
           }
         }
+
+        .input-field {
+          flex: 1;
+          background: #faf8f6;
+          border: 1px solid #ddd;
+          border-radius: 20px;
+          font-size: 16px;
+          color: #222;
+          padding: 8px 12px;
+          outline: none;
+          height: 36px;
+        }
+        .mic-btn, .send-btn {
+          flex-shrink: 0;
+          width: 36px;
+          height: 36px;
+          border: none;
+          border-radius: 50%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          cursor: pointer;
+        }
+        .mic-btn {
+          background: #f5f5f5;
+          color: #b0b0b0;
+          font-size: 20px;
+        }
+        .mic-btn.recording {
+          color: #ff4444;
+        }
+        .send-btn {
+          background: #7baaf7;
+          color: #fff;
+          font-size: 18px;
+        }
+        .send-btn:disabled {
+          opacity: 0.6;
+          cursor: not-allowed;
+        }
       `}</style>
+
       <div style={{
         minHeight: '100vh',
         background: '#faf8f6',
-        width: '100vw',
-        position: 'relative',
         fontFamily: 'Segoe UI, Arial, sans-serif',
+        position: 'relative',
+        paddingBottom: '140px'
       }}>
         {/* Exit Button */}
         <button
           onClick={() => navigate('/')}
-          className="copilot-exit-btn"
           style={{
             position: 'absolute',
             top: 24,
@@ -190,83 +262,60 @@ const CopilotLikeChat = () => {
             border: 'none',
             boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
             color: '#222',
-            fontWeight: 600,
             fontSize: 22,
             cursor: 'pointer',
-            zIndex: 100,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            transition: 'background 0.2s',
+            zIndex: 2100
           }}
           title="Exit to Home"
         >
           ×
         </button>
 
-        {/* Centered Prompt or Chat */}
+        {/* Center Area */}
         <div style={{
-          minHeight: '100vh',
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
-          justifyContent: 'center',
-          paddingBottom: 120,
+          justifyContent: 'center'
         }}>
           {/* Initial Prompt */}
           {!hasPrompted && (
-            <div className="copilot-prompt" style={{
-              marginTop: 80,
-              textAlign: 'center',
-              color: '#222',
-            }}>
-              <div style={{ fontSize: '1em', fontWeight: 500, marginBottom: 24 }}>
-                   Hi, I’m your personalized AI counselor...!!  
-I’m not a real doctor or psychologist, and I can’t see or fully understand your situation like a human can. I use your assessments and other data to give you some initial personalized guidance. But for proper support, it’s always best to speak with a real doctor or psychologist—there’s nothing wrong with that.
-              </div>
-              <div style={{ display: 'flex', justifyContent: 'center', gap: 18, alignItems: 'center', color: '#b0b0b0', fontSize: 20 }}>
+            <div className="initial-message">
+              <p style={{ fontSize: '1.25rem', fontWeight: 600, marginBottom: 16 }}>
+                Hi, I’m your personalized AI counselor!
+              </p>
+              <p style={{ marginBottom: 12 }}>
+                I’m not a real doctor or psychologist, and I can’t see or fully understand your situation like a human can. I use your assessments and other data to give you some initial personalized guidance.
+              </p>
+              <p style={{ marginBottom: 24 }}>
+                For proper support, it’s always best to speak with a real doctor or psychologist—there’s nothing wrong with that.
+              </p>
+              <div style={{ display: 'flex', justifyContent: 'center', gap: 18, color: '#b0b0b0', fontSize: 20 }}>
                 <FaThumbsUp style={{ cursor: 'pointer' }} />
                 <FaThumbsDown style={{ cursor: 'pointer' }} />
                 <FaRegCopy style={{ cursor: 'pointer' }} />
                 <span style={{ fontSize: 22, color: '#e0e0e0' }}>|</span>
                 <FaRegEdit style={{ cursor: 'pointer' }} />
-                <span style={{ fontSize: 15, color: '#888', marginLeft: 8 }}>AI counsellor</span>
+                <span style={{ fontSize: 15, color: '#888' }}>AI counsellor</span>
               </div>
             </div>
           )}
 
-          {/* Chat Window */}
+          {/* Chat History */}
           {hasPrompted && (
-            <div style={{
-              width: '100%',
-              maxWidth: 700,
-              margin: '0 auto',
-              marginTop: 40,
-              marginBottom: 40,
-              minHeight: 200,
-              display: 'flex',
-              flexDirection: 'column',
-              gap: 18,
-            }}>
+            <div className="chat-window">
               {messages.map((msg, idx) => (
-                <div
-                  key={idx}
-                  className="copilot-chat-bubble"
-                  style={{
-                    alignSelf: msg.sender === 'user' ? 'flex-end' : 'flex-start',
-                    background: msg.sender === 'user' ? '#e6f0ff' : '#fff',
-                    color: '#222',
-                    borderRadius: 18,
-                    padding: '14px 22px',
-                    maxWidth: '80%',
-                    fontSize: 17,
-                    lineHeight: 1.6,
-                    boxShadow: '0 2px 8px rgba(0,0,0,0.06)',
-                    wordBreak: 'break-word',
-                  }}
-                >
-                  <ReactMarkdown remarkPlugins={[remarkGfm]}>{msg.text}</ReactMarkdown>
-                </div>
+                msg.sender === 'bot'
+                  ? <div key={idx} className="bot-message">
+                      <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                        {msg.text}
+                      </ReactMarkdown>
+                    </div>
+                  : <div key={idx} className="user-bubble">
+                      <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                        {msg.text}
+                      </ReactMarkdown>
+                    </div>
               ))}
               {isListening && (
                 <div style={{ textAlign: 'center', color: '#ff4444', fontWeight: 600, fontSize: 16 }}>
@@ -277,104 +326,32 @@ I’m not a real doctor or psychologist, and I can’t see or fully understand y
           )}
         </div>
 
-        {/* Chat Input Floating Bar */}
-        <form
-          id="chat-form"
-          onSubmit={handleSubmit}
-          className="copilot-input-bar"
-          style={{
-            position: 'fixed',
-            left: 0,
-            right: 0,
-            bottom: 0,
-            margin: '0 auto',
-            width: '100%',
-            maxWidth: 600,
-            background: '#fff',
-            borderRadius: 32,
-            boxShadow: '0 4px 32px rgba(0,0,0,0.10)',
-            padding: '18px 32px',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            gap: 16,
-            zIndex: 99,
-            minHeight: 72,
-          }}
-        >
-          {/* Mic Button */}
+        {/* Input Bar */}
+        <form onSubmit={handleSubmit} className="input-bar">
           <button
             type="button"
             onClick={toggleListening}
             disabled={isLoading}
-            title={isListening ? 'Stop Recording' : 'Start Recording'}
-            className="copilot-mic-btn"
-            style={{
-              background: '#f5f5f5',
-              border: 'none',
-              color: isListening ? '#ff4444' : '#b0b0b0',
-              fontSize: 24,
-              cursor: 'pointer',
-              width: 44,
-              height: 44,
-              borderRadius: '50%',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              transition: 'background 0.2s',
-              flexShrink: 0,
-            }}
+            className={`mic-btn ${isListening ? 'recording' : ''}`}
           >
             {isListening ? <FaMicrophoneSlash /> : <FaMicrophone />}
           </button>
-          {/* Input Field */}
+
           <input
             type="text"
-            placeholder="Type or speak your thoughts..."
-            id="chat-message"
-            autoComplete="off"
+            placeholder="Ask me anything!"
             value={input}
-            onChange={(e) => setInput(e.target.value)}
+            onChange={e => setInput(e.target.value)}
             disabled={isLoading}
-            className="copilot-input"
-            style={{
-              flex: 1,
-              background: '#faf8f6',
-              border: 'none',
-              borderRadius: 18,
-              fontSize: 18,
-              color: '#222',
-              padding: '12px 18px',
-              margin: '0 8px',
-              outline: 'none',
-              minWidth: 0,
-            }}
+            className="input-field"
           />
-          {/* Send Button */}
+
           <button
             type="submit"
             disabled={isLoading || !input.trim()}
-            title="Send Message"
-            className="copilot-send-btn"
-            style={{
-              background: '#7baaf7',
-              border: 'none',
-              color: '#fff',
-              width: 64,
-              height: 44,
-              borderRadius: 22,
-              fontWeight: 600,
-              fontSize: 22,
-              cursor: isLoading || !input.trim() ? 'not-allowed' : 'pointer',
-              opacity: isLoading || !input.trim() ? 0.6 : 1,
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              transition: 'background 0.2s',
-              flexShrink: 0,
-            }}
+            className="send-btn"
           >
-            <FaPaperPlane style={{ fontSize: 22 }} />
+            <FaPaperPlane />
           </button>
         </form>
       </div>
