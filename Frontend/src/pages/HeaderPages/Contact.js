@@ -139,8 +139,8 @@ export default function Contact() {
             </div>
             <div className="member-card">
               <h3>Arfatul Islam Asif</h3>
-              <a href="mailto:aiasif@gmail.com">
-                <FaEnvelope /> aiasif@gmail.com
+              <a href="mailto:arfatulislam2001@gmail.com">
+                <FaEnvelope /> arfatulislam2001@gmail.com
               </a>
               <a href="https://www.linkedin.com/in/arfatul-islam-asif-169116279/" target="_blank" rel="noopener noreferrer">
                 <FaLinkedin /> LinkedIn
