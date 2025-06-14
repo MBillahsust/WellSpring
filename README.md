@@ -275,6 +275,8 @@ Frontend/
 
 # Database schema
 
+<img src = "images/Database Schema.png">
+
 
 # Functional Requirements:
 
