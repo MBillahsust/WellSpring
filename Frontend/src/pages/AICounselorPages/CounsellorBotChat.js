@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useLayoutEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
@@ -12,6 +12,29 @@ import {
   FaRegEdit
 } from 'react-icons/fa';
 
+// Typewriter effect hook
+function useTypewriter(text, enabled, speed = 18, onDone) {
+  const [displayed, setDisplayed] = useState(enabled ? '' : text || '');
+  useEffect(() => {
+    if (!enabled || !text) {
+      setDisplayed(text || '');
+      return;
+    }
+    setDisplayed('');
+    let i = 0;
+    const interval = setInterval(() => {
+      setDisplayed(t => t + text[i]);
+      i++;
+      if (i >= text.length) {
+        clearInterval(interval);
+        if (onDone) onDone();
+      }
+    }, speed);
+    return () => clearInterval(interval);
+  }, [text, enabled, speed, onDone]);
+  return displayed;
+}
+
 const CopilotLikeChat = () => {
   const location = useLocation();
   const navigate = useNavigate();
@@ -23,6 +46,22 @@ const CopilotLikeChat = () => {
   const [isListening, setIsListening] = useState(false);
   const [hasPrompted, setHasPrompted] = useState(false);
   const recognitionRef = useRef(null);
+
+  const initialPrompt = [
+    "Hi, I'm your personalized AI counselor!",
+    "I'm not a real doctor or psychologist, and I can't see or fully understand your situation like a human can. I use your assessments and other data to give you some initial personalized guidance.",
+    "For proper support, it's always best to speak with a real doctor or psychologist—there's nothing wrong with that."
+  ];
+  const [initialStep, setInitialStep] = useState(0);
+  const [initialDone, setInitialDone] = useState(false);
+  const initialText = initialPrompt[initialStep];
+  const initialTyped = useTypewriter(initialText, !hasPrompted, 18, () => {
+    if (initialStep < initialPrompt.length - 1) {
+      setTimeout(() => setInitialStep(s => s + 1), 400);
+    } else {
+      setInitialDone(true);
+    }
+  });
 
   // set up speech recognition
   useEffect(() => {
@@ -119,6 +158,48 @@ const CopilotLikeChat = () => {
       recognitionRef.current.start();
     }
   };
+
+  // For bot messages typewriter effect
+  const [typingIdx, setTypingIdx] = useState(null);
+  const [typedBot, setTypedBot] = useState('');
+  useEffect(() => {
+    if (messages.length && messages[messages.length - 1].sender === 'bot') {
+      setTypingIdx(messages.length - 1);
+      setTypedBot('');
+    }
+  }, [messages]);
+  useEffect(() => {
+    if (typingIdx !== null && messages[typingIdx] && messages[typingIdx].sender === 'bot') {
+      const text = messages[typingIdx].text;
+      let i = 0;
+      setTypedBot('');
+      const interval = setInterval(() => {
+        setTypedBot(t => t + text[i]);
+        i++;
+        if (i >= text.length) {
+          clearInterval(interval);
+          setTypingIdx(null);
+        }
+      }, 16);
+      return () => clearInterval(interval);
+    }
+  }, [typingIdx, messages]);
+
+  const chatWindowRef = useRef(null);
+  const lastMsgRef = useRef(null);
+  // Auto-scroll to bottom when new message arrives, unless user is scrolling up
+  useLayoutEffect(() => {
+    if (!hasPrompted) return;
+    const container = chatWindowRef.current;
+    if (container) {
+      const scrollTarget = container.scrollHeight - container.clientHeight / 2;
+      container.scrollTo({
+        top: scrollTarget,
+        behavior: 'smooth',
+      });
+    }
+  }, [messages, typedBot, hasPrompted]);
+  
 
   return (
     <>
@@ -281,15 +362,9 @@ const CopilotLikeChat = () => {
           {/* Initial Prompt */}
           {!hasPrompted && (
             <div className="initial-message">
-              <p style={{ fontSize: '1.25rem', fontWeight: 600, marginBottom: 16 }}>
-                Hi, I’m your personalized AI counselor!
-              </p>
-              <p style={{ marginBottom: 12 }}>
-                I’m not a real doctor or psychologist, and I can’t see or fully understand your situation like a human can. I use your assessments and other data to give you some initial personalized guidance.
-              </p>
-              <p style={{ marginBottom: 24 }}>
-                For proper support, it’s always best to speak with a real doctor or psychologist—there’s nothing wrong with that.
-              </p>
+              <p style={{ fontSize: '1.25rem', fontWeight: 600, marginBottom: 16 }}>{initialStep === 0 ? initialTyped : initialPrompt[0]}</p>
+              {initialStep > 0 && <p style={{ marginBottom: 12 }}>{initialStep === 1 ? initialTyped : initialPrompt[1]}</p>}
+              {initialStep > 1 && <p style={{ marginBottom: 24 }}>{initialTyped}</p>}
               <div style={{ display: 'flex', justifyContent: 'center', gap: 18, color: '#b0b0b0', fontSize: 20 }}>
                 <FaThumbsUp style={{ cursor: 'pointer' }} />
                 <FaThumbsDown style={{ cursor: 'pointer' }} />
@@ -303,15 +378,15 @@ const CopilotLikeChat = () => {
 
           {/* Chat History */}
           {hasPrompted && (
-            <div className="chat-window">
+            <div className="chat-window" ref={chatWindowRef} style={{ overflowY: 'auto', maxHeight: '60vh' }}>
               {messages.map((msg, idx) => (
                 msg.sender === 'bot'
-                  ? <div key={idx} className="bot-message">
+                  ? <div key={idx} className="bot-message" ref={idx === messages.length - 1 ? lastMsgRef : null}>
                       <ReactMarkdown remarkPlugins={[remarkGfm]}>
-                        {msg.text}
+                        {typingIdx === idx ? typedBot : msg.text}
                       </ReactMarkdown>
                     </div>
-                  : <div key={idx} className="user-bubble">
+                  : <div key={idx} className="user-bubble" ref={idx === messages.length - 1 ? lastMsgRef : null}>
                       <ReactMarkdown remarkPlugins={[remarkGfm]}>
                         {msg.text}
                       </ReactMarkdown>
