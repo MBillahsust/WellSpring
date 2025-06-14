@@ -12,7 +12,7 @@ export default function Footer() {
           <a href="/contact" className="footer-link">Contact</a>
         </nav>
         <div className="footer-copyright">
-          © 2024 WellSpring. All rights reserved.
+          © 2025 WellSpring. All rights reserved.
         </div>
       </div>
     </footer>
