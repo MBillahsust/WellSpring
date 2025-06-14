@@ -32,7 +32,7 @@ export default function BigCard({ onGetStartedClick }) {
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.3 }}
           >
-            Wellspring is an AI-powered platform that supports your mental wellness by helping you track your routine, mood, and activities, and by offering insights through psychological assessments based on standardized medical tools. While it provides initial guidance for self-aware individuals, it is not a doctor and does not replace professional advice—it’s always better to consult a qualified psychologist or doctor without any hesitation.
+            Wellspring is an AI-powered platform that supports your mental wellness by helping you track your routine, mood, and activities and by offering insights through psychological assessments based on standardized medical tools. While it provides initial guidance for self-aware individuals, it isn’t a doctor and doesn’t replace professional advice—it’s always best to consult a qualified psychologist or physician without hesitation.
 
 
           </motion.p>
