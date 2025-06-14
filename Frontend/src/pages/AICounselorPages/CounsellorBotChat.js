@@ -220,8 +220,9 @@ const CopilotLikeChat = () => {
               textAlign: 'center',
               color: '#222',
             }}>
-              <div style={{ fontSize: '1.5em', fontWeight: 500, marginBottom: 24 }}>
-                   Hi, I am your personalized AI counsellor...!!
+              <div style={{ fontSize: '1em', fontWeight: 500, marginBottom: 24 }}>
+                   Hi, I’m your personalized AI counselor...!!  
+I’m not a real doctor or psychologist, and I can’t see or fully understand your situation like a human can. I use your assessments and other data to give you some initial personalized guidance. But for proper support, it’s always best to speak with a real doctor or psychologist—there’s nothing wrong with that.
               </div>
               <div style={{ display: 'flex', justifyContent: 'center', gap: 18, alignItems: 'center', color: '#b0b0b0', fontSize: 20 }}>
                 <FaThumbsUp style={{ cursor: 'pointer' }} />
