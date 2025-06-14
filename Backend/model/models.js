@@ -125,6 +125,21 @@ const doctorSchemaExp = mongoose.model('Doctor', doctorSchema);
 
 
 
+// PlatformFeedback Model
+const platformFeedbackSchema = new mongoose.Schema({
+  userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+  wasHelpful: { type: String, required: true },
+  likedFeatures: { type: String, required: true },
+  dislikedFeatures: { type: String, required: true },
+  suggestedImprovements: { type: String, required: true },
+  betterUnderstanding: { type: String, required: true },
+  submittedAt: { type: Date, default: Date.now }
+});
+const PlatformFeedback = mongoose.model('PlatformFeedback', platformFeedbackSchema);
+
+
+
+
 // Export all models
 module.exports = {
   User,
@@ -134,5 +149,6 @@ module.exports = {
   ResearchQuestionnaire,
   GameScore,
   GameAssessment,
-  doctorSchemaExp
+  doctorSchemaExp,
+  PlatformFeedback
 };

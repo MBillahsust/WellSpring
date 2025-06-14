@@ -6,6 +6,7 @@ const moodAndActivityController = require("../controller/moodAndActivityControll
 const gameController = require("../controller/gameController");
 const doctorController = require("../controller/doctorController");
 const AiCounselorController = require("../controller/AiCounselorController");
+const CommunityController = require("../controller/CommunityController");
 
 const isLogin = require("../middlewares/middlewares");
 
@@ -68,6 +69,11 @@ Router.post("/recommandDoctor", isLogin, doctorController.recommendDoctorsContro
 
 // AI Counselor
 Router.post("/context", isLogin, AiCounselorController.getUserContextController);
+
+
+// Community
+Router.post("/feedback", isLogin, CommunityController.submitPlatformFeedback );
+Router.get("/allfeedback", CommunityController.getAllPlatformFeedback);
 
 
 

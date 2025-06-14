@@ -379,7 +379,39 @@ Authrization : Token
 ```
 
 ---
+---
+---
 
+# Post community feedback : POST
+
+
+**http://localhost:5004/community/feedback**
+
+**Header**
+
+Autherization : Token
+
+
+```
+{
+  "wasHelpful": "Yes, it gave me a better understanding of my mood patterns.",
+  "likedFeatures": "I liked the daily mood tracking and personalized suggestions.",
+  "dislikedFeatures": "Some of the assessment questions felt repetitive.",
+  "suggestedImprovements": "Add more real-life coping strategies and audio guides.",
+  "betterUnderstanding": "Yes, I now recognize patterns in my behavior and feel more aware of my stress triggers."
+}
+
+```
+
+---
+
+# GET all community feedback : GET
+
+
+**http://localhost:5004/community/allfeedback**
+
+
+---
 
 
 
