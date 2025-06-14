@@ -86,7 +86,13 @@ All sensitive operations are protected with JWT-based authentication.
 
 <img src="images/Assessment.png">
 
-### Counsellors Page
+### AI Counsellor Page
+
+<img src = "images/AI Counsellor1.png">
+<img src = "images/AI Counsellor2.png">
+<img src = "images/AI Counsellor3.png">
+
+### Connect With Expert Page
 
 <img src="images/Counsellors.png">
 
