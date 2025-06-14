@@ -1,4 +1,4 @@
-import React, { useState, useContext, useEffect } from 'react';
+import React, { useState, useContext, useEffect, useRef } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import axios from 'axios';
 import { UserContext } from '../../UserContext';
@@ -27,6 +27,9 @@ const answerOptions = [
   { value: "4", label: "Very often" }
 ];
 
+
+
+
 export default function AnxietyAssessment() {
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [answers, setAnswers] = useState([]);
@@ -35,6 +38,7 @@ export default function AnxietyAssessment() {
   const { userInfo } = useContext(UserContext);
   const navigate = useNavigate();
   const location = useLocation();
+  const questionRef = useRef(null);
 
   const [showDisclaimer, setShowDisclaimer] = useState(true);
   // const navigate = useNavigate();
@@ -235,9 +239,8 @@ export default function AnxietyAssessment() {
             <>
               <button
                 onClick={handleBack}
-                className={`next-button bg-gray-300 text-gray-700 hover:bg-gray-400 ${
-                  currentQuestion === 0 ? 'opacity-50 cursor-not-allowed' : ''
-                }`}
+                className={`next-button bg-gray-300 text-gray-700 hover:bg-gray-400 ${currentQuestion === 0 ? 'opacity-50 cursor-not-allowed' : ''
+                  }`}
                 disabled={currentQuestion === 0}
               >
                 Back
