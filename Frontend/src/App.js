@@ -66,6 +66,8 @@ import UserDashboard from './pages/UserDashboard';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import './toastify-custom.css';
+import Community from './pages/CommunityPages/Community';
+import GiveFeedback from './pages/CommunityPages/GiveFeedback';
 
 function App() {
   return (
@@ -135,6 +137,8 @@ function App() {
             <Route path="/ai-counselor" element={<AICounselor />} />
             <Route path="/routine" element={<Routine />} />
             <Route path="/dashboard" element={<UserDashboard />} />
+            <Route path="/community" element={<Community />} />
+            <Route path="/community/give-feedback" element={<GiveFeedback />} />
           </Routes>
         </div>
         <Footer />

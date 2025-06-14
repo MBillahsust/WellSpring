@@ -10,6 +10,9 @@ import {
   FaBell
 } from 'react-icons/fa';
 
+import { FaUsers } from 'react-icons/fa'; // Add this
+
+
 const Navbar = () => {
   const location = useLocation();
   const [notifications] = useState([
@@ -30,6 +33,8 @@ const Navbar = () => {
     { path: '/games', icon: FaGamepad, label: 'Wellness Games' },
     { path: '/progress', icon: FaChartLine, label: 'Progress' },
     { path: '/routine', icon: FaCalendarAlt, label: 'My Routine' },
+    { path: '/community', icon: FaUsers, label: 'Community' },
+
   ];
 
   return (
