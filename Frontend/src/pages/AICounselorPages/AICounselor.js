@@ -660,7 +660,7 @@ const AICounselor = () => {
                       Start Chat
                     </button>
                     <p className="text-xs text-gray-600 text-center mt-2">
-                      Get personalized routine based on your assessments and mood
+                      Get your personalized AI counselor ready....
                     </p>
                   </div>
                 </div>
