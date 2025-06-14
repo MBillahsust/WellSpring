@@ -46,6 +46,7 @@ const CopilotLikeChat = () => {
   const [isListening, setIsListening] = useState(false);
   const [hasPrompted, setHasPrompted] = useState(false);
   const recognitionRef = useRef(null);
+  const [darkMode, setDarkMode] = useState(false);
 
   const initialPrompt = [
     "Hi, I'm your personalized AI counselor!",
@@ -189,16 +190,24 @@ const CopilotLikeChat = () => {
   const lastMsgRef = useRef(null);
   // Auto-scroll to bottom when new message arrives, unless user is scrolling up
   useLayoutEffect(() => {
-    if (!hasPrompted) return;
+    if (!hasPrompted || !lastMsgRef.current || !chatWindowRef.current) return;
+  
     const container = chatWindowRef.current;
-    if (container) {
-      const scrollTarget = container.scrollHeight - container.clientHeight / 2;
-      container.scrollTo({
-        top: scrollTarget,
-        behavior: 'smooth',
-      });
-    }
+    const message = lastMsgRef.current;
+  
+    const containerHeight = container.clientHeight;
+    const messageTop = message.offsetTop;
+    const messageHeight = message.clientHeight;
+  
+    const scrollTo = messageTop - (containerHeight / 2) + (messageHeight / 2);
+  
+    container.scrollTo({
+      top: Math.max(0, scrollTo),
+      behavior: 'smooth',
+    });
   }, [messages, typedBot, hasPrompted]);
+  
+  
   
 
   return (
@@ -206,14 +215,14 @@ const CopilotLikeChat = () => {
       <style>{`
         /* INITIAL PROMPT */
         .initial-message {
-          background: #fff;
+          background: ${darkMode ? '#23272f' : '#fff'};
           padding: 24px 32px;
           border-radius: 16px;
           box-shadow: 0 2px 8px rgba(0,0,0,0.04);
           width: 65vw;
-          margin: 80px auto 24px;
+          margin: 0;
           text-align: center;
-          color: #333;
+          color: ${darkMode ? '#e0e6ed' : '#333'};
           line-height: 1.6;
         }
         @media (max-width: 600px) {
@@ -222,12 +231,13 @@ const CopilotLikeChat = () => {
 
         /* CHAT WINDOW */
         .chat-window {
-          margin: 40px auto;
+          margin: 0 auto;
           min-height: 200px;
           display: flex;
           flex-direction: column;
           gap: 18px;
           width: 65vw;
+          background: transparent;
         }
         @media (max-width: 600px) {
           .chat-window { width: 100vw; padding: 0 16px; }
@@ -236,18 +246,19 @@ const CopilotLikeChat = () => {
         /* BOT MESSAGE */
         .bot-message {
           align-self: flex-start;
-          color: #222;
+          color: ${darkMode ? '#e0e6ed' : '#222'};
           font-size: 17px;
           line-height: 1.6;
           word-break: break-word;
           width: 100%;
+          background: ${darkMode ? 'rgba(40,44,52,0.95)' : 'transparent'};
         }
 
         /* USER BUBBLE */
         .user-bubble {
           align-self: flex-end;
-          background: #e6f0ff;
-          color: #222;
+          background: ${darkMode ? '#2d3748' : '#e6f0ff'};
+          color: ${darkMode ? '#e0e6ed' : '#222'};
           border-radius: 18px;
           padding: 14px 22px;
           max-width: 80%;
@@ -265,7 +276,7 @@ const CopilotLikeChat = () => {
           transform: translateX(-50%);
           width: 65vw;
           padding: 12px 24px;
-          background: #fff;
+          background: ${darkMode ? '#23272f' : '#fff'};
           border-radius: 24px;
           box-shadow: 0 8px 24px rgba(0,0,0,0.12);
           display: flex;
@@ -283,11 +294,11 @@ const CopilotLikeChat = () => {
 
         .input-field {
           flex: 1;
-          background: #faf8f6;
-          border: 1px solid #ddd;
+          background: ${darkMode ? '#23272f' : '#faf8f6'};
+          border: 1px solid ${darkMode ? '#444' : '#ddd'};
           border-radius: 20px;
           font-size: 16px;
-          color: #222;
+          color: ${darkMode ? '#e0e6ed' : '#222'};
           padding: 8px 12px;
           outline: none;
           height: 36px;
@@ -302,17 +313,17 @@ const CopilotLikeChat = () => {
           align-items: center;
           justify-content: center;
           cursor: pointer;
+          background: ${darkMode ? '#23272f' : '#f5f5f5'};
+          color: ${darkMode ? '#b0b0b0' : '#b0b0b0'};
         }
         .mic-btn {
-          background: #f5f5f5;
-          color: #b0b0b0;
           font-size: 20px;
         }
         .mic-btn.recording {
           color: #ff4444;
         }
         .send-btn {
-          background: #7baaf7;
+          background: ${darkMode ? '#4f8cff' : '#7baaf7'};
           color: #fff;
           font-size: 18px;
         }
@@ -322,13 +333,17 @@ const CopilotLikeChat = () => {
         }
       `}</style>
 
-      <div style={{
-        minHeight: '100vh',
-        background: '#faf8f6',
-        fontFamily: 'Segoe UI, Arial, sans-serif',
-        position: 'relative',
-        paddingBottom: '140px'
-      }}>
+      <div
+        style={{
+          minHeight: '100vh',
+          background: darkMode ? '#181a20' : '#faf8f6',
+          fontFamily: 'Segoe UI, Arial, sans-serif',
+          position: 'relative',
+          padding: 0,
+          margin: 0,
+          transition: 'background 0.3s',
+        }}
+      >
         {/* Exit Button */}
         <button
           onClick={() => navigate('/')}
@@ -350,6 +365,29 @@ const CopilotLikeChat = () => {
           title="Exit to Home"
         >
           ×
+        </button>
+
+        {/* Dark Mode Toggle */}
+        <button
+          onClick={() => setDarkMode(d => !d)}
+          style={{
+            position: 'absolute',
+            top: 24,
+            right: 90,
+            width: 44,
+            height: 44,
+            borderRadius: '50%',
+            background: darkMode ? '#222' : '#fff',
+            border: 'none',
+            boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
+            color: darkMode ? '#fff' : '#222',
+            fontSize: 22,
+            cursor: 'pointer',
+            zIndex: 2100
+          }}
+          title={darkMode ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
+        >
+          {darkMode ? '🌙' : '☀️'}
         </button>
 
         {/* Center Area */}
