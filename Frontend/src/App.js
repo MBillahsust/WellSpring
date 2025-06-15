@@ -68,8 +68,16 @@ import 'react-toastify/dist/ReactToastify.css';
 import './toastify-custom.css';
 import Community from './pages/CommunityPages/Community';
 import GiveFeedback from './pages/CommunityPages/GiveFeedback';
+import { useLocation } from 'react-router-dom';
+
 
 function App() {
+
+  const location = useLocation();
+
+  const hideFooterRoutes = ['/counsellor-bot'];
+  const shouldHideFooter = hideFooterRoutes.includes(location.pathname);
+
   return (
     <div className="app-container">
       <UserContextProvider>
@@ -141,7 +149,7 @@ function App() {
             <Route path="/community/give-feedback" element={<GiveFeedback />} />
           </Routes>
         </div>
-        <Footer />
+        {!shouldHideFooter && <Footer />}
       </UserContextProvider>
     </div>
   );
