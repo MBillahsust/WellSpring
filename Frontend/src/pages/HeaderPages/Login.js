@@ -30,9 +30,9 @@ export default function Login() {
       });
       setSuccess('Login successful! Redirecting...');
       toast.success('Login successful!');
-      console.log('Login token:', res.data.token);
+      
       const decoded = jwtDecode(res.data.token);
-      console.log('Decoded userId:', decoded.userId);
+      
       setUserInfo({ token: res.data.token, email, userId: decoded.userId });
       localStorage.setItem('token', res.data.token);
       const redirectTo = location.state?.from || '/';
@@ -111,7 +111,7 @@ export default function Login() {
                 to="/forgot-password" 
                 className="text-sky-600 hover:text-sky-700 font-medium transition-colors duration-200"
               >
-                Forgot Password?
+                Welcome back!
               </Link>
               <Link 
                 to="/signup" 

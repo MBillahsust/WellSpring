@@ -46,7 +46,7 @@ export default function Header() {
   }, []);
 
   const handleLogout = () => {
-    console.log('Logging out. Previous userInfo:', userInfo);
+    console.log('Logging out......');
     toast.success('Logged out successfully!');
     setUserInfo(null);
     setIsDropdownOpen(false);
