@@ -59,7 +59,7 @@ export default function Counsellor() {
     const url = `${process.env.REACT_APP_BACKEND_URL}/doctor/getallDoctor`;
     axios.get(url)
       .then(res => {
-        console.log('Doctor API response:', res.data);
+          // console.log('Doctor API response:', res.data);
         let data = res.data;
         if (data && Array.isArray(data.doctors)) {
           setDoctors(data.doctors);
@@ -92,9 +92,10 @@ export default function Counsellor() {
     const params = new URLSearchParams(location.search);
     const token = localStorage.getItem('token');
     if (filtersRestored && params.get('recommend') === '1' && token && !recommendTriggered.current) {
-      console.log('Auto-triggering recommend POST after login with filters:', {
-        moodChecked, activityChecked, assessmentChecked, division, token
-      });
+      //   // console.log('Auto-triggering recommend POST after login with filters:', {
+      //   moodChecked, activityChecked, assessmentChecked, division, token
+      // });
+
       recommendTriggered.current = true;
       handleRecommend(true);
     }
@@ -150,11 +151,11 @@ export default function Counsellor() {
       Authorization: `Bearer ${token}`,
     };
 
-    console.log('Recommend Doctor POST', { url, payload, headers });
+      // console.log('Recommend Doctor POST', { url, payload, headers });
 
     try {
       const res = await axios.post(url, payload, { headers });
-      console.log('Recommend Doctor RESPONSE:', res);
+        // console.log('Recommend Doctor RESPONSE:', res);
       let data = res.data;
 
       if (data?.combinedSummary) {
@@ -183,7 +184,7 @@ export default function Counsellor() {
       }
 
     } catch (err) {
-      console.log('Recommend Doctor ERROR:', err);
+        // console.log('Recommend Doctor ERROR:', err);
       let errorMsg = 'Failed to recommend doctor.';
       if (err.response?.data?.message) {
         errorMsg = err.response.data.message;
