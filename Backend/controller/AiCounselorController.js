@@ -15,19 +15,20 @@ const generateUserContext = async (userId, selectedAssessmentsId, moodHistory, a
     .select("assessmentName assessmentResult assessmentScore recommendation takenAt")
     .sort({ takenAt: -1 });
 
-  // Fetch mood entries for the last moodHistory days
-  const moodDateLimit = new Date();
-  moodDateLimit.setDate(moodDateLimit.getDate() - moodHistory);
-  const moods = await MoodEntry.find({ userId, time: { $gte: moodDateLimit } })
-    .select("mood notes time")
-    .sort({ time: -1 });
+        // Fetch latest moodHistory mood entries
+    const moods = await MoodEntry.find({ userId })
+      .select("mood notes time")
+      .sort({ time: -1 }) // works if 'time' is ISO formatted
+      .limit(moodHistory);
 
-  // Fetch activity entries for the last activityHistory days
-  const activityDateLimit = new Date();
-  activityDateLimit.setDate(activityDateLimit.getDate() - activityHistory);
-  const activities = await ActivityEntry.find({ userId, time: { $gte: activityDateLimit } })
-    .select("activity notes time")
-    .sort({ time: -1 });
+    // Fetch latest activityHistory activity entries
+    const activities = await ActivityEntry.find({ userId })
+      .select("activity notes time")
+      .sort({ time: -1 }) // works if 'time' is ISO formatted
+      .limit(activityHistory);
+
+  
+    
 
   // Fetch recent game scores limited by gameHistory
   const gameScores = await GameScore.find({ userId })
@@ -58,7 +59,7 @@ const generateUserContext = async (userId, selectedAssessmentsId, moodHistory, a
     moodSummary += "No mood entries found.\n";
   } else {
     moods.forEach(m => {
-      moodSummary += `- Mood: ${m.mood || "N/A"}, Notes: ${m.notes || "N/A"}, Date: ${m.time.toISOString().split("T")[0]}\n`;
+      moodSummary += `- Mood: ${m.mood || "N/A"}, Notes: ${m.notes || "N/A"}, Date: ${m.time}\n`;
     });
   }
 
@@ -68,7 +69,7 @@ const generateUserContext = async (userId, selectedAssessmentsId, moodHistory, a
     activitySummary += "No activity entries found.\n";
   } else {
     activities.forEach(a => {
-      activitySummary += `- Activity: ${a.activity || "N/A"}, Notes: ${a.notes || "N/A"}, Date: ${a.time.toISOString().split("T")[0]}\n`;
+      activitySummary += `- Activity: ${a.activity || "N/A"}, Notes: ${a.notes || "N/A"}, Date: ${a.time}\n`;
     });
   }
 
@@ -105,11 +106,13 @@ const getUserContextController = async (req, res) => {
     const userId = req.userId;  // assuming you get userId from auth middleware
     const { selectedAssessmentsId, moodHistory, activityHistory, gameHistory } = req.body;
 
+    console.log(moodHistory, activityHistory);
+
     if (!Array.isArray(selectedAssessmentsId))
       return res.status(400).json({ error: "selectedAssessmentsId must be an array" });
-    if (typeof moodHistory !== "number" || moodHistory < 1 || moodHistory > 7)
+    if (typeof moodHistory !== "number" || moodHistory < 1 || moodHistory > 10)
       return res.status(400).json({ error: "moodHistory must be an integer between 1 and 7" });
-    if (typeof activityHistory !== "number" || activityHistory < 1 || activityHistory > 7)
+    if (typeof activityHistory !== "number" || activityHistory < 1 || activityHistory > 10)
       return res.status(400).json({ error: "activityHistory must be an integer between 1 and 7" });
     if (typeof gameHistory !== "number" || gameHistory < 1 || gameHistory > 10)
       return res.status(400).json({ error: "gameHistory must be an integer between 1 and 10" });

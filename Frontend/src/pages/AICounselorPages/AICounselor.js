@@ -576,10 +576,10 @@ const AICounselor = () => {
                         value={moodDays}
                         onChange={e => setMoodDays(Number(e.target.value))}
                       >
-                        <option value={2}>2 days</option>
-                        <option value={5}>5 days</option>
-                        <option value={7}>7 days</option>
-                        <option value={10}>10 days</option>
+                        <option value={2}>Last 2 </option>
+                        <option value={5}>Last 5 </option>
+                        <option value={7}>Last 7 </option>
+                        <option value={10}>Last 10 </option>
                       </select>
                     </div>
                     <div className="overflow-x-auto">
@@ -618,10 +618,10 @@ const AICounselor = () => {
                         value={activityDays}
                         onChange={e => setActivityDays(Number(e.target.value))}
                       >
-                        <option value={2}>2 days</option>
-                        <option value={5}>5 days</option>
-                        <option value={7}>7 days</option>
-                        <option value={10}>10 days</option>
+                        <option value={2}>Last 2 </option>
+                        <option value={5}>Last 5 </option>
+                        <option value={7}>Last 7 </option>
+                        <option value={10}>Last 10 </option>
                       </select>
                     </div>
                     <div className="overflow-x-auto">

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useLayoutEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
@@ -12,28 +12,25 @@ import {
   FaRegEdit
 } from 'react-icons/fa';
 
-// Typewriter effect hook
-function useTypewriter(text, enabled, speed = 18, onDone) {
-  const [displayed, setDisplayed] = useState(enabled ? '' : text || '');
+// Simple typewriter effect for bot text
+const Typewriter = ({ text }) => {
+  const [displayed, setDisplayed] = useState('');
   useEffect(() => {
-    if (!enabled || !text) {
-      setDisplayed(text || '');
-      return;
-    }
     setDisplayed('');
-    let i = 0;
+    let idx = 0;
     const interval = setInterval(() => {
-      setDisplayed(t => t + text[i]);
-      i++;
-      if (i >= text.length) {
-        clearInterval(interval);
-        if (onDone) onDone();
-      }
-    }, speed);
+      setDisplayed(prev => prev + text.charAt(idx));
+      idx++;
+      if (idx >= text.length) clearInterval(interval);
+    }, 2); // adjust speed here (ms per character)
     return () => clearInterval(interval);
-  }, [text, enabled, speed, onDone]);
-  return displayed;
-}
+  }, [text]);
+  return (
+    <ReactMarkdown remarkPlugins={[remarkGfm]}>
+      {displayed}
+    </ReactMarkdown>
+  );
+};
 
 const CopilotLikeChat = () => {
   const location = useLocation();
@@ -46,23 +43,6 @@ const CopilotLikeChat = () => {
   const [isListening, setIsListening] = useState(false);
   const [hasPrompted, setHasPrompted] = useState(false);
   const recognitionRef = useRef(null);
-  const [darkMode, setDarkMode] = useState(false);
-
-  const initialPrompt = [
-    "Hi, I'm your personalized AI counselor!",
-    "I'm not a real doctor or psychologist, and I can't see or fully understand your situation like a human can. I use your assessments and other data to give you some initial personalized guidance.",
-    "For proper support, it's always best to speak with a real doctor or psychologist—there's nothing wrong with that."
-  ];
-  const [initialStep, setInitialStep] = useState(0);
-  const [initialDone, setInitialDone] = useState(false);
-  const initialText = initialPrompt[initialStep];
-  const initialTyped = useTypewriter(initialText, !hasPrompted, 18, () => {
-    if (initialStep < initialPrompt.length - 1) {
-      setTimeout(() => setInitialStep(s => s + 1), 400);
-    } else {
-      setInitialDone(true);
-    }
-  });
 
   // set up speech recognition
   useEffect(() => {
@@ -90,7 +70,7 @@ const CopilotLikeChat = () => {
     setMessages(prev => [...prev, { sender: 'user', text }]);
     setIsLoading(true);
     try {
-      const systemPrompt = `You are an empathetic and professional AI mental health counselor. Your role is to understand the user's mental health condition, mood patterns, daily activities, and cognitive performance based on the detailed data provided. Use this comprehensive overview of the user's recent assessments, mood history, activity logs, and game performance metrics to offer personalized, supportive, and practical advice that promotes the user's emotional well-being, cognitive health, and overall balance in daily life. Always communicate with compassion, avoid judgment, and tailor your responses to reflect the unique experiences and needs revealed by the data. Also Make sure that your responses are always formatted nicely.`;
+      const systemPrompt = `You are an empathetic and professional AI mental health counselor. Your role is to understand the user's mental health condition, mood patterns, daily activities, and cognitive performance based on the detailed data provided. Use this comprehensive overview of the user's recent assessments, mood history, activity logs, and game performance metrics to offer personalized, supportive, and practical advice that promotes the user's emotional well-being, cognitive health, and overall balance in daily life. Always communicate with compassion, avoid judgment, and tailor your responses to reflect the unique experiences and needs revealed by the data.`;
       let contextString = '';
       if (context) {
         try {
@@ -160,69 +140,19 @@ const CopilotLikeChat = () => {
     }
   };
 
-  // For bot messages typewriter effect
-  const [typingIdx, setTypingIdx] = useState(null);
-  const [typedBot, setTypedBot] = useState('');
-  useEffect(() => {
-    if (messages.length && messages[messages.length - 1].sender === 'bot') {
-      setTypingIdx(messages.length - 1);
-      setTypedBot('');
-    }
-  }, [messages]);
-  useEffect(() => {
-    if (typingIdx !== null && messages[typingIdx] && messages[typingIdx].sender === 'bot') {
-      const text = messages[typingIdx].text;
-      let i = 0;
-      setTypedBot('');
-      const interval = setInterval(() => {
-        setTypedBot(t => t + text[i]);
-        i++;
-        if (i >= text.length) {
-          clearInterval(interval);
-          setTypingIdx(null);
-        }
-      }, 16);
-      return () => clearInterval(interval);
-    }
-  }, [typingIdx, messages]);
-
-  const chatWindowRef = useRef(null);
-  const lastMsgRef = useRef(null);
-  // Auto-scroll to bottom when new message arrives, unless user is scrolling up
-  useLayoutEffect(() => {
-    if (!hasPrompted || !lastMsgRef.current || !chatWindowRef.current) return;
-  
-    const container = chatWindowRef.current;
-    const message = lastMsgRef.current;
-  
-    const containerHeight = container.clientHeight;
-    const messageTop = message.offsetTop;
-    const messageHeight = message.clientHeight;
-  
-    const scrollTo = messageTop - (containerHeight / 2) + (messageHeight / 2);
-  
-    container.scrollTo({
-      top: Math.max(0, scrollTo),
-      behavior: 'smooth',
-    });
-  }, [messages, typedBot, hasPrompted]);
-  
-  
-  
-
   return (
     <>
       <style>{`
         /* INITIAL PROMPT */
         .initial-message {
-          background: ${darkMode ? '#23272f' : '#fff'};
+          background: #fff;
           padding: 24px 32px;
           border-radius: 16px;
           box-shadow: 0 2px 8px rgba(0,0,0,0.04);
           width: 65vw;
-          margin: 0;
+          margin: 80px auto 24px;
           text-align: center;
-          color: ${darkMode ? '#e0e6ed' : '#333'};
+          color: #333;
           line-height: 1.6;
         }
         @media (max-width: 600px) {
@@ -231,13 +161,12 @@ const CopilotLikeChat = () => {
 
         /* CHAT WINDOW */
         .chat-window {
-          margin: 0 auto;
+          margin: 40px auto;
           min-height: 200px;
           display: flex;
           flex-direction: column;
           gap: 18px;
           width: 65vw;
-          background: transparent;
         }
         @media (max-width: 600px) {
           .chat-window { width: 100vw; padding: 0 16px; }
@@ -246,19 +175,18 @@ const CopilotLikeChat = () => {
         /* BOT MESSAGE */
         .bot-message {
           align-self: flex-start;
-          color: ${darkMode ? '#e0e6ed' : '#222'};
+          color: #222;
           font-size: 17px;
           line-height: 1.6;
           word-break: break-word;
           width: 100%;
-          background: ${darkMode ? 'rgba(40,44,52,0.95)' : 'transparent'};
         }
 
         /* USER BUBBLE */
         .user-bubble {
           align-self: flex-end;
-          background: ${darkMode ? '#2d3748' : '#e6f0ff'};
-          color: ${darkMode ? '#e0e6ed' : '#222'};
+          background: #e6f0ff;
+          color: #222;
           border-radius: 18px;
           padding: 14px 22px;
           max-width: 80%;
@@ -276,7 +204,7 @@ const CopilotLikeChat = () => {
           transform: translateX(-50%);
           width: 65vw;
           padding: 12px 24px;
-          background: ${darkMode ? '#23272f' : '#fff'};
+          background: #fff;
           border-radius: 24px;
           box-shadow: 0 8px 24px rgba(0,0,0,0.12);
           display: flex;
@@ -294,11 +222,11 @@ const CopilotLikeChat = () => {
 
         .input-field {
           flex: 1;
-          background: ${darkMode ? '#23272f' : '#faf8f6'};
-          border: 1px solid ${darkMode ? '#444' : '#ddd'};
+          background: #faf8f6;
+          border: 1px solid #ddd;
           border-radius: 20px;
           font-size: 16px;
-          color: ${darkMode ? '#e0e6ed' : '#222'};
+          color: #222;
           padding: 8px 12px;
           outline: none;
           height: 36px;
@@ -313,17 +241,17 @@ const CopilotLikeChat = () => {
           align-items: center;
           justify-content: center;
           cursor: pointer;
-          background: ${darkMode ? '#23272f' : '#f5f5f5'};
-          color: ${darkMode ? '#b0b0b0' : '#b0b0b0'};
         }
         .mic-btn {
+          background: #f5f5f5;
+          color: #b0b0b0;
           font-size: 20px;
         }
         .mic-btn.recording {
           color: #ff4444;
         }
         .send-btn {
-          background: ${darkMode ? '#4f8cff' : '#7baaf7'};
+          background: #7baaf7;
           color: #fff;
           font-size: 18px;
         }
@@ -333,17 +261,13 @@ const CopilotLikeChat = () => {
         }
       `}</style>
 
-      <div
-        style={{
-          minHeight: '100vh',
-          background: darkMode ? '#181a20' : '#faf8f6',
-          fontFamily: 'Segoe UI, Arial, sans-serif',
-          position: 'relative',
-          padding: 0,
-          margin: 0,
-          transition: 'background 0.3s',
-        }}
-      >
+      <div style={{
+        minHeight: '100vh',
+        background: '#faf8f6',
+        fontFamily: 'Segoe UI, Arial, sans-serif',
+        position: 'relative',
+        paddingBottom: '140px'
+      }}>
         {/* Exit Button */}
         <button
           onClick={() => navigate('/')}
@@ -367,29 +291,6 @@ const CopilotLikeChat = () => {
           ×
         </button>
 
-        {/* Dark Mode Toggle */}
-        <button
-          onClick={() => setDarkMode(d => !d)}
-          style={{
-            position: 'absolute',
-            top: 24,
-            right: 90,
-            width: 44,
-            height: 44,
-            borderRadius: '50%',
-            background: darkMode ? '#222' : '#fff',
-            border: 'none',
-            boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
-            color: darkMode ? '#fff' : '#222',
-            fontSize: 22,
-            cursor: 'pointer',
-            zIndex: 2100
-          }}
-          title={darkMode ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
-        >
-          {darkMode ? '🌙' : '☀️'}
-        </button>
-
         {/* Center Area */}
         <div style={{
           display: 'flex',
@@ -400,9 +301,15 @@ const CopilotLikeChat = () => {
           {/* Initial Prompt */}
           {!hasPrompted && (
             <div className="initial-message">
-              <p style={{ fontSize: '1.25rem', fontWeight: 600, marginBottom: 16 }}>{initialStep === 0 ? initialTyped : initialPrompt[0]}</p>
-              {initialStep > 0 && <p style={{ marginBottom: 12 }}>{initialStep === 1 ? initialTyped : initialPrompt[1]}</p>}
-              {initialStep > 1 && <p style={{ marginBottom: 24 }}>{initialTyped}</p>}
+              <p style={{ fontSize: '1.25rem', fontWeight: 600, marginBottom: 16 }}>
+                Hi, I’m your personalized AI counselor!
+              </p>
+              <p style={{ marginBottom: 12 }}>
+                I’m not a real doctor or psychologist, and I can’t see or fully understand your situation like a human can. I use your assessments and other data to give you some initial personalized guidance.
+              </p>
+              <p style={{ marginBottom: 24 }}>
+                For proper support, it’s always best to speak with a real doctor or psychologist—there’s nothing wrong with that.
+              </p>
               <div style={{ display: 'flex', justifyContent: 'center', gap: 18, color: '#b0b0b0', fontSize: 20 }}>
                 <FaThumbsUp style={{ cursor: 'pointer' }} />
                 <FaThumbsDown style={{ cursor: 'pointer' }} />
@@ -416,15 +323,13 @@ const CopilotLikeChat = () => {
 
           {/* Chat History */}
           {hasPrompted && (
-            <div className="chat-window" ref={chatWindowRef} style={{ overflowY: 'auto', maxHeight: '60vh' }}>
+            <div className="chat-window">
               {messages.map((msg, idx) => (
                 msg.sender === 'bot'
-                  ? <div key={idx} className="bot-message" ref={idx === messages.length - 1 ? lastMsgRef : null}>
-                      <ReactMarkdown remarkPlugins={[remarkGfm]}>
-                        {typingIdx === idx ? typedBot : msg.text}
-                      </ReactMarkdown>
+                  ? <div key={idx} className="bot-message">
+                      <Typewriter text={msg.text} />
                     </div>
-                  : <div key={idx} className="user-bubble" ref={idx === messages.length - 1 ? lastMsgRef : null}>
+                  : <div key={idx} className="user-bubble">
                       <ReactMarkdown remarkPlugins={[remarkGfm]}>
                         {msg.text}
                       </ReactMarkdown>
