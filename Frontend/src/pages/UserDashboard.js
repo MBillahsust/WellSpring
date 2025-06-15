@@ -167,17 +167,17 @@ const UserDashboard = () => {
     const fetchUserProfile = async () => {
       setLoadingUser(true);
       try {
-        console.log('Fetching user profile from:', `${BACKEND_URL}/auth/User`);
-        console.log('Token used:', userInfo.token);
+        // console.log('Fetching user profile from:', `${BACKEND_URL}/auth/User`);
+        // console.log('Token used:', userInfo.token);
         const res = await axios.get(
           `${BACKEND_URL}/auth/User`,
           { headers: { Authorization: `Bearer ${userInfo.token}` } }
         );
-        console.log('User profile raw response:', res.data);
+        // console.log('User profile raw response:', res.data);
         // Try both possible response shapes
         setUserData(res.data.user || res.data);
       } catch (err) {
-        console.error('Error fetching user profile:', err);
+        // console.error('Error fetching user profile:', err);
         setUserData(null);
       } finally {
         setLoadingUser(false);
@@ -237,7 +237,7 @@ const UserDashboard = () => {
           `${BACKEND_URL}/addassesment/getassessments`,
           { headers: { Authorization: `Bearer ${userInfo.token}` } }
         );
-        console.log('Assessment raw response:', res.data);
+        // console.log('Assessment raw response:', res.data);
         // Accept both array and object responses
         let arr = Array.isArray(res.data) ? res.data : (res.data.assessments || []);
         if (!Array.isArray(arr)) arr = [];
@@ -278,7 +278,7 @@ const UserDashboard = () => {
           };
         }));
       } catch (err) {
-        console.error('Error fetching assessments:', err);
+         console.error('Error fetching assessments:', err);
         setAssessments([]);
       }
     };
@@ -453,7 +453,7 @@ const UserDashboard = () => {
 
   // Compute pie chart data from last 10 activity entries (most recent first)
   const last10 = activityEntries.slice(0, 10);
-  console.log('Last 10 activities (most recent first):', last10.map(a => ({ title: a.activity, category: categorizeActivity(a.activity) })));
+  // console.log('Last 10 activities (most recent first):', last10.map(a => ({ title: a.activity, category: categorizeActivity(a.activity) })));
   const counts = {
     'Mental Activities': 0,
     'Physical Activities': 0,
@@ -506,7 +506,7 @@ const UserDashboard = () => {
           <div className="p-6 grid grid-cols-1 md:grid-cols-4 gap-6">
             {userData === null && !loadingUser && (
               <div className="col-span-4 text-red-600 font-semibold">
-                Failed to load user profile. Check console for details.
+                Failed to load user profile. Check // console for details.
               </div>
             )}
 
