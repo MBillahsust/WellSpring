@@ -106,7 +106,6 @@ const getUserContextController = async (req, res) => {
     const userId = req.userId;  // assuming you get userId from auth middleware
     const { selectedAssessmentsId, moodHistory, activityHistory, gameHistory } = req.body;
 
-    console.log(moodHistory, activityHistory);
 
     if (!Array.isArray(selectedAssessmentsId))
       return res.status(400).json({ error: "selectedAssessmentsId must be an array" });
