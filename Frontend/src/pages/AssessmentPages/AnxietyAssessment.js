@@ -102,7 +102,7 @@ export default function AnxietyAssessment() {
       assessmentName: 'Anxiety Level Test',
       assessmentResult: result.severity,
       assessmentScore: `${result.score} out of ${result.maxScore}`,
-      recommendation: result.recommendation,
+      recommendation: `This test is based on GAD - 7 Test. Test recommendation is: ${result.recommendation}`,
       takenAt: new Date().toISOString(),
     };
     try {

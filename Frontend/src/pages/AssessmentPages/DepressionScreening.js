@@ -5,16 +5,16 @@ import { UserContext } from '../../UserContext';
 import '../../Allcss/AssessmentPages/Assessment.css';
 
 const questions = [
-  "How would you describe your mood over the past two weeks?",
-  "Have you noticed any changes in your sleep patterns?",
-  "How has your energy level been lately?",
-  "Have you experienced any changes in your appetite or eating habits?",
-  "How do you feel about yourself and your life in general?",
-  "Have you had any difficulty concentrating or making decisions?",
-  "Have you noticed any changes in your physical activity or the way you move?",
-  "Have you had any thoughts about death or hurting yourself?",
-  "How has your interest in activities or hobbies changed recently?",
-  "Have you experienced any changes in your relationships or social interactions?"
+  "Little interest or pleasure in doing things",
+  "Feeling down, depressed, or hopeless",
+  "Trouble falling or staying asleep, or sleeping too much",
+  "Feeling tired or having little energy",
+  "Poor appetite or overeating",
+  "Feeling bad about yourself — or that you are a failure or have let yourself or your family down",
+  "Trouble concentrating on things, such as reading the newspaper or watching television",
+  "Moving or speaking so slowly that other people could have noticed. Or the opposite — being so fidgety or restless that you have been moving around a lot more than usual",
+  "Thoughts that you would be better off dead, or of hurting yourself",
+  "If you checked off any problems, how difficult have these problems made it for you to do your work, take care of things at home, or get along with other people?"
 ];
 
 const answerOptions = [
@@ -24,9 +24,16 @@ const answerOptions = [
   { value: "3", label: "Nearly every day" }
 ];
 
+const impairmentOptions = [
+  { value: "0", label: "Not difficult at all" },
+  { value: "1", label: "Somewhat difficult" },
+  { value: "2", label: "Very difficult" },
+  { value: "3", label: "Extremely difficult" }
+];
+
 export default function DepressionScreening() {
   const [currentQuestion, setCurrentQuestion] = useState(0);
-  const [answers, setAnswers] = useState([]);
+  const [answers, setAnswers] = useState(Array(questions.length).fill(undefined));
   const [result, setResult] = useState(null);
   const [saveStatus, setSaveStatus] = useState(null);
   const { userInfo } = useContext(UserContext);
@@ -62,28 +69,41 @@ export default function DepressionScreening() {
   };
 
   const calculateResult = () => {
-    const total = answers.reduce((sum, ans) => sum + parseInt(ans, 10), 0);
-    const avg = total / questions.length;
+    // Sum only first 9 questions (PHQ-9 symptom questions)
+    const totalScore = answers.slice(0, 9).reduce((sum, ans) => sum + parseInt(ans || 0, 10), 0);
+    const impairmentScore = parseInt(answers[9] || 0, 10);
 
     let severity, recommendation;
-    if (avg < 1) {
-      severity = "Minimal depression";
-      recommendation = "Your symptoms suggest minimal indication of depression. Continue monitoring your mental health.";
-    } else if (avg < 2) {
-      severity = "Mild depression";
-      recommendation = "You're showing mild symptoms of depression. Consider talking to a mental health professional.";
-    } else if (avg < 3) {
-      severity = "Moderate depression";
-      recommendation = "Your symptoms suggest moderate depression. It's recommended to consult with a mental health professional.";
-    } else {
+
+    if (totalScore >= 20) {
       severity = "Severe depression";
-      recommendation = "Your symptoms indicate severe depression. Please seek professional help immediately.";
+      recommendation = "Your symptoms indicate severe depression. Immediate evaluation by a mental health professional is critical. Please seek help urgently.";
+    } else if (totalScore >= 15) {
+      severity = "Moderately severe depression";
+      recommendation = "Your symptoms are concerning and consistent with moderately severe depression. Professional help is strongly advised. Consider a combination of therapy and medication.";
+    } else if (totalScore >= 10) {
+      severity = "Moderate depression";
+      recommendation = "You may be experiencing moderate depression. It’s important to consult a mental health professional for evaluation and possible treatment.";
+    } else if (totalScore >= 5) {
+      severity = "Mild depression";
+      recommendation = "Mild symptoms of depression are present. You may benefit from lifestyle changes and counseling. Consider talking to a counselor if symptoms persist.";
+    } else if (totalScore >= 1) {
+      severity = "Minimal depression";
+      recommendation = "Your symptoms suggest minimal or no depression. No specific treatment is needed, but continue monitoring your mental health.";
+    } else {
+      severity = "No depression";
+      recommendation = "You reported no symptoms of depression. Keep maintaining your mental well-being.";
+    }
+
+    // If functional impairment is very or extremely difficult, emphasize seeking help
+    if (impairmentScore >= 2) {
+      recommendation += " Additionally, your reported difficulties in daily functioning suggest that professional support would be beneficial.";
     }
 
     setResult({
       severity,
-      score: total,
-      maxScore: questions.length * 3,
+      score: totalScore,
+      maxScore: 27,
       recommendation
     });
   };
@@ -95,12 +115,14 @@ export default function DepressionScreening() {
       navigate('/login', { state: { from: location.pathname } });
       return;
     }
+    if (!result) return;
+
     setSaveStatus('saving');
     const payload = {
       assessmentName: 'Depression Screening',
       assessmentResult: result.severity,
       assessmentScore: `${result.score} out of ${result.maxScore}`,
-      recommendation: result.recommendation,
+      recommendation: `This test is based on PHQ - 9 Test. Test recommendation is: ${result.recommendation}`,
       takenAt: new Date().toISOString(),
     };
     try {
@@ -133,17 +155,30 @@ export default function DepressionScreening() {
               <p className="mt-3 text-sm text-gray-500">Use this tool as a starting point for self-awareness, not a diagnosis.</p>
             </div>
             <div className="px-6 py-4 bg-gray-50 flex justify-end space-x-3 border-t border-gray-200">
-              <button className="px-5 py-2 bg-gray-800 text-white rounded-lg font-medium hover:bg-gray-900 transition-all shadow-sm" onClick={() => { setShowDisclaimer(false); navigate('/assessment'); }}>Cancel</button>
-              <button className="px-5 py-2 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-all shadow-md" onClick={() => setShowDisclaimer(false)} autoFocus>Accept and Continue</button>
+              <button
+                className="px-5 py-2 bg-gray-800 text-white rounded-lg font-medium hover:bg-gray-900 transition-all shadow-sm"
+                onClick={() => { setShowDisclaimer(false); navigate('/assessment'); }}
+              >
+                Cancel
+              </button>
+              <button
+                className="px-5 py-2 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-all shadow-md"
+                onClick={() => setShowDisclaimer(false)}
+                autoFocus
+              >
+                Accept and Continue
+              </button>
             </div>
           </div>
         </div>
       )}
+
       <div className={`assessment-card${showDisclaimer ? ' pointer-events-none opacity-30' : ''}`}>
         <div className="assessment-header depression">
           <h2 className="assessment-title">Depression Screening</h2>
-          <p className="assessment-subtitle">Answer the following questions about how you've been feeling over the past two weeks.</p>
+          <p className="assessment-subtitle">Over the last 2 weeks, how often have you been bothered by any of the following problems?</p>
         </div>
+
         <div className="assessment-content">
           {result ? (
             <div className="result-container">
@@ -158,11 +193,13 @@ export default function DepressionScreening() {
               </div>
               <p className="disclaimer">
                 Note: This is a screening tool and not a diagnostic instrument. <br />
-                If you're having thoughts of self-harm or suicide, please seek immediate help: <br />
-                <strong>National Suicide Prevention Lifeline (US): 1-800-273-8255</strong><br />
-                Available 24/7
+                Please consult with a mental health professional for a proper evaluation.
               </p>
-              <button className="next-button" onClick={handleSaveScore} style={{ marginTop: '1rem' }}>
+              <button
+                className="next-button"
+                onClick={handleSaveScore}
+                style={{ marginTop: '1rem' }}
+              >
                 Save Score
               </button>
               {saveStatus === 'saving' && <p style={{ color: '#6366f1' }}>Saving...</p>}
@@ -180,7 +217,7 @@ export default function DepressionScreening() {
                 {questions[currentQuestion]}
               </div>
               <div className="options-grid">
-                {answerOptions.map((option) => (
+                {(currentQuestion < 9 ? answerOptions : impairmentOptions).map((option) => (
                   <div
                     key={option.value}
                     className={`option-item ${answers[currentQuestion] === option.value ? 'selected' : ''}`}
@@ -189,12 +226,12 @@ export default function DepressionScreening() {
                       type="radio"
                       name="answer"
                       value={option.value}
-                      id={`q-${option.value}`}
+                      id={`q-${currentQuestion}-${option.value}`}
                       checked={answers[currentQuestion] === option.value}
                       onChange={() => handleAnswer(option.value)}
                       className="radio-input"
                     />
-                    <label htmlFor={`q-${option.value}`} className="option-label">
+                    <label htmlFor={`q-${currentQuestion}-${option.value}`} className="option-label">
                       {option.label}
                     </label>
                   </div>
@@ -203,6 +240,7 @@ export default function DepressionScreening() {
             </>
           )}
         </div>
+
         <div className="assessment-footer flex justify-between items-center gap-4 mt-4">
           {!result && (
             <>

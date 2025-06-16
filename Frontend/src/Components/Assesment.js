@@ -25,7 +25,7 @@ export default function MentalHealthAssessments() {
     },
     {
       title: "Depression Screening",
-      description: "Identify the signs and symptoms of depression with our screening tool and get guidance on next steps.",
+      description: "[Based on PHQ-9]. Identify the signs and symptoms of depression with our screening tool and get guidance on next steps.",
       path: "/depression-screening",
       icon: FaBrain,
       buttonText: "Start Screening"
