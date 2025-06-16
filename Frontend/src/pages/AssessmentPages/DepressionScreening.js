@@ -39,7 +39,6 @@ export default function DepressionScreening() {
     if (questionRef.current) {
       questionRef.current.scrollIntoView({ behavior: 'smooth' });
     }
-    setShowDisclaimer(true);
   }, [currentQuestion]);
 
   const handleAnswer = (value) => {

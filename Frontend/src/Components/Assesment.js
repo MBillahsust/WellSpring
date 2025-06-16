@@ -18,7 +18,7 @@ export default function MentalHealthAssessments() {
   const assessments = [
     {
       title: "Anxiety Assessment",
-      description: "Take our comprehensive anxiety assessment to understand your symptoms and receive personalized recommendations.",
+      description: "[Based on GAD-7]. Take our comprehensive anxiety assessment to understand your symptoms and receive personalized recommendations.",
       path: "/anxiety-assessment",
       icon: FaHeartbeat,
       buttonText: "Start Assessment"
