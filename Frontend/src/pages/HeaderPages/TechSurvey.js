@@ -13,21 +13,21 @@ const techUsageScale = {
     { value: "5", label: "Strongly Agree" }
   ],
   questions: [
-    "I spend several hours daily watching short-form videos on TikTok, Instagram Reels, or YouTube Shorts.",
-    "I often scroll through social media feeds longer than I originally intended.",
-    "I feel the urge to check my social media notifications as soon as they appear.",
-    "I frequently binge-watch content on YouTube, Netflix, or other streaming platforms.",
-    "The autoplay feature on video platforms makes it difficult for me to stop watching.",
-    "I frequently use disappearing message apps like Snapchat, Instagram Stories, or WhatsApp.",
-    "I feel anxious when my posts do not receive likes, comments, or shares quickly.",
-    "Social media notifications often distract me from work, studies, or real-life activities.",
-    "I often refresh my social media feeds to check for new updates.",
-    "I check social media as soon as I wake up in the morning.",
-    "I feel mentally exhausted after spending a long time on social media.",
-    "I use social media as a way to escape from stress or negative emotions.",
-    "I feel pressured to maintain an online presence or follow trends on social media.",
-    "I feel the need to respond immediately to messages or comments on social media.",
-    "After using social media, I find it difficult to focus on real-world tasks."
+    "I spend several hours daily watching short-form videos on TikTok, Instagram Reels, or YouTube Shorts.",  // Q1
+    "I often scroll through social media feeds longer than I originally intended.",                         // Q2
+    "I feel the urge to check my social media notifications as soon as they appear.",                     // Q3
+    "I frequently binge-watch content on YouTube, Netflix, or other streaming platforms.",                 // Q4
+    "The autoplay feature on video platforms makes it difficult for me to stop watching.",                // Q5
+    "I frequently use disappearing message apps like Snapchat, Instagram Stories, or WhatsApp.",           // Q6
+    "I feel anxious when my posts do not receive likes, comments, or shares quickly.",                     // Q7
+    "Social media notifications often distract me from work, studies, or real-life activities.",           // Q8
+    "I often refresh my social media feeds to check for new updates.",                                     // Q9
+    "I check social media as soon as I wake up in the morning.",                                          // Q10
+    "I feel mentally exhausted after spending a long time on social media.",                               // Q11
+    "I use social media as a way to escape from stress or negative emotions.",                             // Q12
+    "I feel pressured to maintain an online presence or follow trends on social media.",                   // Q13
+    "I feel the need to respond immediately to messages or comments on social media.",                     // Q14
+    "After using social media, I find it difficult to focus on real-world tasks."                         // Q15
   ]
 };
 
@@ -49,13 +49,19 @@ const TechnologyUsageSurvey = () => {
   };
 
   const handleConfirm = () => {
-    // save responses + email for later backend sync
+    // Build payload: email + Q1…Q15
     const payload = {
       email: localStorage.getItem('userEmail'),
       ...Object.fromEntries(
-        Object.entries(responses).map(([idx, val]) => [`Q${Number(idx)+1}`, Number(val)])
+        Object.entries(responses).map(
+          ([idx, val]) => [`Q${Number(idx) + 1}`, Number(val)]
+        )
       )
     };
+    // Save for later parts
+
+    console.log(payload);
+    
     localStorage.setItem('techSurvey1Responses', JSON.stringify(payload));
     navigate('/TechSurvey2');
   };
@@ -63,6 +69,8 @@ const TechnologyUsageSurvey = () => {
   return (
     <div className="assessment-container">
       <div className="assessment-card">
+
+        {/* Header */}
         <div
           className="assessment-header adhd"
           style={{ background: 'linear-gradient(135deg, #0284c7, #0ea5e9)' }}
@@ -81,35 +89,30 @@ const TechnologyUsageSurvey = () => {
           </div>
         </div>
 
+        {/* Questions */}
         <div className="assessment-content">
           <div className="scale-section">
             <h3
               className="scale-title"
               style={{
                 fontSize: '1.5rem',
-                fontWeight: '700',
+                fontWeight: 700,
                 marginBottom: '1.5rem'
               }}
             >
               {techUsageScale.title}
-              <p
-                className="text-sm text-gray-600 mt-2 font-normal"
-              >
+              <p className="text-sm text-gray-600 mt-2 font-normal">
                 Please rate how strongly you agree with each statement
               </p>
             </h3>
 
             {techUsageScale.questions.map((question, qIdx) => (
-              <div
-                key={qIdx}
-                className="question-block"
-                style={{ marginBottom: '2rem' }}
-              >
+              <div key={qIdx} className="question-block" style={{ marginBottom: '2rem' }}>
                 <p
                   className="question-text"
                   style={{
                     fontSize: '1.125rem',
-                    fontWeight: '500',
+                    fontWeight: 500,
                     marginBottom: '1rem'
                   }}
                 >
@@ -140,6 +143,7 @@ const TechnologyUsageSurvey = () => {
           </div>
         </div>
 
+        {/* Footer */}
         <div className="assessment-footer">
           <button
             onClick={handleSubmitClick}
@@ -156,9 +160,12 @@ const TechnologyUsageSurvey = () => {
         </div>
       </div>
 
+      {/* Confirmation Modal */}
       {showConfirmation && (
         <div className="fixed inset-0 flex items-center justify-center z-50">
-          <div className="absolute inset-0 bg-gray-900 bg-opacity-75 backdrop-blur-sm"></div>
+          <div
+            className="absolute inset-0 bg-gray-900 bg-opacity-75 backdrop-blur-sm"
+          />
           <div className="relative bg-white rounded-lg shadow-xl max-w-md w-full mx-4 border border-gray-200">
             <div className="px-6 py-4 border-b border-gray-200">
               <h3 className="text-xl font-semibold text-gray-900">
@@ -195,13 +202,13 @@ const TechnologyUsageSurvey = () => {
             <div className="px-6 py-4 bg-gray-50 rounded-b-lg flex justify-end space-x-3">
               <button
                 onClick={() => setShowConfirmation(false)}
-                className="px-4 py-2 bg-white border border-gray-300 rounded-md text-gray-700 font-medium hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors"
+                className="px-4 py-2 bg-white border border-gray-300 rounded-md text-gray-700 font-medium hover:bg-gray-50 transition-colors"
               >
                 Review Answers
               </button>
               <button
                 onClick={handleConfirm}
-                className="px-4 py-2 bg-blue-600 border border-transparent rounded-md text-white font-medium hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors"
+                className="px-4 py-2 bg-blue-600 border border-transparent rounded-md text-white font-medium hover:bg-blue-700 transition-colors"
               >
                 Continue to Next Survey
               </button>

@@ -13,16 +13,17 @@ const attentionScale = {
     { value: "5", label: "Very Often" }
   ],
   questions: [
-    "I have trouble keeping my attention on tasks that are boring or repetitive.",                       // Q26
-    "I often start tasks but leave them unfinished.",                                                   // Q27
-    "I find myself checking notifications or my phone even during important tasks.",                      // Q28
-    "I frequently lose or misplace items needed for daily tasks (e.g., keys, phone, notes).",            // Q29
-    "I get distracted easily by sounds, activity, or movement around me.",                               // Q30
-    "My house or workspace contains many half-finished projects.",                                       // Q31
-    "When switching between apps or tasks, I find it hard to maintain mental focus.",                    // Q32
-    "I struggle to stay present and focused when using digital devices.",                                 // Q33
-    "I make careless mistakes on tasks that require full attention.",                                     // Q34
-    "I forget appointments or obligations even after planning for them."                                  // Q35
+    // Q26–Q35
+    "I have trouble keeping my attention on tasks that are boring or repetitive.",
+    "I often start tasks but leave them unfinished.",
+    "I find myself checking notifications or my phone even during important tasks.",
+    "I frequently lose or misplace items needed for daily tasks (e.g., keys, phone, notes).",
+    "I get distracted easily by sounds, activity, or movement around me.",
+    "My house or workspace contains many half-finished projects.",
+    "When switching between apps or tasks, I find it hard to maintain mental focus.",
+    "I struggle to stay present and focused when using digital devices.",
+    "I make careless mistakes on tasks that require full attention.",
+    "I forget appointments or obligations even after planning for them."
   ]
 };
 
@@ -30,6 +31,7 @@ const TechnologyUsageSurvey3 = () => {
   const navigate = useNavigate();
   const [responses, setResponses] = useState({});
   const [showConfirmation, setShowConfirmation] = useState(false);
+
   const totalQuestions = attentionScale.questions.length;
   const answeredQuestions = Object.keys(responses).length;
   const progress = (answeredQuestions / totalQuestions) * 100;
@@ -43,27 +45,33 @@ const TechnologyUsageSurvey3 = () => {
   };
 
   const handleConfirm = () => {
-    // map our 0–9 responses to Q26–Q35
+    // 1) build Part 3 payload mapping 0→Q26 … 9→Q35
     const survey3 = {};
     Object.entries(responses).forEach(([idx, val]) => {
-      const qNum = Number(idx) + 26;  // idx 0 → Q26, … idx 9 → Q35
+      const qNum = 26 + Number(idx);
       survey3[`Q${qNum}`] = Number(val);
     });
-    // save part 3
-    localStorage.setItem('techSurvey3Responses', JSON.stringify(survey3));
 
-    // combine with parts 1 & 2
-    const survey1 = JSON.parse(localStorage.getItem('techSurvey1Responses') || '{}');
-    const survey2 = JSON.parse(localStorage.getItem('techSurvey2Responses') || '{}');
+    // 2) pull in existing merged payload (email + Q1–Q25)
+    const completePrev = JSON.parse(
+      localStorage.getItem('techSurvey2Responses') || '{}'
+    );
+
+    // 3) merge and overwrite
     const complete = {
-      email: localStorage.getItem('userEmail'),
-      ...survey1,
-      ...survey2,
+      ...completePrev,
       ...survey3
     };
-    localStorage.setItem('completeResearchResponses', JSON.stringify(complete));
 
-    // next
+    console.log(complete);
+
+
+    localStorage.setItem(
+      'techSurvey3Responses',
+      JSON.stringify(complete)
+    );
+
+    // 4) go to Part 4
     navigate('/TechSurvey4');
   };
 
@@ -72,7 +80,9 @@ const TechnologyUsageSurvey3 = () => {
       <div className="assessment-card">
         <div
           className="assessment-header adhd"
-          style={{ background: 'linear-gradient(135deg,rgb(237, 7, 7),rgb(233, 14, 105))' }}
+          style={{
+            background: 'linear-gradient(135deg,rgb(237, 7, 7),rgb(233, 14, 105))'
+          }}
         >
           <h2 className="assessment-title">Attention and Focus Scale</h2>
           <p className="assessment-subtitle">
@@ -91,22 +101,39 @@ const TechnologyUsageSurvey3 = () => {
 
         <div className="assessment-content">
           <div className="scale-section">
-            <h3 className="scale-title" style={{ fontSize: '1.5rem', fontWeight: '700', marginBottom: '1.5rem' }}>
+            <h3
+              className="scale-title"
+              style={{ fontSize: '1.5rem', fontWeight: '700', marginBottom: '1.5rem' }}
+            >
               {attentionScale.title}
               <p className="text-sm text-gray-600 mt-2 font-normal">
                 Please rate how often you experience each of the following situations
               </p>
             </h3>
+
             {attentionScale.questions.map((question, qIdx) => (
-              <div key={qIdx} className="question-block" style={{ marginBottom: '2rem' }}>
-                <p className="question-text" style={{ fontSize: '1.125rem', fontWeight: '500', marginBottom: '1rem' }}>
+              <div
+                key={qIdx}
+                className="question-block"
+                style={{ marginBottom: '2rem' }}
+              >
+                <p
+                  className="question-text"
+                  style={{
+                    fontSize: '1.125rem',
+                    fontWeight: '500',
+                    marginBottom: '1rem'
+                  }}
+                >
                   {question}
                 </p>
                 <div className="options-grid">
                   {attentionScale.options.map(option => (
                     <label
                       key={option.value}
-                      className={`option-item ${responses[qIdx] === option.value ? 'selected' : ''}`}
+                      className={`option-item ${
+                        responses[qIdx] === option.value ? 'selected' : ''
+                      }`}
                     >
                       <input
                         type="radio"
@@ -181,13 +208,13 @@ const TechnologyUsageSurvey3 = () => {
             <div className="px-6 py-4 bg-gray-50 rounded-b-lg flex justify-end space-x-3">
               <button
                 onClick={() => setShowConfirmation(false)}
-                className="px-4 py-2 bg-white border border-gray-300 rounded-md text-gray-700 font-medium hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors"
+                className="px-4 py-2 bg-white border border-gray-300 rounded-md text-gray-700 font-medium hover:bg-gray-50"
               >
                 Review Answers
               </button>
               <button
                 onClick={handleConfirm}
-                className="px-4 py-2 bg-blue-600 border border-transparent rounded-md text-white font-medium hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors"
+                className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
               >
                 Continue to Next Survey
               </button>

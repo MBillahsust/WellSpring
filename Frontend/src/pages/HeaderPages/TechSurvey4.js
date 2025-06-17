@@ -13,6 +13,7 @@ const cognitiveLoadScale = {
     { value: "5", label: "Strongly Agree" }
   ],
   questions: [
+    // Q36…Q45
     "I get tired very quickly when doing mentally demanding tasks.",
     "I have problems thinking clearly when I’m mentally overwhelmed.",
     "I tire easily after periods of concentration or problem-solving.",
@@ -39,35 +40,37 @@ const TechnologyUsageSurvey4 = () => {
     setResponses(prev => ({ ...prev, [questionIndex]: value }));
   };
 
-  const handleSubmitClick = () => {
-    setShowConfirmation(true);
-  };
+  const handleSubmitClick = () => setShowConfirmation(true);
 
   const handleConfirm = () => {
-    // Store part 4 responses with numbering Q36–Q45
-    const numberedResponses = Object.fromEntries(
-      Object.entries(responses).map(
-        ([idx, val]) => [`Q${36 + Number(idx)}`, Number(val)]
-      )
+    // 1) build Q36–Q45 payload
+    const part4 = Object.fromEntries(
+      Object.entries(responses).map(([idx, val]) => [
+        `Q${36 + Number(idx)}`, 
+        Number(val)
+      ])
     );
+
+    // 2) pull in existing merged data (email + Q1–Q35)
+    const previous = JSON.parse(
+      localStorage.getItem('techSurvey3Responses') || '{}'
+    );
+
+    // 3) merge and store back
+    const merged = {
+      ...previous,
+      ...part4
+    };
+
+    console.log(merged);
+
+
     localStorage.setItem(
       'techSurvey4Responses',
-      JSON.stringify(numberedResponses)
+      JSON.stringify(merged)
     );
 
-    // Merge with previous parts
-    const survey1 = JSON.parse(localStorage.getItem('techSurvey1Responses') || '{}');
-    const survey2 = JSON.parse(localStorage.getItem('techSurvey2Responses') || '{}');
-    const survey3 = JSON.parse(localStorage.getItem('techSurvey3Responses') || '{}');
-
-    const all = {
-      techUsage: survey1,
-      lifestyle: survey2,
-      attention: survey3,
-      cognitiveLoad: numberedResponses
-    };
-    localStorage.setItem('completeResearchResponses', JSON.stringify(all));
-
+    // 4) go to Part 5
     navigate('/TechSurvey5');
   };
 
@@ -76,14 +79,13 @@ const TechnologyUsageSurvey4 = () => {
       <div className="assessment-card">
         <div
           className="assessment-header adhd"
-          style={{
-            background: 'linear-gradient(135deg,rgb(58, 14, 95),rgb(5, 45, 127))'
-          }}
+          style={{ background: 'linear-gradient(135deg,rgb(58, 14, 95),rgb(5, 45, 127))' }}
         >
           <h2 className="assessment-title">Cognitive Load Scale</h2>
           <p className="assessment-subtitle">
             Question {answeredQuestions} of {totalQuestions}
           </p>
+          {/* Progress Bar */}
           <div className="mt-4 w-full px-4">
             <div className="w-full h-1.5 bg-gray-200/30 rounded-full overflow-hidden">
               <div
@@ -98,11 +100,7 @@ const TechnologyUsageSurvey4 = () => {
           <div className="scale-section">
             <h3
               className="scale-title"
-              style={{
-                fontSize: '1.5rem',
-                fontWeight: '700',
-                marginBottom: '1.5rem'
-              }}
+              style={{ fontSize: '1.5rem', fontWeight: '700', marginBottom: '1.5rem' }}
             >
               {cognitiveLoadScale.title}
               <p className="text-sm text-gray-600 mt-2 font-normal">
@@ -111,11 +109,7 @@ const TechnologyUsageSurvey4 = () => {
             </h3>
 
             {cognitiveLoadScale.questions.map((question, qIdx) => (
-              <div
-                key={qIdx}
-                className="question-block"
-                style={{ marginBottom: '2rem' }}
-              >
+              <div key={qIdx} className="question-block" style={{ marginBottom: '2rem' }}>
                 <p
                   className="question-text"
                   style={{
@@ -167,6 +161,7 @@ const TechnologyUsageSurvey4 = () => {
         </div>
       </div>
 
+      {/* Confirmation Modal */}
       {showConfirmation && (
         <div className="fixed inset-0 flex items-center justify-center z-50">
           <div className="absolute inset-0 bg-gray-900 bg-opacity-75 backdrop-blur-sm" />
@@ -198,8 +193,7 @@ const TechnologyUsageSurvey4 = () => {
                     Ready to proceed?
                   </p>
                   <p className="text-gray-600 text-sm">
-                    Please ensure you have reviewed all your answers before
-                    moving on.
+                    Please ensure you have reviewed all your answers before moving on.
                   </p>
                 </div>
               </div>

@@ -14,6 +14,7 @@ const impulsivityScale = {
     { value: "5", label: "Very Often" }
   ],
   questions: [
+    // Q46 … Q55
     "I do things without thinking.",
     "I act on the spur of the moment.",
     "I buy things impulsively, even when I don’t need them.",
@@ -45,35 +46,32 @@ const TechnologyUsageSurvey5 = () => {
   };
 
   const handleConfirm = async () => {
-    // build part 5 numbered Q46–Q55
+    // 1) Build Q46–Q55 payload
     const part5 = Object.fromEntries(
-      Object.entries(responses).map(
-        ([idx, val]) => [`Q${46 + Number(idx)}`, Number(val)]
-      )
+      Object.entries(responses).map(([idx, val]) => [
+        `Q${46 + Number(idx)}`,
+        Number(val)
+      ])
     );
-    // retrieve prior parts
-    const survey1 = JSON.parse(localStorage.getItem('techSurvey1Responses') || '{}');
-    const survey2 = JSON.parse(localStorage.getItem('techSurvey2Responses') || '{}');
-    const survey3 = JSON.parse(localStorage.getItem('techSurvey3Responses') || '{}');
-    const survey4 = JSON.parse(localStorage.getItem('techSurvey4Responses') || '{}');
 
-    // assemble full payload
+    // 2) Retrieve previous parts
+    const survey = JSON.parse(localStorage.getItem('techSurvey4Responses') || '{}');
+    
+
+    // 3) Assemble full payload
     const payload = {
-      email: localStorage.getItem('userEmail'),
-      ...survey1,
-      ...survey2,
-      ...survey3,
-      ...survey4,
+      ...survey,
       ...part5
     };
 
+    console.log(payload);
+
     try {
       await axios.post('http://localhost:5004/research/research', payload);
-      // on success, navigate to research-development
       navigate('/research-development');
     } catch (err) {
       console.error("Failed submitting survey:", err);
-      // you can add a toast or alert here if desired
+      // Optionally show an error notification here
     }
   };
 
@@ -110,6 +108,7 @@ const TechnologyUsageSurvey5 = () => {
                 Please rate how often you experience each of the following behaviors
               </p>
             </h3>
+
             {impulsivityScale.questions.map((question, qIdx) => (
               <div key={qIdx} className="question-block" style={{ marginBottom: '2rem' }}>
                 <p

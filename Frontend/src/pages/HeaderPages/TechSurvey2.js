@@ -44,27 +44,33 @@ const TechnologyUsageSurvey2 = () => {
   };
 
   const handleConfirm = () => {
-    // retrieve Part 1 payload (Q1–Q15)
-    const survey1 = JSON.parse(localStorage.getItem('techSurvey1Responses') || '{}');
+    // 1) load whatever's in completeResearchResponses (includes email + Q1–Q15)
+    const completeSoFar = JSON.parse(
+      localStorage.getItem('techSurvey1Responses') || '{}'
+    );
 
-    // build Part 2 payload mapping to Q16…Q25
+    // 2) map our 0→Q16 … 9→Q25
     const survey2 = {};
     Object.entries(responses).forEach(([idx, val]) => {
-      const qNum = Number(idx) + 16;        // idx 0→Q16, … idx 9→Q25
+      const qNum = 16 + Number(idx);
       survey2[`Q${qNum}`] = Number(val);
     });
 
-    // combine with email + part 1
-    const complete = {
-      email: localStorage.getItem('userEmail'),
-      ...survey1,
+    // 3) merge back into the same object
+    const updated = {
+      ...completeSoFar,
       ...survey2
     };
 
-    // save full object for backend sync
-    localStorage.setItem('completeResearchResponses', JSON.stringify(complete));
+    console.log(updated);
 
-    // navigate to Part 3
+    // 4) write back
+    localStorage.setItem(
+      'techSurvey2Responses',
+      JSON.stringify(updated)
+    );
+
+    // 5) go to part 3
     navigate('/TechSurvey3');
   };
 
@@ -96,7 +102,7 @@ const TechnologyUsageSurvey2 = () => {
               className="scale-title"
               style={{
                 fontSize: '1.5rem',
-                fontWeight: '700',
+                fontWeight: 700,
                 marginBottom: '1.5rem'
               }}
             >
@@ -107,16 +113,12 @@ const TechnologyUsageSurvey2 = () => {
             </h3>
 
             {lifestyleScale.questions.map((question, qIdx) => (
-              <div
-                key={qIdx}
-                className="question-block"
-                style={{ marginBottom: '2rem' }}
-              >
+              <div key={qIdx} className="question-block" style={{ marginBottom: '2rem' }}>
                 <p
                   className="question-text"
                   style={{
                     fontSize: '1.125rem',
-                    fontWeight: '500',
+                    fontWeight: 500,
                     marginBottom: '1rem'
                   }}
                 >
@@ -166,7 +168,7 @@ const TechnologyUsageSurvey2 = () => {
       {/* Confirmation Modal */}
       {showConfirmation && (
         <div className="fixed inset-0 flex items-center justify-center z-50">
-          <div className="absolute inset-0 bg-gray-900 bg-opacity-75 backdrop-blur-sm"></div>
+          <div className="absolute inset-0 bg-gray-900 bg-opacity-75 backdrop-blur-sm" />
           <div className="relative bg-white rounded-lg shadow-xl max-w-md w-full mx-4 border border-gray-200">
             <div className="px-6 py-4 border-b border-gray-200">
               <h3 className="text-xl font-semibold text-gray-900">
@@ -203,13 +205,13 @@ const TechnologyUsageSurvey2 = () => {
             <div className="px-6 py-4 bg-gray-50 rounded-b-lg flex justify-end space-x-3">
               <button
                 onClick={() => setShowConfirmation(false)}
-                className="px-4 py-2 bg-white border border-gray-300 rounded-md text-gray-700 font-medium hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors"
+                className="px-4 py-2 bg-white border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50"
               >
                 Review Answers
               </button>
               <button
                 onClick={handleConfirm}
-                className="px-4 py-2 bg-blue-600 border border-transparent rounded-md text-white font-medium hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors"
+                className="px-4 py-2 bg-blue-600 border border-transparent rounded-md text-white hover:bg-blue-700"
               >
                 Continue to Next Survey
               </button>
