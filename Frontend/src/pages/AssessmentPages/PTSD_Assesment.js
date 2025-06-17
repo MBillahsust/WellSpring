@@ -104,7 +104,7 @@ export default function PTSD_Assessment() {
       assessmentName: 'PTSD Assessment',
       assessmentResult: result.severity,
       assessmentScore: `${result.score} out of ${result.maxScore}`,
-      recommendation: result.recommendation,
+      recommendation: `This test is based on PTSD Checklist for DSM-5 (PCL-5). ${result.recommendation}`,
       takenAt: new Date().toISOString(),
     };
     try {

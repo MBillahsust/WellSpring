@@ -67,7 +67,7 @@ export default function MentalHealthAssessments() {
     },
     {
       title: "PTSD Clarity Check",
-      description: "Evaluate your stress and trauma responses with this PTSD assessment, and receive personalized strategies to manage flashbacks, anxiety, and emotional resilience.",
+      description: "[Based on PCL-5]. Evaluate your stress and trauma responses with this PTSD assessment, and receive personalized strategies to manage flashbacks, anxiety, and emotional resilience.",
       path: "/ptsd_clarity_check",
       icon: FaShieldAlt,
       buttonText: "Start Checking"
