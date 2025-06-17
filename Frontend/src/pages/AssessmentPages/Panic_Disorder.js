@@ -1,48 +1,47 @@
-import React, { useState, useContext, useEffect } from 'react';
+import React, { useState, useContext, useEffect, useRef } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import axios from 'axios';
 import { UserContext } from '../../UserContext';
 import '../../Allcss/AssessmentPages/Assessment.css';
 
+// 7-item Panic Disorder Severity Scale (PDSS)
 const questions = [
-  "How often do you experience sudden panic attacks or episodes of intense fear?",
-  "How much do you worry about having another panic attack?",
-  "Have you changed your behavior or daily routine to avoid panic attacks?",
-  "How often do you experience rapid heartbeat or heart palpitations during panic episodes?",
-  "How often do you experience shortness of breath or difficulty breathing during panic episodes?",
-  "How often do you experience trembling or shaking during panic episodes?",
-  "How often do you experience sweating during panic episodes?",
-  "How often do you feel like you're choking during panic episodes?",
-  "How often do you experience chest pain or discomfort during panic episodes?",
-  "How often do you feel dizzy, unsteady, or lightheaded during panic episodes?",
-  "How often do you experience feelings of unreality or being detached from yourself during panic episodes?",
-  "How often do you fear losing control or going crazy during panic episodes?",
-  "How often do you experience numbness or tingling sensations during panic episodes?",
-  "How often do you experience chills or hot flushes during panic episodes?"
+  "How many panic attacks did you have in the past week?",
+  "How much distress did you experience during your worst panic attack?",
+  "How much anticipatory anxiety did you feel about having another panic attack?",
+  "To what extent have you been avoiding situations out of fear of having a panic attack?",
+  "How much have you changed your behavior (e.g. rituals, safety behaviors) to prevent panic attacks?",
+  "How much have panic symptoms interfered with your work or school activities?",
+  "How much have panic symptoms interfered with your social or family life?"
 ];
 
 const answerOptions = [
-  { value: "0", label: "Not at all" },
-  { value: "1", label: "Several days" },
-  { value: "2", label: "More than half the days" },
-  { value: "3", label: "Nearly every day" }
+  { value: "0", label: "None" },
+  { value: "1", label: "Mild" },
+  { value: "2", label: "Moderate" },
+  { value: "3", label: "Severe" },
+  { value: "4", label: "Extreme" }
 ];
 
 export default function Panic_Disorder() {
   const [currentQuestion, setCurrentQuestion] = useState(0);
-  const [answers, setAnswers] = useState([]);
+  const [answers, setAnswers] = useState(Array(questions.length).fill(undefined));
   const [result, setResult] = useState(null);
   const [saveStatus, setSaveStatus] = useState(null);
   const { userInfo } = useContext(UserContext);
   const navigate = useNavigate();
   const location = useLocation();
+  const questionRef = useRef(null);
   const [showDisclaimer, setShowDisclaimer] = useState(true);
 
+  // Show disclaimer once on mount
   useEffect(() => { setShowDisclaimer(true); }, []);
+  // Scroll to top of question on change
+  useEffect(() => { questionRef.current?.scrollIntoView({ behavior: 'smooth' }); }, [currentQuestion]);
 
   const handleAnswer = (value) => {
     const updated = [...answers];
-    updated[currentQuestion] = value;
+    updated[currentQuestion] = parseInt(value, 10);
     setAnswers(updated);
   };
 
@@ -61,28 +60,36 @@ export default function Panic_Disorder() {
   };
 
   const calculateResult = () => {
-    const total = answers.reduce((sum, answer) => sum + parseInt(answer, 10), 0);
-    const score = total / questions.length;
-
+    const total = answers.reduce((sum, ans) => sum + (ans || 0), 0);
+    // PDSS thresholds:
+    // 0–3   → Minimal or no panic symptoms
+    // 4–7   → Mild panic symptoms
+    // 8–12  → Moderate panic symptoms
+    // 13–17 → Severe panic symptoms
+    // 18–28 → Extreme panic symptoms
     let severity, recommendation;
-    if (score < 1) {
-      severity = "Minimal panic symptoms";
-      recommendation = "Your symptoms suggest minimal indication of panic disorder. Continue monitoring your mental health.";
-    } else if (score < 2) {
-      severity = "Mild panic symptoms";
-      recommendation = "You're showing mild symptoms of panic disorder. Consider discussing these symptoms with a mental health professional.";
-    } else if (score < 3) {
-      severity = "Moderate panic symptoms";
-      recommendation = "Your symptoms suggest moderate panic disorder. It's recommended to consult with a mental health professional for further evaluation.";
+
+    if (total <= 3) {
+      severity = "Minimal or No Panic Symptoms";
+      recommendation = "Your score indicates minimal panic symptoms. Continue monitoring and practicing healthy coping strategies.";
+    } else if (total <= 7) {
+      severity = "Mild Panic Symptoms";
+      recommendation = "You have mild panic symptoms. Consider learning relaxation exercises (e.g., deep breathing) and monitoring triggers.";
+    } else if (total <= 12) {
+      severity = "Moderate Panic Symptoms";
+      recommendation = "Your symptoms are moderate. Structured techniques like cognitive reframing and gradual exposure may help—consider consulting a mental health professional.";
+    } else if (total <= 17) {
+      severity = "Severe Panic Symptoms";
+      recommendation = "You have severe panic symptoms. Seeking professional evaluation (e.g., CBT, medication review) is recommended.";
     } else {
-      severity = "Severe panic symptoms";
-      recommendation = "Your symptoms indicate severe panic disorder. Please seek professional help for proper evaluation and support.";
+      severity = "Extreme Panic Symptoms";
+      recommendation = "Your symptoms are extreme. Please contact a mental health provider promptly for comprehensive support.";
     }
 
     setResult({
-      severity,
       score: total,
-      maxScore: questions.length * 3,
+      maxScore: questions.length * 4,
+      severity,
       recommendation
     });
   };
@@ -90,30 +97,26 @@ export default function Panic_Disorder() {
   const progress = ((currentQuestion + 1) / questions.length) * 100;
 
   const handleSaveScore = async () => {
-    if (!userInfo || !userInfo.token) {
+    if (!userInfo?.token) {
       navigate('/login', { state: { from: location.pathname } });
       return;
     }
     setSaveStatus('saving');
     const payload = {
-      assessmentName: 'Panic Disorder Assessment',
+      assessmentName: 'Panic Monitor',
       assessmentResult: result.severity,
       assessmentScore: `${result.score} out of ${result.maxScore}`,
-      recommendation: result.recommendation,
+      recommendation: `Panic Disorder Severity Scale (PDSS). The recommandation is: ${result.recommendation}`,
       takenAt: new Date().toISOString(),
     };
     try {
       await axios.post(
         `${process.env.REACT_APP_BACKEND_URL}/addassesment/assessments`,
         payload,
-        {
-          headers: {
-            Authorization: `Bearer ${userInfo.token}`
-          }
-        }
+        { headers: { Authorization: `Bearer ${userInfo.token}` } }
       );
       setSaveStatus('success');
-    } catch (err) {
+    } catch {
       setSaveStatus('error');
     }
   };
@@ -121,29 +124,43 @@ export default function Panic_Disorder() {
   return (
     <div className="assessment-container">
       {showDisclaimer && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center">
-          <div className="absolute inset-0 bg-gray-900 bg-opacity-60 backdrop-blur-sm transition-opacity animate-fadeIn"></div>
-          <div className="relative bg-white rounded-2xl shadow-xl max-w-lg w-full mx-4 border border-gray-200 animate-scaleIn overflow-hidden">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          <div className="absolute inset-0 bg-gray-900 bg-opacity-60 backdrop-blur-sm" />
+          <div className="relative bg-white rounded-2xl shadow-xl w-full max-w-md mx-4 border border-gray-200 overflow-hidden">
             <div className="px-6 py-5 border-b border-gray-200">
-              <h3 className="text-xl font-semibold text-gray-800 flex items-center gap-2">⚠️ Disclaimer</h3>
+              <h3 className="text-xl font-semibold text-gray-800 flex items-center gap-2">
+                ⚠️ Disclaimer
+              </h3>
             </div>
             <div className="px-6 py-5 text-gray-700 text-base leading-relaxed">
-              <p>This assessment is based solely on your responses and is intended for informational purposes only. Please consult a qualified healthcare provider for a professional evaluation.</p>
-              <p className="mt-3 text-sm text-gray-500">Use this tool as a starting point for self-awareness, not a diagnosis.</p>
+              <p>This assessment evaluates panic symptoms over the past week but cannot diagnose medical conditions. Please be aware that the results of the assessment are based solely on your responses to the questionnaire; they provide an indication and do not constitute a clinical diagnosis.</p>
+              <p className="mt-3 text-sm text-gray-500">For an accurate diagnosis and treatment plan, please consult a qualified healthcare provider.</p>
             </div>
             <div className="px-6 py-4 bg-gray-50 flex justify-end space-x-3 border-t border-gray-200">
-              <button className="px-5 py-2 bg-gray-800 text-white rounded-lg font-medium hover:bg-gray-900 transition-all shadow-sm" onClick={() => { setShowDisclaimer(false); navigate('/assessment'); }}>Cancel</button>
-              <button className="px-5 py-2 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-all shadow-md" onClick={() => setShowDisclaimer(false)} autoFocus>Accept and Continue</button>
+              <button
+                className="px-5 py-2 bg-gray-800 text-white rounded-lg hover:bg-gray-900"
+                onClick={() => { setShowDisclaimer(false); navigate('/assessment'); }}
+              >
+                Cancel
+              </button>
+              <button
+                className="px-5 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+                onClick={() => setShowDisclaimer(false)}
+                autoFocus
+              >
+                Accept and Continue
+              </button>
             </div>
           </div>
         </div>
       )}
+
       <div className={`assessment-card${showDisclaimer ? ' pointer-events-none opacity-30' : ''}`}>
         <div className="assessment-header panic">
           <h2 className="assessment-title">Panic Disorder Assessment</h2>
-          <p className="assessment-subtitle">Rate how often you experience these symptoms during panic episodes.</p>
+          <p className="assessment-subtitle">Rate each item based on your experience over the past week.</p>
         </div>
-        <div className="assessment-content">
+        <div className="assessment-content" ref={questionRef}>
           {result ? (
             <div className="result-container">
               <h3 className="result-title">Assessment Complete</h3>
@@ -153,68 +170,66 @@ export default function Panic_Disorder() {
                 <h4 className="recommendation-title">Recommendation</h4>
                 <p className="recommendation-text">{result.recommendation}</p>
               </div>
-              <p className="disclaimer">
-                Note: This is a screening tool and not a diagnostic instrument. 
-                Please consult with a mental health professional for a proper evaluation.
-                If you're experiencing a panic attack, try deep breathing exercises and seek immediate help if needed.
+              <p className="disclaimer text-xs mt-2 text-gray-500">
+                Note: This is a screening tool and not a diagnostic instrument.
               </p>
-              <button className="next-button" onClick={handleSaveScore} style={{ marginTop: '1rem' }}>
+              <button
+                className="next-button mt-4"
+                onClick={handleSaveScore}
+              >
                 Save Score
               </button>
-              {saveStatus === 'saving' && <p style={{ color: '#6366f1' }}>Saving...</p>}
-              {saveStatus === 'success' && <p style={{ color: 'green' }}>Score saved successfully!</p>}
-              {saveStatus === 'error' && <p style={{ color: 'red' }}>Failed to save score. Please try again.</p>}
+              {saveStatus === 'saving' && <p className="text-xs mt-2 text-blue-600">Saving...</p>}
+              {saveStatus === 'success' && <p className="text-xs mt-2 text-green-600">Saved successfully!</p>}
+              {saveStatus === 'error' && <p className="text-xs mt-2 text-red-600">Save failed. Try again.</p>}
             </div>
           ) : (
             <>
-              <div className="progress-container">
-                <div className="progress-bar" style={{ width: `${progress}%` }}></div>
+              <div className="progress-container mb-4">
+                <div className="progress-bar" style={{ width: `${progress}%` }} />
               </div>
               <p className="question-counter">Question {currentQuestion + 1} of {questions.length}</p>
-              <div className="question">{questions[currentQuestion]}</div>
-              <div className="options-grid">
-                {answerOptions.map((option) => (
-                  <div
+              <div className="question mb-4">{questions[currentQuestion]}</div>
+              <div className="options-grid space-y-2">
+                {answerOptions.map(option => (
+                  <label
                     key={option.value}
-                    className={`option-item ${answers[currentQuestion] === option.value ? 'selected' : ''}`}
+                    className={`option-item flex items-center p-3 border rounded-md cursor-pointer ${
+                      answers[currentQuestion] === parseInt(option.value)
+                        ? 'bg-indigo-50 border-indigo-400'
+                        : 'border-gray-200 hover:border-gray-300'
+                    }`}
                   >
                     <input
                       type="radio"
                       name="answer"
                       value={option.value}
-                      id={`q-${option.value}`}
-                      checked={answers[currentQuestion] === option.value}
+                      checked={answers[currentQuestion] === parseInt(option.value)}
                       onChange={() => handleAnswer(option.value)}
-                      className="radio-input"
+                      className="h-4 w-4 text-indigo-600"
                     />
-                    <label htmlFor={`q-${option.value}`} className="option-label">
-                      {option.label}
-                    </label>
-                  </div>
+                    <span className="ml-3">{option.label}</span>
+                  </label>
                 ))}
               </div>
-            </>
-          )}
-        </div>
-        <div className="assessment-footer flex justify-between items-center gap-4 mt-4">
-          {!result && (
-            <>
-              <button
-                onClick={handleBack}
-                className={`next-button bg-gray-300 text-gray-700 hover:bg-gray-400 transition duration-200 ${
-                  currentQuestion === 0 ? 'opacity-50 cursor-not-allowed' : ''
-                }`}
-                disabled={currentQuestion === 0}
-              >
-                Back
-              </button>
-              <button
-                onClick={handleNext}
-                className="next-button hover:bg-green-600 transition duration-200"
-                disabled={answers[currentQuestion] === undefined}
-              >
-                {currentQuestion < questions.length - 1 ? "Next Question" : "Submit"}
-              </button>
+              <div className="assessment-footer flex justify-between items-center mt-6">
+                <button
+                  onClick={handleBack}
+                  className={`next-button bg-gray-300 text-gray-700 hover:bg-gray-400 ${
+                    currentQuestion === 0 ? 'opacity-50 cursor-not-allowed' : ''
+                  }`}
+                  disabled={currentQuestion === 0}
+                >
+                  Back
+                </button>
+                <button
+                  onClick={handleNext}
+                  className="next-button bg-green-600 text-white hover:bg-green-700"
+                  disabled={answers[currentQuestion] === undefined}
+                >
+                  {currentQuestion < questions.length - 1 ? "Next Question" : "Submit"}
+                </button>
+              </div>
             </>
           )}
         </div>

@@ -46,7 +46,7 @@ export default function MentalHealthAssessments() {
     },
     {
       title: "Panic Monitor",
-      description: "Evaluate the intensity and frequency of your panic episodes, and get personalized techniques to help you manage and reduce panic attacks effectively.",
+      description: "[Based on (PDSS)]. Evaluate the intensity and frequency of your panic episodes, and get personalized techniques to help you manage and reduce panic attacks effectively.",
       path: "/panic_monitor",
       icon: FaBolt,
       buttonText: "Start Evaluation"
