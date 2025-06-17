@@ -60,7 +60,7 @@ export default function MentalHealthAssessments() {
     },
     {
       title: "OCD Check",
-      description: "Assess your behaviors and thoughts with this OCD evaluation, and get customized strategies to reduce obsessive patterns and manage compulsive actions effectively.",
+      description: "[Based on OCI-R]. Assess your behaviors and thoughts with this OCD evaluation, and get customized strategies to reduce obsessive patterns and manage compulsive actions effectively.",
       path: "/ocd_check",
       icon: FaSync,
       buttonText: "Start Checking"
