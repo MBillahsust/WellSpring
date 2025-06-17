@@ -22,7 +22,7 @@ export default function MoodTracking() {
       // Fetch mood history from backend
       const fetchMoodHistory = async () => {
         try {
-          console.log('Fetching mood history with token:', userInfo.token);
+          
           const res = await axios.get(
             `${process.env.REACT_APP_BACKEND_URL}/mood/getMood/`,
             {
@@ -31,7 +31,7 @@ export default function MoodTracking() {
               }
             }
           );
-          console.log('Mood history response:', res.data);
+          
           const moodArray = Array.isArray(res.data)
             ? res.data
             : (res.data.moods || []);
@@ -39,7 +39,7 @@ export default function MoodTracking() {
             moodArray.map(entry => {
               const d = new Date(entry.time);
               return {
-                id: entry.id,
+                id: entry._id,
                 mood: entry.mood,
                 notes: entry.notes,
                 date: d.toLocaleDateString(),
@@ -91,7 +91,7 @@ export default function MoodTracking() {
           moodArray.map(entry => {
             const d = new Date(entry.time);
             return {
-              id: entry.id,
+              id: entry._id,
               mood: entry.mood,
               notes: entry.notes,
               date: d.toLocaleDateString(),
@@ -135,7 +135,7 @@ export default function MoodTracking() {
         moodArray.map(entry => {
           const d = new Date(entry.time);
           return {
-            id: entry.id,
+            id: entry._id,
             mood: entry.mood,
             notes: entry.notes,
             date: d.toLocaleDateString(),
