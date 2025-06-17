@@ -69,6 +69,7 @@ import './toastify-custom.css';
 import Community from './pages/CommunityPages/Community';
 import GiveFeedback from './pages/CommunityPages/GiveFeedback';
 import { useLocation } from 'react-router-dom';
+import WordRecall from './pages/GamesPages/WordRecall';
 
 
 function App() {
@@ -90,6 +91,7 @@ function App() {
             <Route path="/games" element={<Games />} />
             <Route path="/games/flappy-bird" element={<FlappyBird />} />
             <Route path="/games/memory-match" element={<MemoryMatch />} />
+            <Route path="/games/word-recall" element={<WordRecall />} />
 
             <Route path='/counsellors' element={<Counsellor />} />
             <Route path="/counsellor-bot" element={<CounsellorBotChat />} />

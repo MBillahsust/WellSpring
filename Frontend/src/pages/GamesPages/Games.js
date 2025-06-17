@@ -1,6 +1,6 @@
 import React, { useContext } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { FaGamepad, FaDove, FaPuzzlePiece, FaBrain } from 'react-icons/fa';
+import { FaGamepad, FaDove, FaPuzzlePiece, FaBrain, FaRegListAlt } from 'react-icons/fa';
 import { UserContext } from '../../UserContext';
 
 const Games = () => {
@@ -23,6 +23,14 @@ const Games = () => {
       path: '/games/memory-match',
       color: 'bg-purple-500',
       disabled: false
+    },
+    {
+      id: 'word-recall',
+      title: 'Word Recall',
+      description: 'Words flash on screen for 4 seconds, then pick the ones you remember from a list.',
+      icon: <FaRegListAlt className="text-4xl" />,
+      path: '/games/word-recall',
+      color: 'bg-yellow-500'
     },
     {
       id: 'coming-soon-2',
