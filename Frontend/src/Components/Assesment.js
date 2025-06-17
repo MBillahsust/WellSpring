@@ -39,7 +39,7 @@ export default function MentalHealthAssessments() {
     },
     {
       title: "Social Anxiety Evaluation",
-      description: "Assess your social anxiety levels and uncover personalized strategies to help you navigate social interactions with greater confidence and ease.",
+      description: "[Based on SPIN]. Assess your social anxiety levels and uncover personalized strategies to help you navigate social interactions with greater confidence and ease.",
       path: "/social_anxiety_gauge",
       icon: FaUsers,
       buttonText: "Start Assessment"
