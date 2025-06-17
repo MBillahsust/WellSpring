@@ -357,116 +357,159 @@ const MemoryMatch = () => {
     return (
         <div className="min-h-screen bg-green-100 py-4 pt-0">
             <ToastContainer position="top-right" autoClose={3000} hideProgressBar={false} newestOnTop closeOnClick pauseOnFocusLoss draggable pauseOnHover />
-            <Dialog open={modalOpen} onClose={() => setModalOpen(false)} className="fixed z-50 inset-0">
+            
+            
+            {/* Game Insights Modal */}
+                <Dialog open={modalOpen} onClose={() => setModalOpen(false)} className="fixed inset-0 z-50">
                 <div className="flex items-center justify-center min-h-screen px-4">
                     <div className="fixed inset-0 bg-black opacity-30" />
-                    <div className="relative bg-white rounded-xl shadow-xl max-w-3xl w-full mx-auto p-6 z-50 overflow-visible">
-                        <DialogTitle className="text-2xl font-bold text-green-800 text-center mb-4">Game Insights</DialogTitle>
-                        {apiError ? (
-                            <div className="text-red-600 font-semibold mb-3 text-center">{apiError}</div>
-                        ) : apiResult ? (
-                            <>
-                                {/* Meta Section */}
-                                <div className="mb-4">
-                                    <div className="font-semibold text-gray-700 mb-1">Meta:</div>
-                                    <ul className="text-sm text-gray-700 grid grid-cols-2 md:grid-cols-3 gap-x-4 gap-y-1">
-                                        {apiResult.meta
-                                            ? Object.entries(apiResult.meta)
-                                                .filter(([meta]) => meta !== 'rank')
-                                                .map(([meta, value]) => (
-                                                    <li key={meta} className="capitalize flex justify-between">
-                                                        <span>{meta.replace(/_/g, ' ')}:</span>
-                                                        <span className="font-bold text-green-700">{value ?? '-'}</span>
-                                                    </li>
-                                                ))
-                                            : <li className="col-span-2 text-gray-400">No meta data available.</li>}
-                                    </ul>
-                                </div>
-                                {/* Trait Scores Section */}
-                                <div className="font-semibold text-gray-700 mb-1">Trait Scores:</div>
-                                <div className="space-y-3">
-                                    {apiResult.cognitive_report?.trait_scores ? (
-                                        Object.entries(apiResult.cognitive_report.trait_scores)
-                                            .slice(0, 5)
-                                            .map(([trait, value], idx) => {
-                                                const percent = Math.max(0, Math.min(100, Number(value)));
-                                                const colors = ['bg-blue-500', 'bg-green-500', 'bg-yellow-500', 'bg-purple-500', 'bg-pink-500'];
-                                                const barColor = colors[idx % colors.length];
-                                                return (
-                                                    <div key={trait} className="flex flex-col gap-1">
-                                                        <div className="flex justify-between text-xs font-medium text-gray-700">
-                                                            <span className="capitalize">{trait.replace(/_/g, ' ')}</span>
-                                                            <span className="text-green-700 font-bold">{percent}</span>
-                                                        </div>
-                                                        <div className="w-full h-3 bg-gray-200 rounded-full overflow-hidden">
-                                                            <div
-                                                                className={`h-3 rounded-full transition-all duration-1000 ease-out ${barColor}`}
-                                                                style={{ width: `${percent}%` }}
-                                                            ></div>
-                                                        </div>
-                                                    </div>
-                                                );
-                                            })
-                                    ) : (
-                                        <div className="text-gray-400">No trait scores available.</div>
-                                    )}
-                                </div>
-                                {/* Recommendation Section */}
-                                <div className="mb-4">
-                                    <div className="font-semibold text-gray-700 mb-1">Recommendation:</div>
-                                    <div className="text-gray-800 text-sm">{apiResult.cognitive_report?.recommendation || 'No recommendation available.'}</div>
-                                </div>
-                                {/* Status & Buttons */}
-                                <div className={`mt-3 text-center text-sm font-semibold ${submitStatus && submitStatus.includes('success') ? 'text-green-600' : 'text-red-600'}`}>
-                                    {submitStatus}
-                                </div>
-                                <div className="flex gap-4 mt-6">
-                                    <button
-                                        onClick={() => setFeedbackOpen(true)}
-                                        className="w-1/2 bg-gray-200 text-green-800 py-2 rounded-lg font-semibold hover:bg-gray-300 transition text-sm"
-                                    >
-                                        Feedback
-                                    </button>
-                                    <button
-                                        onClick={handleSubmitAssessment}
-                                        className="w-1/2 bg-green-600 text-white py-2 rounded-lg font-semibold hover:bg-green-700 transition text-sm"
-                                    >
-                                        Submit
-                                    </button>
-                                </div>
-                            </>
-                        ) : (
-                            <div className="text-gray-600 text-center">Loading...</div>
-                        )}
-                    </div>
-                </div>
-            </Dialog>
-            <Dialog open={feedbackOpen} onClose={() => setFeedbackOpen(false)} className="fixed z-50 inset-0">
-                <div className="flex items-center justify-center min-h-screen px-4">
-                    <div className="fixed inset-0 bg-black opacity-30" />
-                    <div className="relative bg-white rounded-xl shadow-xl max-w-lg w-full mx-auto p-6 z-50 overflow-visible">
-                        <DialogTitle className="text-2xl font-bold text-green-800 text-center mb-4">Feedback</DialogTitle>
-                        <textarea
-                            className="w-full min-h-[120px] p-3 border border-green-300 rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-green-400 text-base mb-4"
-                            placeholder="Share your thoughts, suggestions, or how you felt about the game..."
-                            value={feedbackText}
-                            onChange={e => setFeedbackText(e.target.value)}
-                            maxLength={500}
-                        />
-                        <div className="flex justify-end gap-4 mt-2">
-                            <button
-                                className="bg-gray-200 text-green-800 px-4 py-2 rounded-lg font-semibold hover:bg-gray-300 transition text-sm"
-                                onClick={() => setFeedbackOpen(false)}
-                            >Cancel</button>
-                            <button
-                                className="bg-green-600 text-white px-4 py-2 rounded-lg font-semibold hover:bg-green-700 transition text-sm"
-                                onClick={() => { setFeedbackOpen(false); }}
-                                disabled={feedbackText.trim().length === 0}
-                            >Save</button>
+                    <div
+                    className="relative bg-white rounded-xl shadow-xl max-w-3xl w-full mx-auto p-6 z-50
+                                max-h-[80vh] overflow-auto"
+                    >
+                    <DialogTitle className="text-2xl font-bold text-green-800 text-center mb-4">
+                        Game Insights
+                    </DialogTitle>
+
+                    {apiError ? (
+                        <div className="text-red-600 font-semibold mb-3 text-center">{apiError}</div>
+                    ) : apiResult ? (
+                        <>
+                        {/* Meta Section */}
+                        <div className="mb-4">
+                            <div className="font-semibold text-gray-700 mb-1">Meta:</div>
+                            <ul className="text-sm text-gray-700 grid grid-cols-2 md:grid-cols-3 gap-x-4 gap-y-1">
+                            {apiResult.meta
+                                ? Object.entries(apiResult.meta)
+                                    .filter(([meta]) => meta !== 'rank')
+                                    .map(([meta, value]) => (
+                                    <li key={meta} className="capitalize flex justify-between">
+                                        <span>{meta.replace(/_/g, ' ')}:</span>
+                                        <span className="font-bold text-green-700">{value ?? '-'}</span>
+                                    </li>
+                                    ))
+                                : <li className="col-span-2 text-gray-400">No meta data available.</li>}
+                            </ul>
                         </div>
+
+                        {/* Trait Scores Section */}
+                        <div className="font-semibold text-gray-700 mb-1">Trait Scores:</div>
+                        <div className="space-y-3">
+                            {apiResult.cognitive_report?.trait_scores ? (
+                            Object.entries(apiResult.cognitive_report.trait_scores)
+                                .slice(0, 5)
+                                .map(([trait, value], idx) => {
+                                const percent = Math.max(0, Math.min(100, Number(value)));
+                                const colors = [
+                                    'bg-blue-500',
+                                    'bg-green-500',
+                                    'bg-yellow-500',
+                                    'bg-purple-500',
+                                    'bg-pink-500',
+                                ];
+                                const barColor = colors[idx % colors.length];
+                                return (
+                                    <div key={trait} className="flex flex-col gap-1">
+                                    <div className="flex justify-between text-xs font-medium text-gray-700">
+                                        <span className="capitalize">{trait.replace(/_/g, ' ')}</span>
+                                        <span className="text-green-700 font-bold">{percent}</span>
+                                    </div>
+                                    <div className="w-full h-3 bg-gray-200 rounded-full overflow-hidden">
+                                        <div
+                                        className={`h-3 rounded-full transition-all duration-1000 ease-out ${barColor}`}
+                                        style={{ width: `${percent}%` }}
+                                        ></div>
+                                    </div>
+                                    </div>
+                                );
+                                })
+                            ) : (
+                            <div className="text-gray-400">No trait scores available.</div>
+                            )}
+                        </div>
+
+                        {/* Recommendation Section */}
+                        <div className="mb-4">
+                            <div className="font-semibold text-gray-700 mb-1">Recommendation:</div>
+                            <div className="text-gray-800 text-sm">
+                            {apiResult.cognitive_report?.recommendation || 'No recommendation available.'}
+                            </div>
+                        </div>
+
+                        {/* Status & Buttons */}
+                        <div
+                            className={`mt-3 text-center text-sm font-semibold ${
+                            submitStatus && submitStatus.includes('success')
+                                ? 'text-green-600'
+                                : 'text-red-600'
+                            }`}
+                        >
+                            {submitStatus}
+                        </div>
+                        <div className="flex gap-4 mt-6">
+                            <button
+                            onClick={() => setFeedbackOpen(true)}
+                            className="w-1/2 bg-gray-200 text-green-800 py-2 rounded-lg font-semibold hover:bg-gray-300 transition text-sm"
+                            >
+                            Feedback
+                            </button>
+                            <button
+                            onClick={handleSubmitAssessment}
+                            className="w-1/2 bg-green-600 text-white py-2 rounded-lg font-semibold hover:bg-green-700 transition text-sm"
+                            >
+                            Submit
+                            </button>
+                        </div>
+                        </>
+                    ) : (
+                        <div className="text-gray-600 text-center">Loading...</div>
+                    )}
                     </div>
                 </div>
-            </Dialog>
+                </Dialog>
+
+                {/* Feedback Modal */}
+                <Dialog open={feedbackOpen} onClose={() => setFeedbackOpen(false)} className="fixed inset-0 z-50">
+                <div className="flex items-center justify-center min-h-screen px-4">
+                    <div className="fixed inset-0 bg-black opacity-30" />
+                    <div
+                    className="relative bg-white rounded-xl shadow-xl max-w-lg w-full mx-auto p-6 z-50
+                                max-h-[70vh] overflow-auto"
+                    >
+                    <DialogTitle className="text-2xl font-bold text-green-800 text-center mb-4">
+                        Feedback
+                    </DialogTitle>
+                    <textarea
+                        className="w-full min-h-[120px] p-3 border border-green-300 rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-green-400 text-base mb-4"
+                        placeholder="Share your thoughts, suggestions, or how you felt about the game..."
+                        value={feedbackText}
+                        onChange={e => setFeedbackText(e.target.value)}
+                        maxLength={500}
+                    />
+                    <div className="flex justify-end gap-4 mt-2">
+                        <button
+                        className="bg-gray-200 text-green-800 px-4 py-2 rounded-lg font-semibold hover:bg-gray-300 transition text-sm"
+                        onClick={() => setFeedbackOpen(false)}
+                        >
+                        Cancel
+                        </button>
+                        <button
+                        className="bg-green-600 text-white px-4 py-2 rounded-lg font-semibold hover:bg-green-700 transition text-sm"
+                        onClick={() => setFeedbackOpen(false)}
+                        disabled={feedbackText.trim().length === 0}
+                        >
+                        Save
+                        </button>
+                    </div>
+                    </div>
+                </div>
+                </Dialog>
+
+
+
+
+
+            
             <div className="max-w-6xl mx-auto px-4">
                 <div className="bg-white rounded-lg shadow-md overflow-hidden">
                     <div className="bg-[#4caf50] p-3">
