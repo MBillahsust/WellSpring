@@ -52,8 +52,8 @@ export default function MentalHealthAssessments() {
       buttonText: "Start Evaluation"
     },
     {
-      title: "ADHD Clarity Check",
-      description: "Gauge your attention and focus levels with this ADHD assessment, and receive tailored strategies to improve clarity, concentration, and impulse control.",
+      title: "Attention and Focus (ADHD) Clarity Check",
+      description: "[Based on ASRS-v1.1]. Gauge your attention and focus levels with this ADHD assessment, and receive tailored strategies to improve clarity, concentration, and impulse control.",
       path: "/adhd_clarity_check",
       icon: FaClipboardCheck,
       buttonText: "Start Checking"

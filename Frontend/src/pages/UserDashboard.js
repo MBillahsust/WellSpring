@@ -195,7 +195,7 @@ const UserDashboard = () => {
           moodArray.map(entry => {
             const d = new Date(entry.time);
             return {
-              id: entry.id,
+              id: entry._id,
               mood: entry.mood,
               notes: entry.notes,
               date: d.toLocaleDateString(),
@@ -219,7 +219,7 @@ const UserDashboard = () => {
           arr.map(entry => {
             const d = new Date(entry.time);
             return {
-              id: entry.id,
+              id: entry._id,
               activity: entry.activity,
               notes: entry.notes,
               date: d.toLocaleDateString(),
@@ -267,7 +267,7 @@ const UserDashboard = () => {
           }
 
           return {
-            id: a.id,
+            id: a._id,
             type: a.assessmentName || a.title || a.type || a.assessmentType || 'Assessment',
             icon,
             date: dateStr,
@@ -349,7 +349,7 @@ const UserDashboard = () => {
           dateStr = a.date;
         }
         return {
-          id: a.id,
+          id: a._id,
           type: a.assessmentName || a.title || a.type || a.assessmentType || 'Assessment',
           icon,
           date: dateStr,
