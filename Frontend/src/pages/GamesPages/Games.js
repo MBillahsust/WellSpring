@@ -1,6 +1,6 @@
 import React, { useContext } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { FaGamepad, FaDove, FaPuzzlePiece, FaBrain, FaRegListAlt } from 'react-icons/fa';
+import { FaGamepad, FaDove, FaPuzzlePiece, FaBrain, FaRegListAlt, FaCogs } from 'react-icons/fa';
 import { UserContext } from '../../UserContext';
 
 const Games = () => {
@@ -31,6 +31,14 @@ const Games = () => {
       icon: <FaRegListAlt className="text-4xl" />,
       path: '/games/word-recall',
       color: 'bg-yellow-500'
+    },
+    {
+      id: 'sequence-simon',
+      title: 'Sequence Simon',
+      description: 'Watch the light sequence, then repeat it button by button. How many rounds can you go?',
+      icon: <FaCogs className="text-4xl" />,
+      path: '/games/sequence-simon',
+      color: 'bg-indigo-500'
     },
     {
       id: 'coming-soon-2',
