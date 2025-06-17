@@ -32,7 +32,7 @@ export default function MentalHealthAssessments() {
     },
     {
       title: "Stress Evaluation",
-      description: "Assess your stress levels and learn personalized strategies to manage stress more effectively and efficiently.",
+      description: "[Based on PSS-10]. Assess your stress levels and learn personalized strategies to manage stress more effectively and efficiently.",
       path: "/stress-evaluation",
       icon: FaBalanceScale,
       buttonText: "Start Evaluation"
