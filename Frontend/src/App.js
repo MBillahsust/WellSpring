@@ -77,8 +77,15 @@ function App() {
 
   const location = useLocation();
 
-  const hideFooterRoutes = ['/counsellor-bot'];
-  const shouldHideFooter = hideFooterRoutes.includes(location.pathname);
+  const hideFooterRoutes = [
+    '/counsellor-bot',
+    '/TechSurvey',
+    '/TechSurvey2',
+    '/TechSurvey3',
+    '/TechSurvey4',
+    '/TechSurvey5'
+  ];
+   const shouldHideFooter = hideFooterRoutes.includes(location.pathname);
 
   return (
     <div className="app-container">

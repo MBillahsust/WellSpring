@@ -1,9 +1,10 @@
+// src/pages/TechnologyUsageSurvey2.js
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../../Allcss/AssessmentPages/Assessment.css';
 
 const lifestyleScale = {
-  title: "Lifestyle & Psychosocial Scale",
+  title: "Part 2 of 5",
   options: [
     { value: "1", label: "Never" },
     { value: "2", label: "Rarely" },
@@ -12,16 +13,16 @@ const lifestyleScale = {
     { value: "5", label: "Always" }
   ],
   questions: [
-    "How often do you engage in physical exercise or outdoor activities?",
-    "How frequently do you maintain a regular sleep schedule?",
-    "How often do you feel socially connected with others in person?",
-    "How frequently do you practice stress-management techniques?",
-    "How often do you maintain a balanced diet?",
-    "How frequently do you take breaks from digital devices?",
-    "How often do you engage in face-to-face social interactions?",
-    "How frequently do you participate in hobbies not involving screens?",
-    "How often do you feel satisfied with your work-life balance?",
-    "How frequently do you spend quality time with family/friends without devices?"
+    "I get at least 7–8 hours of sleep on most nights. *(Reverse Scored)*",             
+    "I have trouble sleeping when I use screens before bedtime.",                       
+    "I engage in regular physical activity, such as exercise or sports. *(Reverse Scored)*",    
+    "I believe my diet and nutrition impact my mental well-being.",                     
+    "I frequently experience high levels of stress due to academic, work, or personal pressures.", 
+    "I have experienced symptoms of anxiety or depression in the past year.",            
+    "Social media has affected my self-esteem or body image.",                           
+    "I often compare myself to others based on their social media posts.",               
+    "Over the past month, I have felt emotionally stable and in good mental health. *(Reverse Scored)*", 
+    "I feel that social media or digital interactions have negatively affected my real-life relationships."
   ]
 };
 
@@ -29,14 +30,13 @@ const TechnologyUsageSurvey2 = () => {
   const navigate = useNavigate();
   const [responses, setResponses] = useState({});
   const [showConfirmation, setShowConfirmation] = useState(false);
+
   const totalQuestions = lifestyleScale.questions.length;
   const answeredQuestions = Object.keys(responses).length;
   const progress = (answeredQuestions / totalQuestions) * 100;
 
   const handleSelect = (questionIndex, value) => {
-    const updated = { ...responses };
-    updated[questionIndex] = value;
-    setResponses(updated);
+    setResponses(prev => ({ ...prev, [questionIndex]: value }));
   };
 
   const handleSubmitClick = () => {
@@ -44,33 +44,41 @@ const TechnologyUsageSurvey2 = () => {
   };
 
   const handleConfirm = () => {
-    // Store responses
-    localStorage.setItem('techSurvey2Responses', JSON.stringify(responses));
-    
-    // Combine responses
-    const survey1Responses = JSON.parse(localStorage.getItem('techSurvey1Responses') || '{}');
-    
-    const allResponses = {
-      techUsage: survey1Responses,
-      lifestyle: responses
+    // retrieve Part 1 payload (Q1–Q15)
+    const survey1 = JSON.parse(localStorage.getItem('techSurvey1Responses') || '{}');
+
+    // build Part 2 payload mapping to Q16…Q25
+    const survey2 = {};
+    Object.entries(responses).forEach(([idx, val]) => {
+      const qNum = Number(idx) + 16;        // idx 0→Q16, … idx 9→Q25
+      survey2[`Q${qNum}`] = Number(val);
+    });
+
+    // combine with email + part 1
+    const complete = {
+      email: localStorage.getItem('userEmail'),
+      ...survey1,
+      ...survey2
     };
 
-    // Store combined responses
-    localStorage.setItem('completeResearchResponses', JSON.stringify(allResponses));
-    
-    // Navigate to next survey
+    // save full object for backend sync
+    localStorage.setItem('completeResearchResponses', JSON.stringify(complete));
+
+    // navigate to Part 3
     navigate('/TechSurvey3');
   };
 
   return (
     <div className="assessment-container">
       <div className="assessment-card">
-        <div className="assessment-header adhd" style={{ background: 'linear-gradient(135deg, #0284c7, #0ea5e9)' }}>
-          <h2 className="assessment-title">Technology Usage Survey</h2>
+        <div
+          className="assessment-header adhd"
+          style={{ background: 'linear-gradient(135deg,rgb(131, 39, 236),rgb(13, 125, 237))' }}
+        >
+          <h2 className="assessment-title">Lifestyle &amp; Psychosocial Factors</h2>
           <p className="assessment-subtitle">
             Question {answeredQuestions} of {totalQuestions}
           </p>
-          
           {/* Progress Bar */}
           <div className="mt-4 w-full px-4">
             <div className="w-full h-1.5 bg-gray-200/30 rounded-full overflow-hidden">
@@ -84,18 +92,44 @@ const TechnologyUsageSurvey2 = () => {
 
         <div className="assessment-content">
           <div className="scale-section">
-            <h3 className="scale-title" style={{ fontSize: '1.5rem', fontWeight: '700', marginBottom: '1.5rem' }}>
+            <h3
+              className="scale-title"
+              style={{
+                fontSize: '1.5rem',
+                fontWeight: '700',
+                marginBottom: '1.5rem'
+              }}
+            >
               {lifestyleScale.title}
               <p className="text-sm text-gray-600 mt-2 font-normal">
                 Please rate how often you experience each of the following behaviors
               </p>
             </h3>
+
             {lifestyleScale.questions.map((question, qIdx) => (
-              <div key={qIdx} className="question-block" style={{ marginBottom: '2rem' }}>
-                <p className="question-text" style={{ fontSize: '1.125rem', fontWeight: '500', marginBottom: '1rem' }}>{question}</p>
+              <div
+                key={qIdx}
+                className="question-block"
+                style={{ marginBottom: '2rem' }}
+              >
+                <p
+                  className="question-text"
+                  style={{
+                    fontSize: '1.125rem',
+                    fontWeight: '500',
+                    marginBottom: '1rem'
+                  }}
+                >
+                  {question}
+                </p>
                 <div className="options-grid">
-                  {lifestyleScale.options.map((option) => (
-                    <label key={option.value} className={`option-item ${responses[qIdx] === option.value ? 'selected' : ''}`}>
+                  {lifestyleScale.options.map(option => (
+                    <label
+                      key={option.value}
+                      className={`option-item ${
+                        responses[qIdx] === option.value ? 'selected' : ''
+                      }`}
+                    >
                       <input
                         type="radio"
                         name={`q-${qIdx}`}
@@ -129,39 +163,43 @@ const TechnologyUsageSurvey2 = () => {
         </div>
       </div>
 
-      {/* Professional Confirmation Modal */}
+      {/* Confirmation Modal */}
       {showConfirmation && (
         <div className="fixed inset-0 flex items-center justify-center z-50">
-          {/* Modal Backdrop with better opacity */}
           <div className="absolute inset-0 bg-gray-900 bg-opacity-75 backdrop-blur-sm"></div>
-          
-          {/* Modal Content */}
           <div className="relative bg-white rounded-lg shadow-xl max-w-md w-full mx-4 border border-gray-200">
-            {/* Modal Header */}
             <div className="px-6 py-4 border-b border-gray-200">
               <h3 className="text-xl font-semibold text-gray-900">
                 Confirm Your Responses
               </h3>
             </div>
-
-            {/* Modal Body */}
             <div className="px-6 py-4">
               <div className="flex items-center mb-4">
                 <div className="flex-shrink-0 w-12 h-12 bg-blue-50 rounded-full flex items-center justify-center">
-                  <svg className="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  <svg
+                    className="w-6 h-6 text-blue-600"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="2"
+                      d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                    />
                   </svg>
                 </div>
                 <div className="ml-4">
-                  <p className="text-gray-800 font-medium mb-1">Ready to proceed?</p>
+                  <p className="text-gray-800 font-medium mb-1">
+                    Ready to proceed?
+                  </p>
                   <p className="text-gray-600 text-sm">
-                    Please ensure you have reviewed all your answers carefully before proceeding to the next survey.
+                    Please ensure you have reviewed all your answers before moving on.
                   </p>
                 </div>
               </div>
             </div>
-
-            {/* Modal Footer */}
             <div className="px-6 py-4 bg-gray-50 rounded-b-lg flex justify-end space-x-3">
               <button
                 onClick={() => setShowConfirmation(false)}
@@ -183,4 +221,4 @@ const TechnologyUsageSurvey2 = () => {
   );
 };
 
-export default TechnologyUsageSurvey2; 
+export default TechnologyUsageSurvey2;
