@@ -149,7 +149,7 @@ export default function ActivityLogging() {
           <textarea
             value={notes}
             onChange={e => setNotes(e.target.value)}
-            placeholder="Activity Notes"
+            placeholder="Activity Notes (You must add both Title and Notes)"
             className="w-full p-2 sm:p-3 rounded-lg border border-gray-300 text-base min-h-[70px] resize-y focus:ring-2 focus:ring-indigo-400 transition mb-4"
           />
           <button

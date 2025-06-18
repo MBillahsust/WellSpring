@@ -870,7 +870,8 @@ const UserDashboard = () => {
         </div>
 
 
-        {/* Daily Routine Section */}
+
+        {/* Daily Routine Section
         <div className="mt-8">
           <div className="flex justify-between items-center mb-6">
             <h2 className="text-2xl font-bold text-gray-800">Daily Routine</h2>
@@ -937,7 +938,13 @@ const UserDashboard = () => {
               </div>
             </div>
           </div>
-        </div>
+        </div> */}
+
+
+
+
+
+
 
 
 

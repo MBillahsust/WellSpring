@@ -118,6 +118,9 @@ export default function MoodTracking() {
       </p>
 
       <div className="flex flex-col md:flex-row gap-8 w-full max-w-5xl">
+       
+       
+       
         <div className="bg-white p-5 sm:p-6 md:p-8 rounded-2xl shadow-xl border border-indigo-100 w-full max-w-sm">
           <h3 className="text-xl sm:text-2xl font-semibold mb-3 text-indigo-600 text-center">
             How are you feeling now?
@@ -157,7 +160,7 @@ export default function MoodTracking() {
           <textarea
             value={notes}
             onChange={e => setNotes(e.target.value)}
-            placeholder="Add notes about your mood..."
+            placeholder="Add notes about your mood (required)..."
             className="w-full p-2 sm:p-3 rounded-lg border border-gray-300 text-base min-h-[70px] resize-y focus:ring-2 focus:ring-indigo-400 transition mb-4"
           />
           <button
@@ -167,6 +170,9 @@ export default function MoodTracking() {
             Log Mood
           </button>
         </div>
+
+
+
 
         <div className="bg-white p-5 sm:p-8 rounded-2xl shadow-xl border border-indigo-100 w-full">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-4 gap-2">
