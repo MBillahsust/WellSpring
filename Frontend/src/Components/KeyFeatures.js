@@ -1,6 +1,8 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { FaSmile, FaRunning, FaHandsHelping } from 'react-icons/fa';
+import { FaSmile, FaRunning} from 'react-icons/fa';
+import { RiGameLine } from "react-icons/ri";
+
 import { motion } from 'framer-motion';
 
 export default function KeyFeatures() {
@@ -81,16 +83,16 @@ export default function KeyFeatures() {
             className="group"
           >
             <Link 
-              to="/personalized-guidance"
+              to="/games"
               className="block bg-white rounded-2xl p-8 shadow-[0_2px_12px_rgba(0,157,255,0.08)] hover:shadow-[0_4px_16px_rgba(0,157,255,0.16)] transition-all duration-300 hover:-translate-y-1"
             >
               <div className="text-center">
                 <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gradient-to-r from-[#00a0ff] to-[#0066ff] text-white mb-6 transform group-hover:scale-110 transition-transform duration-300">
-                  <FaHandsHelping className="w-8 h-8" />
+                  <RiGameLine  className="w-8 h-8" />
                 </div>
-                <h3 className="text-xl font-semibold text-[#1a1a1a] mb-4">Personalized Guidance</h3>
+                <h3 className="text-xl font-semibold text-[#1a1a1a] mb-4">Mental Health Games</h3>
                 <p className="text-[#4a5568] leading-relaxed">
-                  Receive tailored advice and recommendations based on your unique situation and needs.
+                  Boost your brain and mood through play. Gameplay data enables personalized support.
                 </p>
               </div>
             </Link>
