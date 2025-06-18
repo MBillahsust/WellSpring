@@ -44,7 +44,7 @@ const ActivityEntry = mongoose.model('ActivityEntry', activityEntrySchema);
 
 // ResearchQuestionnaire Schema
 const researchSchema = new mongoose.Schema({
-  email: { type: String, index: true },
+  email: { type: String },
   createdAt: { type: Date, default: Date.now },
   updatedAt: { type: Date, default: Date.now },
   Q1: Number, Q2: Number, Q3: Number, Q4: Number, Q5: Number,

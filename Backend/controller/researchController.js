@@ -20,11 +20,8 @@ const submitResearch = async (req, res) => {
       }
     }
 
-    // Check if a questionnaire with the same email already exists
-    const existing = await ResearchQuestionnaire.findOne({ email });
-    if (existing) {
-      return res.status(400).json({ error: "A questionnaire with this email already exists" });
-    }
+    
+    
 
     // Create new research questionnaire entry
     const questionnaire = new ResearchQuestionnaire({
