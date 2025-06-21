@@ -67,7 +67,7 @@ const TechnologyUsageSurvey5 = () => {
     console.log(payload);
 
     try {
-      await axios.post('http://localhost:5004/research/research', payload);
+      await axios.post(`${process.env.REACT_APP_BACKEND_URL}/research/research`, payload);
       navigate('/research-development');
     } catch (err) {
       console.error("Failed submitting survey:", err);
