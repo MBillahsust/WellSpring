@@ -196,9 +196,9 @@ JWT_SECRET=
 **Frontend**
 
 ```
-REACT_APP_BACKEND_URL=http://localhost:5004
+REACT_APP_BACKEND_URL=
 
-REACT_APP_GROQ_API_KEY="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"
+REACT_APP_GROQ_API_KEY=
 ```
 
 ## 🖥️ Frontend Setup
