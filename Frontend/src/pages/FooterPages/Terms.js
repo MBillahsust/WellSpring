@@ -44,7 +44,7 @@ export default function Terms() {
             2. Use of Service
           </h2>
           <ul style={{ paddingLeft: '1.2em' }}>
-            <li>You must be at least 13 years old to use Wellspring.</li>
+            <li>You must be at least 18 years old to use Wellspring.</li>
             <li>Do not share confidential personal data about others.</li>
             <li>Use the AI counselor for personal well-being—do not post disallowed content.</li>
           </ul>

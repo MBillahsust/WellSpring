@@ -177,6 +177,30 @@ git clone <repo link>
 cd WellSpring
 ```
 
+## Setup ENV.
+
+**Backend**
+
+```
+PORT=5004
+
+MONGO_DB=""
+
+GROQ_API_KEY=""
+
+GROQ_API_KEY_TWO=""
+
+JWT_SECRET=
+```
+
+**Frontend**
+
+```
+REACT_APP_BACKEND_URL=http://localhost:5004
+
+REACT_APP_GROQ_API_KEY="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"
+```
+
 ## 🖥️ Frontend Setup
 
 ```bash

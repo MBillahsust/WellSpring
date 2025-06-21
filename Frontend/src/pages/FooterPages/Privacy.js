@@ -46,13 +46,13 @@ export default function Privacy() {
           </h2>
           <ul style={{ paddingLeft: '1.2em' }}>
             <li>
-              <strong>Profile Data:</strong> name and email (only if you provide it via Contact form or sign-up).
+              <strong>Profile Data:</strong> name and email (only if you provide it via Contact form or sign-up. If you don't want to use real email or name, you can use dummy profile data to open accounts. Our sole goal is to offer you a plartform that actually helps, nothing else.).
             </li>
             <li>
               <strong>Assessment & Mood Data:</strong> responses to self-assessments, mood logs, and activity entries.
             </li>
             <li>
-              <strong>Chat History:</strong> messages exchanged with the AI counselor.
+              <strong>Chat History:</strong> We don't save chat History. After your conversations with the AI counselor, everything gets automatically deleted.
             </li>
           </ul>
         </section>
@@ -64,7 +64,7 @@ export default function Privacy() {
           <ul style={{ paddingLeft: '1.2em' }}>
             <li>To power personalized AI guidance based on your inputs.</li>
             <li>To improve and debug our service.</li>
-            <li>To send optional reminders or notifications if you opt in.</li>
+            <li>To improve our research goals (only if you provide).</li>
           </ul>
         </section>
 
@@ -97,8 +97,7 @@ export default function Privacy() {
           </h2>
           <p>
             You can request export or deletion of your personal data at any time
-            by contacting us. You may also opt out of notifications or delete
-            your account via your profile settings.
+            by contacting us.
           </p>
         </section>
 
