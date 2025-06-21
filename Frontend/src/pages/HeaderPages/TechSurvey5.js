@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import '../../Allcss/AssessmentPages/Assessment.css';
+import { toast } from 'react-toastify';
 
 const impulsivityScale = {
   title: "Part 5 of 5",
@@ -68,6 +69,7 @@ const TechnologyUsageSurvey5 = () => {
 
     try {
       await axios.post(`${process.env.REACT_APP_BACKEND_URL}/research/research`, payload);
+      toast.success('Submission Successful!');
       navigate('/research-development');
     } catch (err) {
       console.error("Failed submitting survey:", err);
