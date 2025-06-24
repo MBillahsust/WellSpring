@@ -48,7 +48,7 @@ export default function SignUp() {
         age: Number(formData.age),
         weight: parseFloat(formData.weight)
       });
-      console.log('Signup response:', res.data);
+      console.log('Signup response: ok.');
       setSuccess('Account created successfully! Redirecting to login...');
       toast.success('Signup successful!');
       setTimeout(() => navigate('/login'), 1500);
