@@ -102,7 +102,7 @@ export default function Counsellor() {
         navigate(`/counsellors?${params.toString()}`, { replace: true });
       }
     } catch (err) {
-      const msg = 'Failed to recommend doctors. Please provide information about your mood, activities, or assessments to receive a recommendation.';
+      const msg = 'Failed to recommend doctors. Please provide entries about your mood, activities, or assessments to receive a recommendation.';
       toast.error(msg, { autoClose: 8000 });
       if (err.response?.status === 401) {
         localStorage.removeItem('token');
