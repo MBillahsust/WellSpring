@@ -4,16 +4,16 @@ import { FaEnvelope, FaLinkedin, FaGithub } from 'react-icons/fa';
 
 const teamMembers = [
   {
-    name: "Mustakim Billah",
-    email: "mbillah.cse.sust20@gmail.com",
-    linkedin: "https://www.linkedin.com/in/mustakim-billah-nafees/",
-    github: "https://github.com/MBillahsust"
-  },
-  {
     name: "Arfatul Islam Asif",
     email: "Contact_me_via_linkedin",
     linkedin: "https://www.linkedin.com/in/arfatul-islam-asif-169116279/",
     github: "https://github.com/ArfatulAsif"
+  },
+  {
+    name: "Mustakim Billah",
+    email: "mbillah.cse.sust20@gmail.com",
+    linkedin: "https://www.linkedin.com/in/mustakim-billah-nafees/",
+    github: "https://github.com/MBillahsust"
   },
   {
     name: "Sanjoy Das",
