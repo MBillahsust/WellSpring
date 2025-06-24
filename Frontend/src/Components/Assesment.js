@@ -85,7 +85,7 @@ export default function MentalHealthAssessments() {
           className="text-center mb-16"
         >
           <motion.h2 
-            className="text-[2.5rem] font-bold text-[#1a1a1a] mb-5 relative inline-block leading-tight"
+            className="text-[3rem] font-bold text-[#1a1a1a] mb-5 relative inline-block leading-tight"
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
@@ -122,7 +122,7 @@ export default function MentalHealthAssessments() {
                     <assessment.icon className="w-8 h-8" />
                   </motion.div>
                   <motion.h3 
-                    className="text-xl font-semibold text-[#1a1a1a] mb-4"
+                    className="text-[1.5rem] font-semibold text-[#1a1a1a] mb-4"
                     initial={{ opacity: 0 }}
                     whileInView={{ opacity: 1 }}
                     viewport={{ once: true }}
@@ -131,7 +131,7 @@ export default function MentalHealthAssessments() {
                     {assessment.title}
                   </motion.h3>
                   <motion.p 
-                    className="text-[#4a5568] leading-relaxed mb-6 flex-grow"
+                    className="text-[1.125rem] text-[#4a5568] leading-relaxed mb-6 flex-grow"
                     initial={{ opacity: 0 }}
                     whileInView={{ opacity: 1 }}
                     viewport={{ once: true }}
@@ -143,7 +143,7 @@ export default function MentalHealthAssessments() {
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
                     onClick={() => navigate(assessment.path)}
-                    className="w-fit mx-auto bg-gradient-to-r from-[#00a0ff] to-[#0066ff] text-white px-6 py-2.5 rounded-full hover:shadow-lg transition-all duration-300 font-medium text-sm"
+                    className="w-fit mx-auto bg-gradient-to-r from-[#00a0ff] to-[#0066ff] text-white px-6 py-2.5 rounded-full hover:shadow-lg transition-all duration-300 font-medium text-[1.125rem]"
                   >
                     {assessment.buttonText}
                   </motion.button>

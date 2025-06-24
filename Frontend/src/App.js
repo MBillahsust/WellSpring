@@ -118,7 +118,7 @@ function App() {
             <Route path='/conditions' element={<Conditions />} />
             <Route path='/resources' element={<Resources />} />
             <Route path='/contact' element={<Contact />} />
-            <Route path='/about' element={<About />} />
+            <Route path='/userguide' element={<About />} />
             <Route path='/hotlines' element={<HotlinePage />} />
             <Route path='/research-development' element={<ResearchDevelopment />} />
             <Route path="/ScaleSurvey" element={<ScaleSurvey />} />

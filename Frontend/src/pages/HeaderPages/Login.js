@@ -108,7 +108,7 @@ export default function Login() {
 
             <div className="mt-6 flex flex-col sm:flex-row justify-between items-center gap-4 text-sm">
               <Link 
-                to="/forgot-password" 
+                to="/" 
                 className="text-sky-600 hover:text-sky-700 font-medium transition-colors duration-200"
               >
                 Welcome back!

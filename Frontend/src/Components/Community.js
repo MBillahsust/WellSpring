@@ -6,8 +6,6 @@ import { FaUsers, FaRobot } from 'react-icons/fa';
 export default function CommunityFeatures() {
   const navigate = useNavigate();
 
-
-  
   const features = [
     {
       title: "Connect with Experts",
@@ -35,7 +33,7 @@ export default function CommunityFeatures() {
           className="text-center mb-16"
         >
           <motion.h2 
-            className="text-[2.5rem] font-bold text-[#1a1a1a] mb-5 relative inline-block leading-tight"
+            className="text-[3rem] font-bold text-[#1a1a1a] mb-5 relative inline-block leading-tight"
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.2 }}
@@ -64,15 +62,15 @@ export default function CommunityFeatures() {
                   <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gradient-to-r from-[#00a0ff] to-[#0066ff] text-white mb-6 mx-auto transform group-hover:scale-110 transition-transform duration-300">
                     <feature.icon className="w-8 h-8" />
                   </div>
-                  <h3 className="text-xl font-semibold text-[#1a1a1a] mb-4">{feature.title}</h3>
-                  <p className="text-[#4a5568] leading-relaxed mb-6 flex-grow">
+                  <h3 className="text-[1.5rem] font-semibold text-[#1a1a1a] mb-4">{feature.title}</h3>
+                  <p className="text-[1.125rem] text-[#4a5568] leading-relaxed mb-6 flex-grow">
                     {feature.description}
                   </p>
                   <motion.button
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
                     onClick={() => navigate(feature.path)}
-                    className="w-fit mx-auto bg-gradient-to-r from-[#00a0ff] to-[#0066ff] text-white px-6 py-2.5 rounded-full hover:shadow-lg transition-all duration-300 font-medium text-sm"
+                    className="w-fit mx-auto bg-gradient-to-r from-[#00a0ff] to-[#0066ff] text-white px-6 py-2.5 rounded-full hover:shadow-lg transition-all duration-300 font-medium text-[1.125rem]"
                   >
                     {feature.buttonText}
                   </motion.button>

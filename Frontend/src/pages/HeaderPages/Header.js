@@ -8,9 +8,7 @@ import { toast } from 'react-toastify';
 import { Bars3Icon, BellIcon, XMarkIcon } from '@heroicons/react/24/outline';
 
 import { FaTachometerAlt } from 'react-icons/fa'; // Import the dashboard icon
-
 import { FaSignInAlt, FaUserPlus } from 'react-icons/fa'; // Import login and signup icons
-
 
 const navigation = [
   { name: 'AI Counsellor', href: '/ai-counselor' },
@@ -21,7 +19,6 @@ const navigation = [
   { name: 'Learn Conditions', href: '/conditions' },
   { name: 'Resources', href: '/resources' },
   { name: 'Community', href: '/community' },
-  // { name: 'About', href: '/about' },
 ];
 
 function classNames(...classes) {
@@ -53,7 +50,6 @@ export default function Header() {
     navigate('/');
   };
 
-  
   return (
     <Disclosure as="nav" className="bg-[#09090b] text-white">
       <div className="mx-auto max-w-7xl px-2 sm:px-6 lg:px-8">
@@ -70,9 +66,9 @@ export default function Header() {
           {/* Logo and Desktop Navigation */}
           <div className="flex flex-1 items-center justify-center sm:items-stretch sm:justify-start">
             <div className="flex shrink-0 items-center">
-                  <Link to="/" className="text-xl font-bold">
-                       WellSpring
-                  </Link>
+              <Link to="/" className="text-xl font-bold">
+                WellSpring
+              </Link>
             </div>
             <div className="hidden sm:ml-6 sm:block">
               <div className="flex space-x-4">
@@ -81,7 +77,7 @@ export default function Header() {
                     key={item.name}
                     to={item.href}
                     className={classNames(
-                      'text-xs font-medium rounded-md px-2 py-2 hover:bg-[#6d8ded] transition-colors',
+                      'text-sm font-medium rounded-md px-2 py-2 hover:bg-[#6d8ded] transition-colors',
                     )}
                   >
                     {item.name}
@@ -122,7 +118,6 @@ export default function Header() {
                         Dashboard
                       </Link>
                     </MenuItem>
-                    
                     <MenuItem>
                       <div onClick={handleLogout} className="block px-4 py-2 text-white cursor-pointer">
                         Logout

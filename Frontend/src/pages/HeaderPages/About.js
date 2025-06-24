@@ -1,7 +1,5 @@
 import React from 'react';
-import developer1Image from './developer1.jpg';
-import developer2Image from './developer2.jpg';
-import { FaGithub, FaLinkedin } from 'react-icons/fa';
+
 
 const AboutPage = () => {
   const pageStyle = {
@@ -48,55 +46,7 @@ const AboutPage = () => {
     color: '#34495e',
   };
 
-  const developerSectionHeadingStyle = {
-    fontSize: '28px',
-    fontWeight: '600',
-    textAlign: 'center',
-    color: '#2c3e50',
-    marginBottom: '20px',
-  };
 
-  const developerSectionParagraphStyle = {
-    ...paragraphStyle,
-    textAlign: 'center',
-    marginBottom: '30px',
-  };
-
-  const developerCardStyle = {
-    textAlign: 'center',
-  };
-
-  const developerImageStyle = {
-    width: '250px',
-    height: '250px',
-    borderRadius: '50%',
-    objectFit: 'cover',
-    marginBottom: '15px',
-  };
-
-  const developerNameStyle = {
-    fontSize: '22px',
-    fontWeight: '500',
-    color: '#2c3e50',
-    marginBottom: '10px',
-  };
-
-  const developerDetailsStyle = {
-    fontSize: '16px',
-    lineHeight: '1.4',
-    color: '#34495e',
-  };
-
-  const socialLinksStyle = {
-    display: 'flex',
-    justifyContent: 'center',
-    marginTop: '10px',
-  };
-
-  const socialLinkStyle = {
-    marginRight: '15px',
-    color: '#34495e',
-  };
 
   return (
     <div style={pageStyle}>
@@ -117,54 +67,7 @@ const AboutPage = () => {
         </p>
       </section>
 
-      <section style={sectionStyle}>
-        <h2 style={developerSectionHeadingStyle}>The Minds Behind WellSpring</h2>
-        <p style={developerSectionParagraphStyle}>
-          Passionate individuals dedicated to making a difference in mental health.
-        </p>
-
-        <div style={{ display: 'flex', justifyContent: 'space-around' }}>
-          <div style={developerCardStyle}>
-            <img src={developer1Image} alt="Developer 1" style={developerImageStyle} />
-            <h3 style={developerNameStyle}>Mustakim Billah</h3>
-            <p style={developerDetailsStyle}>
-              Lead Developer <br />
-              <strong>mbillah.cse.sust20@gmail.com</strong>
-              <br />
-              <strong> CSE,SUST</strong>
-            </p>
-
-            <div style={socialLinksStyle}>
-              <a href="https://github.com/MBillahsust" target="_blank" rel="noopener noreferrer" style={socialLinkStyle}>
-                <FaGithub size={24} /> 
-              </a>
-              <a href="https://www.linkedin.com/in/mustakim-billah-nafees/" target="_blank" rel="noopener noreferrer" style={socialLinkStyle}>
-                <FaLinkedin size={24} /> 
-              </a>
-            </div>
-          </div>
-
-          <div style={developerCardStyle}>
-            <img src={developer2Image} alt="Developer 2" style={developerImageStyle} />
-            <h3 style={developerNameStyle}>Sanjoy Das</h3>
-            <p style={developerDetailsStyle}>
-              Lead Developer 
-              <br />
-              <strong>sanjoy.cse.sust20@gmail.com</strong> <br />
-              <strong>CSE,SUST </strong>
-            </p>
-
-            <div style={socialLinksStyle}>
-              <a href="https://github.com/sanjoydasjoy" target="_blank" rel="noopener noreferrer" style={socialLinkStyle}>
-                <FaGithub size={24} /> 
-              </a>
-              <a href="https://www.linkedin.com/in/sanjoy-das-ba774a22a/" target="_blank" rel="noopener noreferrer" style={socialLinkStyle}>
-                <FaLinkedin size={24} /> 
-              </a>
-            </div>
-          </div>
-        </div>
-      </section>
+      
     </div>
   );
 };
