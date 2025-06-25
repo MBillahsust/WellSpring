@@ -182,23 +182,13 @@ cd WellSpring
 **Backend**
 
 ```
-PORT=5004
-
-MONGO_DB=""
-
-GROQ_API_KEY=""
-
-GROQ_API_KEY_TWO=""
-
-JWT_SECRET=
+set port, database, LLM and AI apis and jwt pass..
 ```
 
 **Frontend**
 
 ```
-REACT_APP_BACKEND_URL=
-
-REACT_APP_GROQ_API_KEY=
+set backend url and LLM api
 ```
 
 ## 🖥️ Frontend Setup
