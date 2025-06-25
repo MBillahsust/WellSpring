@@ -2,33 +2,42 @@ const { ResearchQuestionnaire } = require("../model/models");
 
 const submitResearch = async (req, res) => {
   try {
-    const { email, ...answers } = req.body;
+    // Destructure expected fields
+    const { email, gender, age, ...answers } = req.body;
 
-    // Validate email format
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
-      return res.status(400).json({ error: "Invalid email format" });
+    // Validate required gender and age
+    if (typeof gender !== "string" || gender.trim() === "") {
+      return res
+        .status(400)
+        .json({ error: "Gender is required and must be a non-empty string" });
+    }
+    if (typeof age !== "string" || age.trim() === "") {
+      return res
+        .status(400)
+        .json({ error: "Age is required and must be a non-empty string" });
     }
 
-    // Validate that all 55 questions are provided and are numbers
+    // Validate that all 55 questions are present and are numbers
     for (let i = 1; i <= 55; i++) {
-      const questionKey = `Q${i}`;
-      if (!(questionKey in answers) || typeof answers[questionKey] !== "number") {
+      const key = `Q${i}`;
+      if (!(key in answers) || typeof answers[key] !== "number") {
         return res
           .status(400)
           .json({ error: `Question ${i} is required and must be a number` });
       }
     }
 
-    
-    
-
-    // Create new research questionnaire entry
-    const questionnaire = new ResearchQuestionnaire({
-      email,
+    // Build the document payload
+    const payload = {
+      gender,
+      age,
       ...answers,
-    });
+      // only include email if provided
+      ...(email != null && { email }),
+    };
 
+    // Save to database
+    const questionnaire = new ResearchQuestionnaire(payload);
     await questionnaire.save();
 
     res.status(201).json({

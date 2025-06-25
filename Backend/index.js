@@ -39,7 +39,7 @@ connectDB()
 
       
 
-      console.log(`Server is running on port ${PORT}`);
+      console.log(`Server is running.`);
     });
   })
   .catch((err) => {

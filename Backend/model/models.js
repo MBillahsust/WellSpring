@@ -42,13 +42,17 @@ const activityEntrySchema = new mongoose.Schema({
 });
 const ActivityEntry = mongoose.model('ActivityEntry', activityEntrySchema);
 
+
 // ResearchQuestionnaire Schema
 const researchSchema = new mongoose.Schema({
-  email: { type: String },
-  createdAt: { type: Date, default: Date.now },
-  updatedAt: { type: Date, default: Date.now },
-  Q1: Number, Q2: Number, Q3: Number, Q4: Number, Q5: Number,
-  Q6: Number, Q7: Number, Q8: Number, Q9: Number, Q10: Number,
+  email:    { type: String, required: false },
+  gender:   { type: String },
+  age:      { type: String },
+  createdAt:{ type: Date,   default: Date.now },
+  updatedAt:{ type: Date,   default: Date.now },
+
+  Q1: Number,  Q2: Number,  Q3: Number,  Q4: Number,  Q5: Number,
+  Q6: Number,  Q7: Number,  Q8: Number,  Q9: Number,  Q10: Number,
   Q11: Number, Q12: Number, Q13: Number, Q14: Number, Q15: Number,
   Q16: Number, Q17: Number, Q18: Number, Q19: Number, Q20: Number,
   Q21: Number, Q22: Number, Q23: Number, Q24: Number, Q25: Number,
@@ -60,6 +64,7 @@ const researchSchema = new mongoose.Schema({
   Q51: Number, Q52: Number, Q53: Number, Q54: Number, Q55: Number
 });
 const ResearchQuestionnaire = mongoose.model('ResearchQuestionnaire', researchSchema);
+
 
 // GameScore Model
 const GameScoreSchema = new mongoose.Schema({

@@ -52,6 +52,8 @@ const TechnologyUsageSurvey = () => {
     // Build payload: email + Q1…Q15
     const payload = {
       email: localStorage.getItem('techUsageEmail'),
+      gender : localStorage.getItem('techUsageGender'),
+      age : localStorage.getItem('techUsageAge'),
       ...Object.fromEntries(
         Object.entries(responses).map(
           ([idx, val]) => [`Q${Number(idx) + 1}`, Number(val)]

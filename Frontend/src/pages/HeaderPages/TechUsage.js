@@ -1,4 +1,3 @@
-// src/pages/TechUsage.js
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { FaLaptop, FaLock, FaChartLine } from 'react-icons/fa';
@@ -7,7 +6,9 @@ import { useNavigate } from 'react-router-dom';
 const TechUsage = () => {
   const navigate = useNavigate();
   const [email, setEmail] = useState('');
-  const [isValid, setIsValid] = useState(false);
+  const [gender, setGender] = useState('');
+  const [age, setAge] = useState('');
+  const [isValid, setIsValid] = useState(true); // email optional
 
   // simple regex to match Gmail addresses
   const gmailRegex = /^[a-zA-Z0-9._%+-]+@gmail\.com$/;
@@ -15,15 +16,30 @@ const TechUsage = () => {
   const handleEmailChange = (e) => {
     const val = e.target.value;
     setEmail(val);
-    setIsValid(gmailRegex.test(val));
+    setIsValid(val === '' || gmailRegex.test(val));
+  };
+
+  const handleGenderChange = (e) => {
+    setGender(e.target.value);
+  };
+
+  const handleAgeChange = (e) => {
+    setAge(e.target.value);
   };
 
   const handleStartSurvey = () => {
-    if (!isValid) return;
-    // store email locally (later to be synced with backend)
-    localStorage.setItem('techUsageEmail', email);
+    if (!isValid || !gender || !age) return;
+
+    // prepare values
+    const emailToStore = email || 'not given';
+    localStorage.setItem('techUsageEmail', emailToStore);
+    localStorage.setItem('techUsageGender', gender);
+    localStorage.setItem('techUsageAge', age);
+
     navigate('/TechSurvey');
   };
+
+  const canSubmit = isValid && gender && age;
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100 py-8 px-4 sm:py-16 sm:px-6 lg:px-8">
@@ -88,6 +104,31 @@ const TechUsage = () => {
               </div>
             </div>
 
+            {/* Gender Dropdown */}
+            <div className="flex justify-center">
+              <select
+                value={gender}
+                onChange={handleGenderChange}
+                className="w-full max-w-md px-6 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-300"
+              >
+                <option value="">Select Gender</option>
+                <option value="male">Male</option>
+                <option value="female">Female</option>
+              </select>
+            </div>
+
+            {/* Age Input */}
+            <div className="flex justify-center">
+              <input
+                id="age"
+                type="text"
+                value={age}
+                onChange={handleAgeChange}
+                placeholder="Age"
+                className="w-full max-w-md px-6 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-300"
+              />
+            </div>
+
             {/* Email Input */}
             <div className="flex justify-center">
               <input
@@ -95,7 +136,7 @@ const TechUsage = () => {
                 type="email"
                 value={email}
                 onChange={handleEmailChange}
-                placeholder="you@gmail.com"
+                placeholder="you@gmail.com (optional)"
                 className={`w-full max-w-md px-6 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-offset-2 transition ${
                   email
                     ? isValid
@@ -106,16 +147,16 @@ const TechUsage = () => {
               />
             </div>
             {email && !isValid && (
-              <p className="text-center text-xs text-red-600">Please enter a valid Gmail address.</p>
+              <p className="text-center text-xs text-red-600">Please enter a valid Gmail address or leave blank.</p>
             )}
 
             {/* Begin Survey */}
             <div className="flex justify-center">
               <button
                 onClick={handleStartSurvey}
-                disabled={!isValid}
+                disabled={!canSubmit}
                 className={`w-full max-w-md px-6 py-3 mt-4 text-base sm:text-lg font-semibold rounded-lg transform transition-all duration-200 shadow-lg focus:outline-none focus:ring-2 focus:ring-offset-2 ${
-                  isValid
+                  canSubmit
                     ? 'bg-blue-600 text-white hover:bg-blue-700 focus:ring-blue-500'
                     : 'bg-gray-300 text-gray-500 cursor-not-allowed'
                 }`}
