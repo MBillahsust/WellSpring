@@ -71,6 +71,7 @@ import GiveFeedback from './pages/CommunityPages/GiveFeedback';
 import { useLocation } from 'react-router-dom';
 import WordRecall from './pages/GamesPages/WordRecall';
 import SequenceSimon from './pages/GamesPages/SequenceSimon';
+import Suduku from './pages/GamesPages/suduku';
 
 
 function App() {
@@ -101,6 +102,8 @@ function App() {
             <Route path="/games/memory-match" element={<MemoryMatch />} />
             <Route path="/games/word-recall" element={<WordRecall />} />
             <Route path="/games/sequence-simon" element={<SequenceSimon />} />
+            <Route path="/games/sudoku" element={<Suduku />} />
+            
 
             <Route path='/counsellors' element={<Counsellor />} />
             <Route path="/counsellor-bot" element={<CounsellorBotChat />} />

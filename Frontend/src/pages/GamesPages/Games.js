@@ -1,6 +1,6 @@
 import React, { useContext } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { FaGamepad, FaDove, FaPuzzlePiece, FaBrain, FaRegListAlt, FaCogs } from 'react-icons/fa';
+import { FaGamepad, FaDove, FaPuzzlePiece, FaBrain, FaRegListAlt, FaCogs, FaThLarge  } from 'react-icons/fa';
 import { UserContext } from '../../UserContext';
 
 const Games = () => {
@@ -39,6 +39,14 @@ const Games = () => {
       icon: <FaCogs className="text-4xl" />,
       path: '/games/sequence-simon',
       color: 'bg-indigo-500'
+    },
+    {
+      id: 'sudoku',
+      title: 'Sudoku',
+      description: 'Fill the 3×3 grid so that every row and column contains the numbers 1 through 3. Great for logical reasoning and pattern recognition.',
+      icon: <FaThLarge className="text-4xl" />,
+      path: '/games/sudoku',
+      color: 'bg-red-500'
     },
     {
       id: 'coming-soon-2',
