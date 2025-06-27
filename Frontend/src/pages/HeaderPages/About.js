@@ -9,7 +9,7 @@ export default function AboutPage() {
         <ol className="list-decimal list-inside space-y-6 text-lg">
           <li>
             <strong>Sign Up</strong><br />
-            Create a account by visiting <Link to="/signup" className="text-blue-600 hover:underline">Sign Up</Link>.If you have any concerns, you can use dummy information. Our platform doesn’t verify your email addresses or personal information.
+            Create a account by visiting <Link to="/signup" className="text-blue-600 hover:underline">Sign Up</Link>.If you have any concerns, you can use dummy information. Our platform doesn’t verify your email addresses or personal information or uses personal information.
           </li>
           <li>
             <strong>Log In</strong><br />

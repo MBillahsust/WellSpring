@@ -1,25 +1,27 @@
 {
-  "short_name": "React App",
-  "name": "Create React App Sample",
+  "short_name": "Wellspring",
+  "name": "Wellspring – AI-Powered Mental Wellness App",
   "icons": [
     {
-      "src": "favicon.ico",
-      "sizes": "64x64 32x32 24x24 16x16",
-      "type": "image/x-icon"
-    },
-    {
-      "src": "logo192.png",
+      "src": "mental-health.png",
       "type": "image/png",
       "sizes": "192x192"
     },
     {
-      "src": "logo512.png",
+      "src": "mental-health.png",
       "type": "image/png",
       "sizes": "512x512"
+    },
+    {
+      "src": "favicon.ico",
+      "sizes": "64x64 32x32 24x24 16x16",
+      "type": "image/x-icon"
     }
   ],
   "start_url": ".",
   "display": "standalone",
-  "theme_color": "#000000",
-  "background_color": "#ffffff"
+  "theme_color": "#0b3d91",
+  "background_color": "#ffffff",
+  "description": "Wellspring is an AI-powered mental wellness platform that helps users track mood, routines, and activities, offering personalized psychological insights based on standardized medical tools. Designed for Bangladesh, accessible worldwide.",
+  "lang": "en"
 }

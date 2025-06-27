@@ -8,14 +8,6 @@ const Games = () => {
   const navigate = useNavigate();
   const games = [
     {
-      id: 'flappy-bird',
-      title: 'Flappy Bird',
-      description: 'Test your reflexes and timing in this classic game. Guide the bird through the pipes!',
-      icon: <FaDove className="text-4xl" />,
-      path: '/games/flappy-bird',
-      color: 'bg-blue-500'
-    },
-    {
       id: 'memory-match',
       title: 'Memory Match',
       description: 'Test your memory with this card matching game.',
@@ -23,6 +15,14 @@ const Games = () => {
       path: '/games/memory-match',
       color: 'bg-purple-500',
       disabled: false
+    },
+    {
+      id: 'flappy-bird',
+      title: 'Flappy Bird',
+      description: 'Test your reflexes and timing in this classic game. Play with PC, preferred!',
+      icon: <FaDove className="text-4xl" />,
+      path: '/games/flappy-bird',
+      color: 'bg-blue-500'
     },
     {
       id: 'word-recall',

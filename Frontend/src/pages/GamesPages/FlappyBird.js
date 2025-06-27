@@ -559,7 +559,7 @@ const FlappyBird = () => {
                   <h4 className="text-md font-bold text-green-800">How to play</h4>
                 </div>
                 <ol className="relative border-l border-green-200 ml-3 mt-2 space-y-4">
-                  <li className="ml-4"><span className="absolute -left-2 top-1 w-3 h-3 bg-green-400 rounded-full"></span>Click the game area or press the spacebar to make the Apple logo jump.</li>
+                  <li className="ml-4"><span className="absolute -left-2 top-1 w-3 h-3 bg-green-400 rounded-full"></span>Use PC to play, preferred. Press the spacebar to make the Apple logo jump.</li>
                   <li className="ml-4"><span className="absolute -left-2 top-1 w-3 h-3 bg-green-400 rounded-full"></span>Avoid hitting the pipes or falling off the screen.</li>
                   <li className="ml-4"><span className="absolute -left-2 top-1 w-3 h-3 bg-green-400 rounded-full"></span>Try to beat your high score!</li>
                 </ol>
@@ -609,7 +609,7 @@ const FlappyBird = () => {
                 </div>
               </div>
               <div className="mt-2 text-center">
-                <p className="text-xs text-gray-500">Click or press space to make the Apple logo jump</p>
+                <p className="text-xs text-gray-500">Press space to Jump. play with PC, preferred.</p>
               </div>
             </div>
 
