@@ -14,11 +14,11 @@ const ResearchDevelopment = () => {
       link: "/research/tech-usage",
     },
     {
-      title: "Lifestyle & Psychosocial",
-      icon: <FaUserFriends className="text-3xl sm:text-4xl text-[#6d8ded]" />,
+      title: "Tech Usage Factors Analysis (reduced)",
+      icon: <FaLaptop className="text-3xl sm:text-4xl text-[#6d8ded]" />,
       description:
-        "Studies on lifestyle factors and social relationships affecting mental health.",
-      link: "/research/lifestyle-psychosocial",
+        "Using machine learning and deep learning, this study analyzes how fast-paced digital content consumption and lifestyle factors jointly influence attention, cognitive load, and impulsivity.",
+      link: "/research/tech-usage-reduced",
     },
     {
       title: "Mental Health Scales",

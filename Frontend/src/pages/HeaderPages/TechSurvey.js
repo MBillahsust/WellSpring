@@ -120,6 +120,8 @@ const TechnologyUsageSurvey = () => {
                 >
                   {question}
                 </p>
+
+                
                 <div className="options-grid">
                   {techUsageScale.options.map(option => (
                     <label
@@ -140,6 +142,8 @@ const TechnologyUsageSurvey = () => {
                     </label>
                   ))}
                 </div>
+
+
               </div>
             ))}
           </div>

@@ -32,6 +32,8 @@ import TechSurvey2 from './pages/HeaderPages/TechSurvey2';
 import TechSurvey3 from './pages/HeaderPages/TechSurvey3';
 import TechSurvey4 from './pages/HeaderPages/TechSurvey4';
 import TechSurvey5 from './pages/HeaderPages/TechSurvey5';
+import CombinedReducedSurvey from './pages/HeaderPages/reducedTechSurvey';
+
 import LifestyleSurvey from './pages/HeaderPages/LifestyleSurvey';
 
 import Login from './pages/HeaderPages/Login'
@@ -60,6 +62,9 @@ import ScrollToTop from './Components/ScrollToTop';
 import './index.css';
 
 import TechUsage from './pages/HeaderPages/TechUsage';
+
+import TechUsageReduced from './pages/HeaderPages/techUsageReduced';
+
 import LifestylePsychosocial from './pages/HeaderPages/LifestylePsychosocial';
 import MentalHealthScales from './pages/HeaderPages/MentalHealthScales';
 import UserDashboard from './pages/UserDashboard';
@@ -130,6 +135,10 @@ function App() {
             <Route path="/TechSurvey3" element={<TechSurvey3 />} />
             <Route path="/TechSurvey4" element={<TechSurvey4 />} />
             <Route path="/TechSurvey5" element={<TechSurvey5 />} />
+
+            <Route path="/TechSurveyReduced" element={<CombinedReducedSurvey />} />
+
+            
             <Route path="/LifestyleSurvey" element={<LifestyleSurvey />} />
 
             <Route path="/login" element={<Login />} />
@@ -153,6 +162,9 @@ function App() {
             <Route path="/contact" element={<Contact />} />
 
             <Route path="/research/tech-usage" element={<TechUsage />} />
+
+            <Route path="/research/tech-usage-reduced" element={<TechUsageReduced />} />
+
             <Route path="/research/lifestyle-psychosocial" element={<LifestylePsychosocial />} />
             <Route path="/research/mental-health-scales" element={<MentalHealthScales />} />
 
